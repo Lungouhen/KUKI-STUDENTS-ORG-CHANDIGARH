@@ -4,26 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'KSO Admin CMS Control Panel')</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome 6 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Choices.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <!-- Local Bootstrap 5 CSS -->
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Local FontAwesome 6 CSS -->
+    <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
+    <!-- Local Choices.js CSS -->
+    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
+    <!-- Local SweetAlert2 CSS -->
+    <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
     <!-- Custom Styles & Vite Bundle -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
 
-    <!-- Alpine.js CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- SweetAlert2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- ApexCharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!-- CKEditor 5 CDN -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <!-- Local Alpine.js -->
+    <script defer src="{{ asset('vendor/alpine/alpine.min.js') }}"></script>
+    <!-- Local SweetAlert2 JS -->
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
+    <!-- Local ApexCharts JS -->
+    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <!-- Local CKEditor 5 JS -->
+    <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
 
     @stack('styles')
 </head>
@@ -131,10 +133,10 @@
         @yield('content')
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Choices.js JS -->
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <!-- Local Bootstrap 5 JS -->
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <!-- Local Choices.js JS -->
+    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
 
     <script>
         function confirmDelete(formId, message = 'Are you sure you want to delete this item?') {

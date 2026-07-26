@@ -1,0 +1,52 @@
+/* FontAwesome 6 Local Minimal CSS Icons */
+.fa, .fas, .fa-solid, .far, .fa-regular, .fab, .fa-brands {
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+.fa-house::before { content: "🏠 "; }
+.fa-circle-info::before { content: "ℹ️ "; }
+.fa-id-card::before { content: "🪪 "; }
+.fa-calendar-days::before, .fa-calendar-check::before, .fa-calendar-day::before, .fa-calendar::before { content: "📅 "; }
+.fa-images::before { content: "🖼️ "; }
+.fa-hand-holding-heart::before, .fa-heart::before { content: "❤️ "; }
+.fa-envelope::before, .fa-envelope-open-text::before { content: "✉️ "; }
+.fa-user-shield::before, .fa-shield-halved::before, .fa-shield::before { content: "🛡️ "; }
+.fa-phone::before, .fa-phone-volume::before { content: "📞 "; }
+.fa-headset::before { content: "🎧 "; }
+.fa-facebook-f::before { content: "📘 "; }
+.fa-instagram::before { content: "📸 "; }
+.fa-whatsapp::before { content: "💬 "; }
+.fa-bullhorn::before { content: "📢 "; }
+.fa-graduation-cap::before { content: "🎓 "; }
+.fa-qrcode::before { content: "🔳 "; }
+.fa-users::before, .fa-user-plus::before, .fa-user::before, .fa-user-gear::before { content: "👥 "; }
+.fa-university::before, .fa-landmark::before, .fa-building-columns::before { content: "🏛️ "; }
+.fa-circle-check::before, .fa-check-circle::before, .fa-check::before { content: "✅ "; }
+.fa-location-dot::before { content: "📍 "; }
+.fa-arrow-right::before { content: "➔ "; }
+.fa-arrow-left::before { content: "⬅ "; }
+.fa-clock::before { content: "🕒 "; }
+.fa-newspaper::before { content: "📰 "; }
+.fa-bullseye::before { content: "🎯 "; }
+.fa-triangle-exclamation::before { content: "⚠️ "; }
+.fa-hospital::before, .fa-notes-medical::before { content: "🏥 "; }
+.fa-hand-holding-dollar::before, .fa-file-invoice-dollar::before { content: "💳 "; }
+.fa-gauge::before { content: "📊 "; }
+.fa-power-off::before { content: "🔌 "; }
+.fa-sliders::before { content: "⚙️ "; }
+.fa-list-check::before { content: "📋 "; }
+.fa-circle-question::before { content: "❓ "; }
+.fa-comments::before, .fa-quote-left::before { content: "💬 "; }
+.fa-star::before { content: "⭐ "; }
+.fa-trash::before { content: "🗑️ "; }
+.fa-plus::before, .fa-plus-circle::before { content: "➕ "; }
+.fa-save::before, .fa-floppy-disk::before { content: "💾 "; }
+.fa-eye::before { content: "👁️ "; }
+.fa-xmark::before, .fa-circle-xmark::before { content: "❌ "; }
+.fa-print::before { content: "🖨️ "; }
+.fa-file-csv::before { content: "📄 "; }

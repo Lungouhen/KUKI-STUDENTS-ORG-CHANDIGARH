@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Kuki Students\' Organisation Chandigarh')</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome 6 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Choices.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-    <!-- FilePond CSS -->
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <!-- FullCalendar CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet" />
-    <!-- Custom Laravel Asset Styles & Vite Bundle -->
+    <!-- Local Bootstrap 5 CSS -->
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Local FontAwesome 6 CSS -->
+    <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
+    <!-- Local Choices.js CSS -->
+    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
+    <!-- Local FilePond CSS -->
+    <link href="{{ asset('vendor/filepond/filepond.min.css') }}" rel="stylesheet">
+    <!-- Local SweetAlert2 CSS -->
+    <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
+    <!-- Custom Styles & Vite Assets -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
 
-    <!-- Alpine.js CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- SweetAlert2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Local Alpine.js -->
+    <script defer src="{{ asset('vendor/alpine/alpine.min.js') }}"></script>
+    <!-- Local SweetAlert2 JS -->
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
     
     @stack('styles')
 </head>
@@ -85,21 +85,16 @@
     <!-- ─── FOOTER COMPONENT ─── -->
     <x-footer />
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Choices.js JS -->
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <!-- FilePond JS -->
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <!-- FullCalendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-    <!-- Stripe.js SDK -->
-    <script src="https://js.stripe.com/v3/"></script>
-    <!-- Razorpay Checkout SDK -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Local Bootstrap 5 JS -->
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <!-- Local Choices.js JS -->
+    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
+    <!-- Local FilePond JS -->
+    <script src="{{ asset('vendor/filepond/filepond.min.js') }}"></script>
+    <!-- Local FullCalendar JS -->
+    <script src="{{ asset('vendor/fullcalendar/fullcalendar.min.js') }}"></script>
 
     <script>
-        // Global SweetAlert2 delete prompt helper
         function confirmDelete(formId, message = 'Are you sure you want to delete this record?') {
             Swal.fire({
                 title: 'Confirm Action',
