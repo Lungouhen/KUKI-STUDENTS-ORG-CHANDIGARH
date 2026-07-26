@@ -29,81 +29,220 @@
 
     @stack('styles')
 </head>
-<body class="bg-light" x-data="{ sidebarOpen: true }">
+<body class="bg-light" x-data="{ 
+    sidebarOpen: true,
+    darkMode: localStorage.getItem('theme') === 'dark',
+    toggleTheme() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+    }
+}" :data-bs-theme="darkMode ? 'dark' : 'light'">
 
-    <!-- Admin Top Bar -->
-    <div class="bg-dark text-white py-3 px-4 d-flex justify-content-between align-items-center shadow-sm">
-        <div class="d-flex align-items-center gap-2">
-            <img src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle border border-warning" width="36" height="36" onerror="this.src='/images/default-avatar-m.png'">
-            <div>
-                <span class="fw-bold fs-5 text-warning me-2"><i class="fa-solid fa-gauge me-2"></i> KSO CMS ADMIN CONTROL PANEL</span>
-                <small class="text-light opacity-75">Laravel Framework</small>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="bg-dark text-white min-vh-100 shadow" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s; width: 260px;">
+            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
+                <div x-show="sidebarOpen" class="fw-bold text-warning">KSO ADMIN PANEL</div>
+                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
+                <ul class="nav flex-column gap-1">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-house me-2"></i> <span x-show="sidebarOpen">Home</span>
+                        </a>
+                    </li>
+                    
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Content</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-images me-2"></i> <span x-show="sidebarOpen">Slider</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.pages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.pages*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-file-lines me-2"></i> <span x-show="sidebarOpen">About & Pages</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.gallery.index') }}" class="nav-link text-white {{ request()->routeIs('admin.gallery*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-image me-2"></i> <span x-show="sidebarOpen">Gallery</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'certificate']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'certificate'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-certificate me-2"></i> <span x-show="sidebarOpen">Certificates</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'achievement']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'achievement'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-trophy me-2"></i> <span x-show="sidebarOpen">Achievements</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'policy']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'policy'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-shield-halved me-2"></i> <span x-show="sidebarOpen">Policies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.news.index') }}" class="nav-link text-white {{ request()->routeIs('admin.news.index') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-newspaper me-2"></i> <span x-show="sidebarOpen">News</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-bullhorn me-2"></i> <span x-show="sidebarOpen">Notices</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.projects.index') }}" class="nav-link text-white {{ request()->routeIs('admin.projects*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-diagram-project me-2"></i> <span x-show="sidebarOpen">Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'campaign']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'campaign'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-bullseye me-2"></i> <span x-show="sidebarOpen">Campaigns</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-briefcase me-2"></i> <span x-show="sidebarOpen">Careers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.messages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.messages*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-envelope me-2"></i> <span x-show="sidebarOpen">Messages</span>
+                        </a>
+                    </li>
+                    
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Members</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.members.index') }}" class="nav-link text-white {{ request()->routeIs('admin.members*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-users me-2"></i> <span x-show="sidebarOpen">All Members</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.members.index', ['status' => 'Pending']) }}" class="nav-link text-white">
+                            <i class="fa-solid fa-user-clock me-2"></i> <span x-show="sidebarOpen">Member Requests</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.members.fees') }}" class="nav-link text-white {{ request()->routeIs('admin.members.fees') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-money-bill me-2"></i> <span x-show="sidebarOpen">Membership Fees</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.committee.index') }}" class="nav-link text-white {{ request()->routeIs('admin.committee*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-user-tag me-2"></i> <span x-show="sidebarOpen">Designations</span>
+                        </a>
+                    </li>
+                    
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">People</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-hand-holding-heart me-2"></i> <span x-show="sidebarOpen">Donors</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.beneficiaries.index') }}" class="nav-link text-white {{ request()->routeIs('admin.beneficiaries*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-users-viewfinder me-2"></i> <span x-show="sidebarOpen">Beneficiaries</span>
+                        </a>
+                    </li>
+                    
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Finance</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-money-check-dollar me-2"></i> <span x-show="sidebarOpen">Donations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.financial.index', ['type' => 'Expense']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.financial.index', ['type' => 'Expense'])) ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-file-invoice-dollar me-2"></i> <span x-show="sidebarOpen">Expenses</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.financial.index') }}" class="nav-link text-white {{ request()->routeIs('admin.financial.index') && !request()->has('type') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-chart-pie me-2"></i> <span x-show="sidebarOpen">Reports</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.partners.index') }}" class="nav-link text-white {{ request()->routeIs('admin.partners*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-handshake me-2"></i> <span x-show="sidebarOpen">Partners</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.users.index') }}" class="nav-link text-white {{ request()->routeIs('admin.users*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-user-shield me-2"></i> <span x-show="sidebarOpen">Users</span>
+                        </a>
+                    </li>
+
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Settings</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.settings.index') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.index') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-building-ngo me-2"></i> <span x-show="sidebarOpen">Organization</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.settings.smtp') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.smtp') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-envelope-circle-check me-2"></i> <span x-show="sidebarOpen">SMTP Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.settings.gateways') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.gateways') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-credit-card me-2"></i> <span x-show="sidebarOpen">Payment Gateways</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white">
+                            <i class="fa-solid fa-file-code me-2"></i> <span x-show="sidebarOpen">Templates</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.settings.integrations') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.integrations') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-plug me-2"></i> <span x-show="sidebarOpen">Integrations</span>
+                        </a>
+                    </li>
+
+                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Election & Logs</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.elections.index') }}" class="nav-link text-white {{ request()->routeIs('admin.elections*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-check-to-slot me-2"></i> <span x-show="sidebarOpen">Election Module</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.audit.index') }}" class="nav-link text-white {{ request()->routeIs('admin.audit*') ? 'bg-primary' : '' }}">
+                            <i class="fa-solid fa-clipboard-check me-2"></i> <span x-show="sidebarOpen">Audit Trail</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="d-flex align-items-center gap-3">
-            <a href="{{ route('home') }}" target="_blank" class="btn btn-outline-warning btn-sm rounded-pill"><i class="fa-solid fa-globe me-1"></i> Public Website</a>
-            <span class="extra-small text-light d-none d-md-inline"><i class="fa-solid fa-user me-1"></i> Logged in: <strong>{{ Auth::user()->name ?? 'Admin' }}</strong></span>
-            <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="fa-solid fa-power-off me-1"></i> Logout
-                </button>
-            </form>
-        </div>
-    </div>
 
-    <!-- Admin Navigation Bar -->
-    <div class="bg-white border-bottom shadow-sm py-2 px-4 mb-4 overflow-auto">
-        <div class="container-fluid px-0">
-            <ul class="nav nav-pills gap-1 flex-nowrap extra-small">
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.dashboard') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.dashboard') }}"><i class="fa-solid fa-gauge me-1"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.members*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.members.index') }}"><i class="fa-solid fa-id-card me-1"></i> Members</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.financial*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.financial.index') }}"><i class="fa-solid fa-file-invoice-dollar me-1"></i> Financial Ledger</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.pages*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.pages.index') }}"><i class="fa-solid fa-file-lines me-1"></i> Page Builder</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.events*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.events.index') }}"><i class="fa-solid fa-calendar-plus me-1"></i> Events</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.news*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.news.index') }}"><i class="fa-solid fa-newspaper me-1"></i> News</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.committee*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.committee.index') }}"><i class="fa-solid fa-users-gear me-1"></i> Executive Council</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.gallery*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.gallery.index') }}"><i class="fa-solid fa-images me-1"></i> Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.donations*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.donations.index') }}"><i class="fa-solid fa-hand-holding-dollar me-1"></i> Donations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.medical*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.medical.index') }}"><i class="fa-solid fa-notes-medical me-1"></i> Medical Desk</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.faqs*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.faqs.index') }}"><i class="fa-solid fa-circle-question me-1"></i> FAQs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.messages*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.messages.index') }}"><i class="fa-solid fa-envelope-open-text me-1"></i> Messages</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.audit*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.audit.index') }}"><i class="fa-solid fa-list-check me-1"></i> Audit Trail</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold text-nowrap {{ request()->routeIs('admin.settings*') ? 'active bg-primary' : 'text-dark' }}" href="{{ route('admin.settings.index') }}"><i class="fa-solid fa-sliders me-1"></i> Settings</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+        <!-- Main Content -->
+        <div class="flex-grow-1 overflow-hidden">
+            <!-- Top Bar -->
+            <div class="bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+                <div class="fw-bold">
+                    @yield('title', 'Admin Panel')
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" style="width: 32px; height: 32px;">
+                        <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                    </button>
+                    <a href="{{ route('home') }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">View Site</a>
+                    <form action="{{ route('admin.logout') }}" method="POST">
+                        @csrf
+                        <button class="btn btn-sm btn-danger rounded-pill">Logout</button>
+                    </form>
+                </div>
+            </div>
 
-    <!-- Main Container -->
-    <div class="container-fluid px-lg-5 my-4">
+            <div class="p-4 overflow-auto" style="height: calc(100vh - 70px);">
         @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -131,6 +270,8 @@
         @endif
 
         @yield('content')
+    </div>
+    </div>
     </div>
 
     <!-- Local Bootstrap 5 JS -->

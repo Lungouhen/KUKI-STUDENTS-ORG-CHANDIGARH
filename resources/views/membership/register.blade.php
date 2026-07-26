@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4">
+<div class="bg-primary text-white py-4 mb-4" x-data="{ memberType: 'Individual' }">
     <div class="container text-center">
         <h2 class="fw-black mb-1">KSO Chandigarh Membership Registration</h2>
         <p class="small text-light opacity-90 mb-0">Register online to get your official verified Digital Membership ID Card</p>
@@ -91,6 +91,19 @@
                                     <option value="PGIMER Chandigarh">PGIMER Chandigarh</option>
                                     <option value="Other Institution in Chandigarh/Mohali">Other Institute in Tricity</option>
                                 </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Membership Category <span class="text-danger">*</span></label>
+                                <select class="form-select" name="membership_category" x-model="memberType" required>
+                                    <option value="Individual">Individual Member</option>
+                                    <option value="Family">Family Membership</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3" x-show="memberType === 'Family'">
+                                <label class="form-label fw-bold">Dependents Count</label>
+                                <input type="number" class="form-control" name="family_count" value="0" min="0">
                             </div>
 
                             <div class="col-md-6">

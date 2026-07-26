@@ -55,6 +55,12 @@
                 <p class="extra-small opacity-90 mb-2">If you or a student member requires blood donation, hospital emergency admission at PGIMER or GMCH-32, contact us immediately.</p>
                 <a href="tel:{{ \App\Models\Setting::get('helpline', '+91 98765 43211') }}" class="btn btn-light text-danger fw-bold btn-sm rounded-pill"><i class="fa-solid fa-phone me-1"></i> Call Medical Cell</a>
             </div>
+
+            @if(\App\Models\Setting::get('mapEmbedUrl'))
+                <div class="mt-4 rounded-4 overflow-hidden shadow-sm border" style="height: 250px;">
+                    <iframe src="{{ \App\Models\Setting::get('mapEmbedUrl') }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            @endif
         </div>
 
         <div class="col-lg-7">

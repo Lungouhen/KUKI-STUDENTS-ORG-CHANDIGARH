@@ -17,7 +17,7 @@ class PaymentGatewayService
      */
     public static function createRazorpayOrder(float $amount, string $cause, string $donorName, string $email, string $phone): array
     {
-        $keyId = config('services.razorpay.key', env('RAZORPAY_KEY', 'rzp_test_KSO_Chandigarh'));
+        $keyId = \App\Models\Setting::get('razorpayKey', config('services.razorpay.key'));
         $orderId = 'order_' . Str::random(12);
 
         return [
@@ -47,6 +47,7 @@ class PaymentGatewayService
     public static function processSuccessfulDonation(array $data): Donation
     {
         $donation = Donation::create([
+            'id' => \App\Models\Transaction::generateDonorId(),
             'donor_name' => $data['donor_name'] ?? 'Anonymous',
             'amount' => $data['amount'],
             'currency' => $data['currency'] ?? 'INR',

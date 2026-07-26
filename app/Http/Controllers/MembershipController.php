@@ -31,12 +31,13 @@ class MembershipController extends Controller
             'current_address' => 'required|string',
             'emergency_contact' => 'required|string',
             'emergency_phone' => 'required|string',
+            'membership_category' => 'required|string',
+            'family_count' => 'nullable|integer',
             'photoFile' => 'nullable|image|max:5120',
         ]);
 
         // Generate ID
-        $count = Member::count() + 1;
-        $id = 'KSO-CHD-2026-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $id = Member::generateMembershipId();
 
         $photoPath = $request->gender === 'Female' ? '/images/default-avatar-f.png' : '/images/default-avatar-m.png';
         if ($request->hasFile('photoFile')) {
@@ -61,11 +62,13 @@ class MembershipController extends Controller
             'current_address' => $validated['current_address'],
             'emergency_contact' => $validated['emergency_contact'],
             'emergency_phone' => $validated['emergency_phone'],
+            'membership_category' => $validated['membership_category'],
+            'family_count' => $validated['family_count'] ?? 0,
             'photo' => $photoPath,
             'status' => 'Pending',
             'membership_type' => 'Regular Student Member',
             'applied_date' => now()->toDateString(),
-            'valid_until' => '2027-06-30',
+            'valid_until' => Member::calculateValidityDate(),
         ]);
 
         // Send registration confirmation email
@@ -88,6 +91,12 @@ class MembershipController extends Controller
         $id = trim($request->input('member_id'));
         $member = Member::find($id);
 
+        return view('membership.verify', compact('member', 'id'));
+    }
+
+    public function verifyDirect($id)
+    {
+        $member = Member::find($id);
         return view('membership.verify', compact('member', 'id'));
     }
 
@@ -115,16 +124,56 @@ class MembershipController extends Controller
     {
         $memberId = session('member_id');
         if (!$memberId) {
-            return redirect()->route('membership.portalLogin');
+            return redirect()->route('membership.portal');
         }
 
         $member = Member::find($memberId);
         if (!$member) {
             session()->forget('member_id');
-            return redirect()->route('membership.portalLogin');
+            return redirect()->route('membership.portal');
         }
 
-        return view('membership.portal_dashboard', compact('member'));
+        $medicalClaims = \App\Models\MedicalReliefClaim::where('member_id', $memberId)->get();
+        
+        // Mock data for dashboard overview requirements
+        $totalFeesPaid = 250;
+        $paymentsCount = 1;
+
+        return view('membership.portal_dashboard', compact('member', 'medicalClaims', 'totalFeesPaid', 'paymentsCount'));
+    }
+
+    public function submitMedicalClaim(Request $request)
+    {
+        $memberId = session('member_id');
+        if (!$memberId) {
+            return redirect()->route('membership.portal');
+        }
+
+        $validated = $request->validate([
+            'patient_name' => 'required|string',
+            'hospital_name' => 'required|string',
+            'nature_of_illness' => 'required|string',
+            'amount_requested' => 'required|numeric|min:1',
+            'medical_document' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:5120',
+        ]);
+
+        $docPath = null;
+        if ($request->hasFile('medical_document')) {
+            $path = $request->file('medical_document')->store('uploads/medical', 'public');
+            $docPath = '/storage/' . $path;
+        }
+
+        \App\Models\MedicalReliefClaim::create([
+            'member_id' => $memberId,
+            'patient_name' => $validated['patient_name'],
+            'hospital_name' => $validated['hospital_name'],
+            'nature_of_illness' => $validated['nature_of_illness'],
+            'amount_requested' => $validated['amount_requested'],
+            'status' => 'Pending',
+            'medical_document' => $docPath,
+        ]);
+
+        return back()->with('success', 'Your medical relief claim has been submitted to the KSO Executive Body.');
     }
 
     public function portalLogout()

@@ -6,21 +6,27 @@
 
 <!-- Financial Overview Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="p-3 bg-dark shadow-sm rounded-3 text-white border-start border-4 border-warning">
+            <small class="text-warning text-uppercase fw-bold extra-small">Current Executive Term</small>
+            <h4 class="fw-black mb-0">{{ \App\Models\Term::current()->name ?? '2025-2026' }}</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-success">
-            <small class="text-muted text-uppercase fw-bold extra-small">Total Income Collections</small>
+            <small class="text-muted text-uppercase fw-bold extra-small">Term Income</small>
             <h3 class="fw-black text-success mb-0">₹{{ number_format($totalIncome, 2) }}</h3>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-danger">
-            <small class="text-muted text-uppercase fw-bold extra-small">Total Expenses & Disbursemnts</small>
+            <small class="text-muted text-uppercase fw-bold extra-small">Term Expenses</small>
             <h3 class="fw-black text-danger mb-0">₹{{ number_format($totalExpense, 2) }}</h3>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-primary">
-            <small class="text-muted text-uppercase fw-bold extra-small">Net Reserve Balance</small>
+            <small class="text-muted text-uppercase fw-bold extra-small">Net Term Balance</small>
             <h3 class="fw-black text-primary mb-0">₹{{ number_format($netBalance, 2) }}</h3>
         </div>
     </div>

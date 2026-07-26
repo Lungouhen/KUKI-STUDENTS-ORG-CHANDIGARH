@@ -20,6 +20,7 @@
                         <th>Contact</th>
                         <th>Payment / UPI Ref</th>
                         <th>Date</th>
+                        <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,11 @@
                             <td>{{ $d->phone ?? '' }} {{ $d->email ? "({$d->email})" : '' }}</td>
                             <td><code>{{ $d->payment_ref }}</code></td>
                             <td>{{ $d->date ? $d->date->format('Y-m-d') : '' }}</td>
+                            <td class="text-end pe-4">
+                                <a href="{{ route('admin.donations.receipt', $d->id) }}" target="_blank" class="btn btn-sm btn-light border">
+                                    <i class="fa-solid fa-print me-1"></i> Receipt
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

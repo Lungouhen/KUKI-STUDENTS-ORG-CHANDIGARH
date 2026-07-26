@@ -44,6 +44,91 @@
                     <label class="form-label fw-bold">UPI ID for Donations</label>
                     <input type="text" class="form-control" name="upiId" value="{{ $settings['upiId'] }}">
                 </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-palette me-1"></i> Branding & Custom Identity</h6>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Primary Color (Hex)</label>
+                    <input type="color" class="form-control form-control-color w-100" name="primaryColor" value="{{ $settings['primaryColor'] }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Accent Color (Hex)</label>
+                    <input type="color" class="form-control form-control-color w-100" name="accentColor" value="{{ $settings['accentColor'] }}">
+                </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-barcode me-1"></i> ID Prefix Configurations</h6>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label extra-small fw-bold">Member ID Prefix</label>
+                    <input type="text" class="form-control" name="memberPrefix" value="{{ $settings['memberPrefix'] }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label extra-small fw-bold">Donor ID Prefix</label>
+                    <input type="text" class="form-control" name="donorPrefix" value="{{ $settings['donorPrefix'] }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label extra-small fw-bold">Beneficiary ID Prefix</label>
+                    <input type="text" class="form-control" name="beneficiaryPrefix" value="{{ $settings['beneficiaryPrefix'] }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label extra-small fw-bold">Project ID Prefix</label>
+                    <input type="text" class="form-control" name="projectPrefix" value="{{ $settings['projectPrefix'] }}">
+                </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-map-location-dot me-1"></i> Location & Map Settings</h6>
+                </div>
+                <div class="col-12">
+                    <label class="form-label extra-small fw-bold">Google Maps Embed URL</label>
+                    <input type="text" class="form-control" name="mapEmbedUrl" value="{{ $settings['mapEmbedUrl'] ?? '' }}">
+                </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-chart-line me-1"></i> Public Statistics (Home Page)</h6>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Base Member Count (Fallback)</label>
+                    <input type="number" class="form-control" name="baseMemberCount" value="{{ $settings['baseMemberCount'] }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Colleges/Institutions Count</label>
+                    <input type="number" class="form-control" name="collegesCount" value="{{ $settings['collegesCount'] }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Base Event Count (Fallback)</label>
+                    <input type="number" class="form-control" name="baseEventCount" value="{{ $settings['baseEventCount'] }}">
+                </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-key me-1"></i> Payment Gateway API Keys (Razorpay)</h6>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label extra-small fw-bold">Razorpay Key ID</label>
+                    <input type="password" class="form-control" name="razorpayKey" value="{{ $settings['razorpayKey'] }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label extra-small fw-bold">Razorpay Key Secret</label>
+                    <input type="password" class="form-control" name="razorpaySecret" value="{{ $settings['razorpaySecret'] }}">
+                </div>
+
+                <div class="col-12 border-top pt-3 mt-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-share-nodes me-1"></i> Social Media & Helpline Links</h6>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Facebook URL</label>
+                    <input type="text" class="form-control" name="facebook" value="{{ $settings['facebook'] ?? '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">Instagram URL</label>
+                    <input type="text" class="form-control" name="instagram" value="{{ $settings['instagram'] ?? '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label extra-small fw-bold">WhatsApp Number</label>
+                    <input type="text" class="form-control" name="whatsapp" value="{{ $settings['whatsapp'] ?? '' }}">
+                </div>
+
                 <div class="col-12 text-end mt-4">
                     <button type="submit" class="btn btn-accent px-5 fw-bold shadow"><i class="fa-solid fa-floppy-disk me-1"></i> Save Settings</button>
                 </div>

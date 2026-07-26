@@ -26,6 +26,11 @@ use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\MedicalReliefController as AdminMedicalReliefController;
 use App\Http\Controllers\Admin\AuditLogController as AdminAuditLogController;
+use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ElectionController;
+use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +49,11 @@ Route::get('/membership/register', [MembershipController::class, 'registerForm']
 Route::post('/membership/register', [MembershipController::class, 'store'])->name('membership.store');
 Route::get('/membership/verify', [MembershipController::class, 'verifyForm'])->name('membership.verifyForm');
 Route::post('/membership/verify', [MembershipController::class, 'verify'])->name('membership.verify');
+Route::get('/membership/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
 Route::get('/membership/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
 Route::post('/membership/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
 Route::get('/membership/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
+Route::post('/membership/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
 Route::get('/membership/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
 Route::get('/membership/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
 
@@ -108,10 +115,16 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/medical', [AdminMedicalReliefController::class, 'index'])->name('medical.index');
     Route::post('/medical/{id}/status', [AdminMedicalReliefController::class, 'updateStatus'])->name('medical.updateStatus');
 
+    // Content Management
+    Route::get('/content', [ContentController::class, 'index'])->name('content.index');
+    Route::post('/content', [ContentController::class, 'store'])->name('content.store');
+    Route::delete('/content/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
+
     // Audit Trail Logs
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
 
     // Members Management
+    Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
     Route::post('/members', [AdminMemberController::class, 'store'])->name('members.store');
@@ -152,6 +165,24 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
     Route::get('/donations/{id}/receipt', [AdminDonationController::class, 'receipt'])->name('donations.receipt');
 
+    // Partners
+    Route::get('/partners/export/csv', [PartnerController::class, 'exportCsv'])->name('partners.exportCsv');
+    Route::resource('partners', PartnerController::class);
+
+    // Users
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    // Projects & Beneficiaries
+    Route::resource('projects', ProjectController::class);
+    Route::get('/beneficiaries', [AdminDashboardController::class, 'beneficiaries'])->name('beneficiaries.index');
+
+    // Terms & Elections
+    Route::get('/terms', [AdminDashboardController::class, 'terms'])->name('terms.index');
+    Route::post('/terms', [AdminDashboardController::class, 'storeTerm'])->name('terms.store');
+    Route::resource('elections', ElectionController::class);
+    Route::post('/elections/{id}/candidates', [ElectionController::class, 'addCandidate'])->name('elections.addCandidate');
+    Route::post('/candidates/{id}/votes', [ElectionController::class, 'updateVotes'])->name('candidates.updateVotes');
+
     // Messages
     Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
     Route::post('/messages/{id}/status', [AdminMessageController::class, 'updateStatus'])->name('messages.updateStatus');
@@ -159,4 +190,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    Route::get('/settings/integrations', [AdminSettingController::class, 'integrations'])->name('settings.integrations');
+    Route::get('/settings/smtp', [AdminSettingController::class, 'smtp'])->name('settings.smtp');
+    Route::get('/settings/gateways', [AdminSettingController::class, 'gateways'])->name('settings.gateways');
 });

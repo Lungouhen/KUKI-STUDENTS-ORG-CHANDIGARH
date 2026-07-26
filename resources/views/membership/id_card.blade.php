@@ -44,7 +44,11 @@
                         <div class="fw-bold text-warning">VALID UNTIL: {{ $member->valid_until ? $member->valid_until->format('Y-m-d') : '2027-06-30' }}</div>
                         <div class="extra-small opacity-75">Recognized by KSO General HQ</div>
                     </div>
-                    <i class="fa-solid fa-qrcode fs-2 text-white"></i>
+                    @php
+                        $verifyUrl = route('membership.verifyDirect', $member->id);
+                        $qrUrl = "https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" . urlencode($verifyUrl) . "&choe=UTF-8";
+                    @endphp
+                    <img src="{{ $qrUrl }}" width="50" height="50" class="rounded bg-white p-1" alt="Verification QR">
                 </div>
             </div>
 
