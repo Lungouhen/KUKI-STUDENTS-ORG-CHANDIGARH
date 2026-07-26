@@ -68,6 +68,13 @@ class MembershipController extends Controller
             'valid_until' => '2027-06-30',
         ]);
 
+        // Send registration confirmation email
+        try {
+            \Illuminate\Support\Facades\Mail::to($member->email)->send(new \App\Mail\MemberRegisteredMail($member));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::info("Mail send skipped: " . $e->getMessage());
+        }
+
         return redirect()->route('membership.idCard', $member->id)->with('success', 'Registration submitted successfully! Your digital ID card is below.');
     }
 

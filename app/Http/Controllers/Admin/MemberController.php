@@ -43,6 +43,13 @@ class MemberController extends Controller
         $member->status = $status;
         if ($status === 'Approved' && !$member->approval_date) {
             $member->approval_date = now()->toDateString();
+            
+            // Send approval email
+            try {
+                \Illuminate\Support\Facades\Mail::to($member->email)->send(new \App\Mail\MemberApprovedMail($member));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::info("Mail send skipped: " . $e->getMessage());
+            }
         }
         $member->save();
 
