@@ -5,10 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CommitteeMember;
-use App\Models\GalleryItem;
-use App\Models\Donation;
-use App\Models\ContactMessage;
-use App\Models\Setting;
 
 class CommitteeController extends Controller
 {
@@ -48,6 +44,35 @@ class CommitteeController extends Controller
         ]);
 
         return back()->with('success', 'Committee member added.');
+    }
+
+    public function edit($id)
+    {
+        $committee = CommitteeMember::findOrFail($id);
+        return view('admin.committee.edit', compact('committee'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $committee = CommitteeMember::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'designation' => 'required|string',
+            'institution' => 'required|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'tenure' => 'required|string',
+            'photoFile' => 'nullable|image|max:5120',
+        ]);
+
+        if ($request->hasFile('photoFile')) {
+            $path = $request->file('photoFile')->store('uploads/committee', 'public');
+            $validated['photo'] = '/storage/' . $path;
+        }
+
+        $committee->update($validated);
+
+        return redirect()->route('admin.committee.index')->with('success', 'Executive leader details updated.');
     }
 
     public function destroy($id)

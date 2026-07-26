@@ -86,16 +86,22 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
     Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
+    Route::put('/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');
 
     // FAQs Manager
     Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faqs.index');
     Route::post('/faqs', [AdminFaqController::class, 'store'])->name('faqs.store');
+    Route::get('/faqs/{id}/edit', [AdminFaqController::class, 'edit'])->name('faqs.edit');
+    Route::put('/faqs/{id}', [AdminFaqController::class, 'update'])->name('faqs.update');
     Route::delete('/faqs/{id}', [AdminFaqController::class, 'destroy'])->name('faqs.destroy');
 
     // Testimonials Manager
     Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
     Route::post('/testimonials', [AdminTestimonialController::class, 'store'])->name('testimonials.store');
+    Route::get('/testimonials/{id}/edit', [AdminTestimonialController::class, 'edit'])->name('testimonials.edit');
+    Route::put('/testimonials/{id}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
     Route::delete('/testimonials/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
 
     // Medical Emergency Relief Desk
@@ -107,7 +113,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Members Management
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
+    Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
+    Route::post('/members', [AdminMemberController::class, 'store'])->name('members.store');
     Route::get('/members/{id}', [AdminMemberController::class, 'show'])->name('members.show');
+    Route::get('/members/{id}/edit', [AdminMemberController::class, 'edit'])->name('members.edit');
+    Route::put('/members/{id}', [AdminMemberController::class, 'update'])->name('members.update');
     Route::post('/members/{id}/status', [AdminMemberController::class, 'updateStatus'])->name('members.updateStatus');
     Route::delete('/members/{id}', [AdminMemberController::class, 'destroy'])->name('members.destroy');
     Route::get('/members/export/csv', [AdminMemberController::class, 'exportCsv'])->name('members.exportCsv');
@@ -115,16 +125,22 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Events
     Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
     Route::post('/events', [AdminEventController::class, 'store'])->name('events.store');
+    Route::get('/events/{id}/edit', [AdminEventController::class, 'edit'])->name('events.edit');
+    Route::put('/events/{id}', [AdminEventController::class, 'update'])->name('events.update');
     Route::delete('/events/{id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
 
     // News
     Route::get('/news', [AdminNewsController::class, 'index'])->name('news.index');
     Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
+    Route::get('/news/{id}/edit', [AdminNewsController::class, 'edit'])->name('news.edit');
+    Route::put('/news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
     Route::delete('/news/{id}', [AdminNewsController::class, 'destroy'])->name('news.destroy');
 
     // Committee
     Route::get('/committee', [AdminCommitteeController::class, 'index'])->name('committee.index');
     Route::post('/committee', [AdminCommitteeController::class, 'store'])->name('committee.store');
+    Route::get('/committee/{id}/edit', [AdminCommitteeController::class, 'edit'])->name('committee.edit');
+    Route::put('/committee/{id}', [AdminCommitteeController::class, 'update'])->name('committee.update');
     Route::delete('/committee/{id}', [AdminCommitteeController::class, 'destroy'])->name('committee.destroy');
 
     // Gallery

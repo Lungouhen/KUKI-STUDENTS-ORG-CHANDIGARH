@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Member;
+use App\Models\AuditLog;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberController extends Controller
@@ -35,10 +36,113 @@ class MemberController extends Controller
         return view('admin.members.index', compact('members', 'status', 'search'));
     }
 
+    public function create()
+    {
+        return view('admin.members.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'dob' => 'nullable|date',
+            'phone' => 'required|string',
+            'email' => 'required|email',
+            'blood_group' => 'required|string',
+            'institution' => 'required|string',
+            'course' => 'required|string',
+            'department' => 'nullable|string',
+            'year_of_study' => 'required|string',
+            'permanent_address' => 'required|string',
+            'current_address' => 'required|string',
+            'emergency_contact' => 'required|string',
+            'emergency_phone' => 'required|string',
+            'status' => 'required|string',
+            'photoFile' => 'nullable|image|max:5120',
+        ]);
+
+        $count = Member::count() + 1;
+        $id = 'KSO-CHD-2026-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        $photoPath = $request->gender === 'Female' ? '/images/default-avatar-f.png' : '/images/default-avatar-m.png';
+        if ($request->hasFile('photoFile')) {
+            $path = $request->file('photoFile')->store('uploads/members', 'public');
+            $photoPath = '/storage/' . $path;
+        }
+
+        $member = Member::create([
+            'id' => $id,
+            'full_name' => $validated['full_name'],
+            'gender' => $validated['gender'],
+            'dob' => $validated['dob'] ?? null,
+            'phone' => $validated['phone'],
+            'email' => $validated['email'],
+            'blood_group' => $validated['blood_group'],
+            'institution' => $validated['institution'],
+            'course' => $validated['course'],
+            'department' => $validated['department'] ?? null,
+            'year_of_study' => $validated['year_of_study'],
+            'permanent_address' => $validated['permanent_address'],
+            'current_address' => $validated['current_address'],
+            'emergency_contact' => $validated['emergency_contact'],
+            'emergency_phone' => $validated['emergency_phone'],
+            'photo' => $photoPath,
+            'status' => $validated['status'],
+            'membership_type' => 'Regular Student Member',
+            'applied_date' => now()->toDateString(),
+            'valid_until' => '2027-06-30',
+        ]);
+
+        AuditLog::log('ADMIN_CREATE_MEMBER', "Member ID: {$member->id}, Name: {$member->full_name}");
+
+        return redirect()->route('admin.members.index')->with('success', "Member {$member->id} registered successfully!");
+    }
+
     public function show($id)
     {
         $member = Member::findOrFail($id);
         return view('admin.members.show', compact('member'));
+    }
+
+    public function edit($id)
+    {
+        $member = Member::findOrFail($id);
+        return view('admin.members.edit', compact('member'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'dob' => 'nullable|date',
+            'phone' => 'required|string',
+            'email' => 'required|email',
+            'blood_group' => 'required|string',
+            'institution' => 'required|string',
+            'course' => 'required|string',
+            'department' => 'nullable|string',
+            'year_of_study' => 'required|string',
+            'permanent_address' => 'required|string',
+            'current_address' => 'required|string',
+            'emergency_contact' => 'required|string',
+            'emergency_phone' => 'required|string',
+            'status' => 'required|string',
+            'photoFile' => 'nullable|image|max:5120',
+        ]);
+
+        if ($request->hasFile('photoFile')) {
+            $path = $request->file('photoFile')->store('uploads/members', 'public');
+            $validated['photo'] = '/storage/' . $path;
+        }
+
+        $member->update($validated);
+        AuditLog::log('ADMIN_UPDATE_MEMBER', "Member ID: {$member->id}");
+
+        return redirect()->route('admin.members.show', $member->id)->with('success', 'Member record updated successfully.');
     }
 
     public function updateStatus(Request $request, $id)
@@ -49,8 +153,6 @@ class MemberController extends Controller
         $member->status = $status;
         if ($status === 'Approved' && !$member->approval_date) {
             $member->approval_date = now()->toDateString();
-            
-            // Send approval email
             try {
                 \Illuminate\Support\Facades\Mail::to($member->email)->send(new \App\Mail\MemberApprovedMail($member));
             } catch (\Exception $e) {
@@ -59,6 +161,8 @@ class MemberController extends Controller
         }
         $member->save();
 
+        AuditLog::log('ADMIN_STATUS_MEMBER', "Member ID: {$member->id}, Status: {$status}");
+
         return back()->with('success', "Member {$member->id} status updated to {$status}.");
     }
 
@@ -66,6 +170,7 @@ class MemberController extends Controller
     {
         $member = Member::findOrFail($id);
         $member->delete();
+        AuditLog::log('ADMIN_DELETE_MEMBER', "Member ID: {$id}");
         return back()->with('success', "Member {$id} deleted successfully.");
     }
 

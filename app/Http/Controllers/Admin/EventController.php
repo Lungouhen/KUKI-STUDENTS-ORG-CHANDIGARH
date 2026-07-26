@@ -5,12 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Event;
-use App\Models\News;
-use App\Models\CommitteeMember;
-use App\Models\GalleryItem;
-use App\Models\Donation;
-use App\Models\ContactMessage;
-use App\Models\Setting;
 
 class EventController extends Controller
 {
@@ -51,6 +45,37 @@ class EventController extends Controller
         ]);
 
         return back()->with('success', 'Event created successfully.');
+    }
+
+    public function edit($id)
+    {
+        $event = Event::findOrFail($id);
+        return view('admin.events.edit', compact('event'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'nullable|string',
+            'venue' => 'required|string',
+            'description' => 'required|string',
+            'status' => 'required|string',
+            'imageFile' => 'nullable|image|max:5120',
+        ]);
+
+        if ($request->hasFile('imageFile')) {
+            $path = $request->file('imageFile')->store('uploads/events', 'public');
+            $validated['image'] = '/storage/' . $path;
+        }
+
+        $event->update($validated);
+
+        return redirect()->route('admin.events.index')->with('success', 'Event updated successfully.');
     }
 
     public function destroy($id)
