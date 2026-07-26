@@ -35,6 +35,12 @@ class MemberController extends Controller
         return view('admin.members.index', compact('members', 'status', 'search'));
     }
 
+    public function show($id)
+    {
+        $member = Member::findOrFail($id);
+        return view('admin.members.show', compact('member'));
+    }
+
     public function updateStatus(Request $request, $id)
     {
         $member = Member::findOrFail($id);

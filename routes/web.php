@@ -106,6 +106,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Members Management
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
+    Route::get('/members/{id}', [AdminMemberController::class, 'show'])->name('members.show');
     Route::post('/members/{id}/status', [AdminMemberController::class, 'updateStatus'])->name('members.updateStatus');
     Route::delete('/members/{id}', [AdminMemberController::class, 'destroy'])->name('members.destroy');
     Route::get('/members/export/csv', [AdminMemberController::class, 'exportCsv'])->name('members.exportCsv');
@@ -132,6 +133,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Donations
     Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
+    Route::get('/donations/{id}/receipt', [AdminDonationController::class, 'receipt'])->name('donations.receipt');
 
     // Messages
     Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
