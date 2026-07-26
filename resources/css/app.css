@@ -1,0 +1,7 @@
+@import '../../public/css/custom.css';
+
+/* Additional Vite Bundle CSS Styles */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

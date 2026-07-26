@@ -8,8 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Custom Styles -->
+    <!-- Custom Styles & Vite Bundle -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    @if(file_exists(public_path('build/manifest.json')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     @stack('styles')
 </head>
 <body class="bg-light">
