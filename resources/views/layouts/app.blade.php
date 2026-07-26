@@ -28,7 +28,14 @@
     
     @stack('styles')
 </head>
-<body x-data="{ mobileMenuOpen: false }">
+<body x-data="{ 
+    mobileMenuOpen: false, 
+    darkMode: localStorage.getItem('theme') === 'dark',
+    toggleTheme() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+    }
+}" :data-bs-theme="darkMode ? 'dark' : 'light'">
 
     <!-- ─── TOPBAR COMPONENT ─── -->
     <x-topbar />

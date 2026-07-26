@@ -15,10 +15,10 @@ class HomeController extends Controller
     public function index()
     {
         $stats = [
-            'membersCount' => Member::where('status', 'Approved')->count() ?: 150,
-            'collegesCount' => 12,
-            'eventsCount' => Event::count() ?: 25,
-            'helpline' => '+91 98765 43211'
+            'membersCount' => Member::where('status', 'Approved')->count() ?: (int)\App\Models\Setting::get('baseMemberCount', 150),
+            'collegesCount' => (int)\App\Models\Setting::get('collegesCount', 12),
+            'eventsCount' => Event::count() ?: (int)\App\Models\Setting::get('baseEventCount', 25),
+            'helpline' => \App\Models\Setting::get('helpline', '+91 98765 43211')
         ];
 
         $committee = CommitteeMember::orderBy('display_order')->take(4)->get();

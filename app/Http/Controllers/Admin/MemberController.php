@@ -14,11 +14,16 @@ class MemberController extends Controller
     {
         $status = $request->query('status');
         $search = $request->query('search');
+        $is_volunteer = $request->query('is_volunteer');
 
         $query = Member::query();
 
         if ($status) {
             $query->where('status', $status);
+        }
+
+        if ($is_volunteer !== null) {
+            $query->where('is_volunteer', $is_volunteer);
         }
 
         if ($search) {
@@ -62,8 +67,7 @@ class MemberController extends Controller
             'photoFile' => 'nullable|image|max:5120',
         ]);
 
-        $count = Member::count() + 1;
-        $id = 'KSO-CHD-2026-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $id = Member::generateMembershipId();
 
         $photoPath = $request->gender === 'Female' ? '/images/default-avatar-f.png' : '/images/default-avatar-m.png';
         if ($request->hasFile('photoFile')) {
@@ -91,7 +95,7 @@ class MemberController extends Controller
             'status' => $validated['status'],
             'membership_type' => 'Regular Student Member',
             'applied_date' => now()->toDateString(),
-            'valid_until' => '2027-06-30',
+            'valid_until' => Member::calculateValidityDate(),
         ]);
 
         AuditLog::log('ADMIN_CREATE_MEMBER', "Member ID: {$member->id}, Name: {$member->full_name}");
@@ -212,5 +216,11 @@ class MemberController extends Controller
         $response->headers->set('Content-Disposition', 'attachment; filename="kso_members_export.csv"');
 
         return $response;
+    }
+
+    public function fees()
+    {
+        $members = Member::where('status', 'Approved')->paginate(15);
+        return view('admin.members.fees', compact('members'));
     }
 }

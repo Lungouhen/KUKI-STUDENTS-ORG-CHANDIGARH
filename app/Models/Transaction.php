@@ -29,6 +29,17 @@ class Transaction extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * Generate a unique Donor/Donation ID
+     */
+    public static function generateDonorId()
+    {
+        $prefix = Setting::get('donorPrefix', 'DONOR-');
+        $year = date('Y');
+        $count = self::count() + 1;
+        return $prefix . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
+
     public function account()
     {
         return $this->belongsTo(FinancialAccount::class, 'financial_account_id');

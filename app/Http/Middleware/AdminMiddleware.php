@@ -9,16 +9,26 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (Auth::check() && Auth::user()->is_admin) {
+        if (!Auth::check()) {
+            return redirect()->route('admin.login')->with('error', 'Please login with admin credentials.');
+        }
+
+        $user = Auth::user();
+
+        if ($user->is_admin) {
+            return $next($request);
+        }
+
+        if (!empty($roles) && in_array($user->role, $roles)) {
             return $next($request);
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized admin access.'], 401);
+            return response()->json(['success' => false, 'message' => 'Unauthorized access.'], 403);
         }
 
-        return redirect()->route('admin.login')->with('error', 'Please login with admin credentials.');
+        return redirect()->route('admin.dashboard')->with('error', 'You do not have permission to access this module.');
     }
 }
