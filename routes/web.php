@@ -52,6 +52,9 @@ Route::get('/membership/id-card/{id}', [MembershipController::class, 'idCard'])-
 
 // Events & News
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::post('/events/{id}/register', [EventController::class, 'registerAttendee'])->name('events.registerAttendee');
+Route::get('/events/ticket/{ticketCode}', [EventController::class, 'ticketPass'])->name('events.ticketPass');
 
 // Gallery
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
