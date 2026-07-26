@@ -1,4 +1,14 @@
-node_modules/
+/vendor
+/node_modules
+/public/storage
+/public/hot
+/storage/*.key
 .env
-*.log
-image-search/
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
