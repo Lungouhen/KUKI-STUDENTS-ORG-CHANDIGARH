@@ -62,6 +62,7 @@ Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index
 // Donations
 Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
 Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
+Route::post('/donations/razorpay-order', [DonationController::class, 'createRazorpayOrder'])->name('donations.razorpayOrder');
 
 // Contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
