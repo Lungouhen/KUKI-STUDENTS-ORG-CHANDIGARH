@@ -8,14 +8,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <!-- Custom Styles & Vite Bundle -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
+
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- CKEditor 5 CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
     @stack('styles')
 </head>
-<body class="bg-light">
+<body class="bg-light" x-data="{ sidebarOpen: true }">
 
     <!-- Admin Top Bar -->
     <div class="bg-dark text-white py-3 px-4 d-flex justify-content-between align-items-center shadow-sm">
@@ -23,7 +35,7 @@
             <img src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle border border-warning" width="36" height="36" onerror="this.src='/images/default-avatar-m.png'">
             <div>
                 <span class="fw-bold fs-5 text-warning me-2"><i class="fa-solid fa-gauge me-2"></i> KSO CMS ADMIN CONTROL PANEL</span>
-                <small class="text-light opacity-75">Laravel Backend Framework</small>
+                <small class="text-light opacity-75">Laravel Framework</small>
             </div>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -91,17 +103,29 @@
     <!-- Main Container -->
     <div class="container-fluid px-lg-5 my-4">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-                <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Admin Action Saved',
+                        text: "{{ session('success') }}",
+                        confirmButtonColor: '#003566'
+                    });
+                });
+            </script>
         @endif
 
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-2"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "{{ session('error') }}",
+                        confirmButtonColor: '#003566'
+                    });
+                });
+            </script>
         @endif
 
         @yield('content')
@@ -109,6 +133,27 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Choices.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <script>
+        function confirmDelete(formId, message = 'Are you sure you want to delete this item?') {
+            Swal.fire({
+                title: 'Confirm Delete',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Delete!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+    </script>
+
     @stack('scripts')
 </body>
 </html>

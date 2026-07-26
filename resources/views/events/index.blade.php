@@ -12,6 +12,13 @@
 </div>
 
 <div class="container my-4">
+
+    <!-- FullCalendar JS Community Grid -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
+        <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-calendar-check text-warning me-2"></i> KSO Community Event Calendar Grid</h4>
+        <div id="fullCalendarGrid" style="min-height: 450px;"></div>
+    </div>
+
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <div class="btn-group" role="group">
             <a href="{{ route('events.index', ['category' => 'All']) }}" class="btn {{ !$category || $category == 'All' ? 'btn-primary active' : 'btn-outline-primary' }}">All Events</a>
@@ -36,7 +43,8 @@
                         <p class="card-text text-muted extra-small mb-3">{{ $e->description }}</p>
                         <div class="mt-auto pt-2 border-top extra-small text-secondary">
                             <div class="mb-1"><i class="fa-solid fa-calendar-day text-primary me-1"></i> <strong>Date:</strong> {{ $e->date ? $e->date->format('Y-m-d') : '' }} ({{ $e->time ?? '10:00 AM' }})</div>
-                            <div><i class="fa-solid fa-location-dot text-danger me-1"></i> <strong>Venue:</strong> {{ $e->venue }}</div>
+                            <div class="mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i> <strong>Venue:</strong> {{ $e->venue }}</div>
+                            <a href="{{ route('events.show', $e->id) }}" class="btn btn-primary btn-sm rounded-pill w-100 fw-bold">RSVP / Event Pass</a>
                         </div>
                     </div>
                 </div>
@@ -65,5 +73,34 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('fullCalendarGrid');
+        if (calendarEl) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                events: [
+                    @foreach($events as $ev)
+                    {
+                        title: '{{ $ev->title }}',
+                        start: '{{ $ev->date ? $ev->date->format("Y-m-d") : "" }}',
+                        url: '{{ route("events.show", $ev->id) }}',
+                        backgroundColor: '{{ $ev->category === "Cultural" ? "#003566" : ($ev->category === "Sports" ? "#0d9488" : "#780000") }}'
+                    },
+                    @endforeach
+                ]
+            });
+            calendar.render();
+        }
+    });
+</script>
+@endpush
 
 @endsection
