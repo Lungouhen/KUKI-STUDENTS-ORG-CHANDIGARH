@@ -8,6 +8,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PageController;
+
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MemberController as AdminMemberController;
@@ -18,16 +20,24 @@ use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\FinancialController as AdminFinancialController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
+use App\Http\Controllers\Admin\MedicalReliefController as AdminMedicalReliefController;
+use App\Http\Controllers\Admin\AuditLogController as AdminAuditLogController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - KSO Chandigarh
+| Web Routes - KSO CHANDIGARH NGO & CMS PLATFORM
 |--------------------------------------------------------------------------
 */
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
+Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
 
 // Membership Routes
 Route::get('/membership/register', [MembershipController::class, 'registerForm'])->name('membership.register');
@@ -63,7 +73,35 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
-    // Members
+    // Financial Management Module
+    Route::get('/financial', [AdminFinancialController::class, 'index'])->name('financial.index');
+    Route::post('/financial/transaction', [AdminFinancialController::class, 'storeTransaction'])->name('financial.storeTransaction');
+    Route::post('/financial/account', [AdminFinancialController::class, 'createAccount'])->name('financial.createAccount');
+
+    // Page Builder CMS
+    Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
+    Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
+    Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');
+
+    // FAQs Manager
+    Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faqs.index');
+    Route::post('/faqs', [AdminFaqController::class, 'store'])->name('faqs.store');
+    Route::delete('/faqs/{id}', [AdminFaqController::class, 'destroy'])->name('faqs.destroy');
+
+    // Testimonials Manager
+    Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
+    Route::post('/testimonials', [AdminTestimonialController::class, 'store'])->name('testimonials.store');
+    Route::delete('/testimonials/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
+
+    // Medical Emergency Relief Desk
+    Route::get('/medical', [AdminMedicalReliefController::class, 'index'])->name('medical.index');
+    Route::post('/medical/{id}/status', [AdminMedicalReliefController::class, 'updateStatus'])->name('medical.updateStatus');
+
+    // Audit Trail Logs
+    Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
+
+    // Members Management
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::post('/members/{id}/status', [AdminMemberController::class, 'updateStatus'])->name('members.updateStatus');
     Route::delete('/members/{id}', [AdminMemberController::class, 'destroy'])->name('members.destroy');

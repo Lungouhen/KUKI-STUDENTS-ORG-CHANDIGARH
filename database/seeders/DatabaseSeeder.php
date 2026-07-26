@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             GallerySeeder::class,
             DonationSeeder::class,
             SettingSeeder::class,
+            FinancialSeeder::class,
+            PageSeeder::class,
         ]);
     }
 }
