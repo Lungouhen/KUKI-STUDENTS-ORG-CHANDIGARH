@@ -2,6 +2,10 @@
 
 @section('title', $event->title . ' | KSO Chandigarh Event')
 
+@push('styles')
+    @include('partials.vendor-styles', ['libs' => ['magnific-popup']])
+@endpush
+
 @section('content')
 
 <div class="bg-primary text-white py-4 mb-4">
@@ -16,7 +20,19 @@
     <div class="row g-5">
         <div class="col-lg-7">
             <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border">
-                <img src="{{ asset($event->image ?? '/images/event-freshers.jpg') }}" class="img-fluid rounded-3 mb-4 w-100" style="max-height: 350px; object-fit: cover;" onerror="this.src='/images/event-freshers.jpg'">
+                {{-- Click the poster to open it full-size in Magnific Popup. --}}
+                <a href="{{ asset($event->image ?? '/images/event-freshers.jpg') }}"
+                   data-mfp="image"
+                   data-mfp-title="{{ $event->title }}"
+                   class="event-poster d-block mb-4"
+                   title="View full-size poster">
+                    <img src="{{ asset($event->image ?? '/images/event-freshers.jpg') }}"
+                         class="img-fluid rounded-3 w-100"
+                         style="max-height: 350px; object-fit: cover;"
+                         alt="{{ $event->title }}"
+                         onerror="this.src='{{ asset('images/event-freshers.jpg') }}'">
+                    <span class="event-poster__hint"><i class="fa-solid fa-magnifying-glass me-1"></i> Click to enlarge</span>
+                </a>
                 
                 <h4 class="fw-bold text-primary mb-3">Event Details</h4>
                 <p class="text-secondary leading-relaxed">{{ $event->description }}</p>
@@ -68,3 +84,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+    @include('partials.vendor-scripts', ['libs' => ['magnific-popup']])
+@endpush

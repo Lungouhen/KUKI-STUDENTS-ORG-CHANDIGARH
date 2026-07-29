@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             FinancialSeeder::class,
             PageSeeder::class,
+            HomepageContentSeeder::class,
         ]);
     }
 }

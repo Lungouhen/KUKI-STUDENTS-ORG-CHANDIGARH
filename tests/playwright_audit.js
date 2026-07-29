@@ -41,7 +41,8 @@ bladeFiles.forEach(file => {
   const endpushesCount = (content.match(/@endpush/g) || []).length;
 
   const checks = [
-    { name: 'Has valid Blade structure', pass: content.includes('@extends') || content.includes('<div') || content.includes('<form') || content.includes('<x-') },
+    // Asset-loader partials legitimately emit only <script>/<link> tags.
+    { name: 'Has valid Blade structure', pass: content.includes('@extends') || content.includes('<div') || content.includes('<form') || content.includes('<x-') || content.includes('<script') || content.includes('<link') },
     // @hasSection / @sectionMissing / @env also close with @endif.
     { name: 'Unclosed @if directives', pass: (content.match(/@(if|hasSection|sectionMissing|env)\b/g) || []).length === (content.match(/@endif\b/g) || []).length },
     { name: 'Unclosed @foreach directives', pass: (content.match(/@foreach\b/g) || []).length === (content.match(/@endforeach\b/g) || []).length },

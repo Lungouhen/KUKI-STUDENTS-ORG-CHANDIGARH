@@ -1369,3 +1369,358 @@ html.sidebar-is-collapsed .admin-sidebar {
     .admin-main { margin-inline-start: 0 !important; }
     .admin-content { padding: 0 !important; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CMS FRONT-END COMPONENTS
+   Swiper hero / testimonials / partners, Masonry gallery, lightGallery and
+   Magnific Popup triggers. All colours use theme tokens so these components
+   follow dark mode.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Hero slider (Swiper) ─── */
+.hero-swiper {
+    position: relative;
+    width: 100%;
+}
+
+.hero-slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 460px;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #003566, #0d9488, #003566);
+    overflow: hidden;
+}
+
+.hero-slide__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Scrim keeps headline text legible over arbitrary CMS-uploaded photos. */
+.hero-slide__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 25, 51, 0.72), rgba(0, 25, 51, 0.55) 45%, rgba(0, 25, 51, 0.8));
+}
+
+.hero-slide h1 {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.hero-slide p {
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    transition: background 0.2s ease;
+}
+
+.hero-swiper .swiper-button-next:hover,
+.hero-swiper .swiper-button-prev:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-swiper .swiper-button-next::after,
+.hero-swiper .swiper-button-prev::after {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    opacity: 0.45;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #FFBF00;
+}
+
+@media (max-width: 767.98px) {
+    .hero-slide { min-height: 340px; padding: 2.5rem 0; }
+    .hero-slide h1 { font-size: 1.35rem !important; }
+    .hero-slide p  { font-size: 0.85rem !important; }
+    .hero-swiper .swiper-button-next,
+    .hero-swiper .swiper-button-prev { display: none; }
+}
+
+/* ─── Homepage gallery collage (lightGallery) ─── */
+.home-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 108px;
+    gap: 0.6rem;
+}
+
+.home-gallery-tile {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--slate-100);
+}
+
+.home-gallery-tile--lead {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.home-gallery-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.home-gallery-tile:hover img { transform: scale(1.07); }
+
+.home-gallery-tile__zoom {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgba(0, 53, 102, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.home-gallery-tile:hover .home-gallery-tile__zoom { opacity: 1; }
+
+/* ─── Masonry gallery grid ─── */
+.masonry-grid {
+    /* Hidden until Masonry positions the tiles, preventing a stacked flash. */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.masonry-grid.is-laid-out { opacity: 1; }
+
+.masonry-sizer,
+.masonry-item {
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .masonry-sizer, .masonry-item { width: 50%; }
+}
+
+@media (min-width: 992px) {
+    .masonry-sizer, .masonry-item { width: 33.3333%; }
+}
+
+@media (min-width: 1400px) {
+    .masonry-sizer, .masonry-item { width: 25%; }
+}
+
+.masonry-item {
+    float: left;
+    padding: 0.5rem;
+}
+
+.masonry-card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    background: var(--slate-100);
+}
+
+.masonry-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.35s ease;
+}
+
+.masonry-card:hover img { transform: scale(1.05); }
+
+.masonry-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 53, 102, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.masonry-card:hover .masonry-card__overlay { opacity: 1; }
+
+.masonry-card__zoom {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #FFBF00;
+    color: #003566;
+    font-size: 0.95rem;
+}
+
+.masonry-card__meta {
+    padding: 0.6rem 0.75rem 0.85rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-top: 0;
+    border-radius: 0 0 12px 12px;
+}
+
+.masonry-card__meta h6 {
+    margin: 0 0 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Clearfix: Masonry items are floated. */
+.masonry-grid::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+/* ─── Testimonials (Swiper) ─── */
+.testimonial-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+    padding: 1.6rem 1.4rem 1.3rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05);
+}
+
+.testimonial-card__mark {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    font-size: 1.6rem;
+    color: var(--primary-light);
+}
+
+.testimonial-card__quote {
+    flex: 1;
+    margin: 0 0 0.9rem;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+
+.testimonial-card__rating {
+    margin-bottom: 0.8rem;
+    color: #FFBF00;
+    font-size: 0.8rem;
+}
+
+.testimonial-card__rating .is-muted { color: var(--slate-300); }
+
+.testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.testimonial-card__author img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+}
+
+.testimonial-card__author span { display: flex; flex-direction: column; min-width: 0; }
+.testimonial-card__author strong { font-size: 0.86rem; color: var(--text-main); }
+.testimonial-card__author small { font-size: 0.72rem; color: var(--text-muted); }
+
+.testimonial-swiper .swiper-pagination-bullet-active { background: var(--primary); }
+
+/* ─── Partner chips (Swiper) ─── */
+.partner-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    height: 100%;
+    padding: 1.1rem 0.75rem;
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.partner-chip:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.partner-chip i { font-size: 1.35rem; color: var(--accent); }
+
+.partner-chip span {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.25;
+}
+
+.partner-chip small { font-size: 0.68rem; color: var(--text-muted); }
+
+/* ─── Magnific Popup trigger (event poster) ─── */
+.event-poster { position: relative; }
+
+.event-poster__hint {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.75);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.event-poster:hover .event-poster__hint { opacity: 1; }
+
+/* Magnific Popup fade transition */
+.mfp-fade.mfp-bg { opacity: 0; transition: opacity 0.25s ease-out; }
+.mfp-fade.mfp-bg.mfp-ready { opacity: 0.85; }
+.mfp-fade.mfp-bg.mfp-removing { opacity: 0; }
+.mfp-fade.mfp-wrap .mfp-content { opacity: 0; transition: opacity 0.25s ease-out; }
+.mfp-fade.mfp-wrap.mfp-ready .mfp-content { opacity: 1; }
+.mfp-fade.mfp-wrap.mfp-removing .mfp-content { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    .home-gallery-tile img,
+    .masonry-card img,
+    .partner-chip,
+    .masonry-grid { transition: none; }
+}

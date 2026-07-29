@@ -305,6 +305,11 @@
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
+    {{-- jQuery powers the CMS admin conveniences (upload previews, list
+         filtering, auto-slug, confirm dialogs) in public/js/kso-admin.js. --}}
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/kso-admin.js') }}"></script>
+
     {{-- CKEditor 5 (~1.3 MB) is fetched on demand, only by pages that actually
          declare a [data-richtext] textarea, instead of on every admin screen. --}}
     <script>
