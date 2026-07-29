@@ -6,7 +6,7 @@
 
 <div class="card border-0 shadow-sm rounded-4 p-4">
     <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-        <h4 class="fw-bold text-primary mb-0"><i class="fa-solid fa-calendar-pen me-2"></i> Edit Scheduled Event</h4>
+        <h4 class="fw-bold text-primary mb-0"><i class="fa-solid fa-calendar-day me-2"></i> Edit Scheduled Event</h4>
         <a href="{{ route('admin.events.index') }}" class="btn btn-outline-secondary rounded-pill btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Back to List</a>
     </div>
 

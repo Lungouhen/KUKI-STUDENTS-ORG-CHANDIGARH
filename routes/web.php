@@ -165,21 +165,24 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
     Route::get('/donations/{id}/receipt', [AdminDonationController::class, 'receipt'])->name('donations.receipt');
 
-    // Partners
+    // Partners (creation happens via a modal on the index page, so no create/show views)
     Route::get('/partners/export/csv', [PartnerController::class, 'exportCsv'])->name('partners.exportCsv');
-    Route::resource('partners', PartnerController::class);
+    Route::resource('partners', PartnerController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
-    // Projects & Beneficiaries
-    Route::resource('projects', ProjectController::class);
+    // Projects & Beneficiaries (creation happens via a modal on the index page)
+    Route::resource('projects', ProjectController::class)
+        ->only(['index', 'store', 'edit', 'update', 'destroy']);
     Route::get('/beneficiaries', [AdminDashboardController::class, 'beneficiaries'])->name('beneficiaries.index');
 
     // Terms & Elections
     Route::get('/terms', [AdminDashboardController::class, 'terms'])->name('terms.index');
     Route::post('/terms', [AdminDashboardController::class, 'storeTerm'])->name('terms.store');
-    Route::resource('elections', ElectionController::class);
+    Route::resource('elections', ElectionController::class)
+        ->only(['index', 'store', 'show', 'destroy']);
     Route::post('/elections/{id}/candidates', [ElectionController::class, 'addCandidate'])->name('elections.addCandidate');
     Route::post('/candidates/{id}/votes', [ElectionController::class, 'updateVotes'])->name('candidates.updateVotes');
 

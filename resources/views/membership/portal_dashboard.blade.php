@@ -53,10 +53,12 @@
                             <div class="extra-small opacity-75">Recognized by KSO General HQ</div>
                         </div>
                         @php
+                            // Generated server-side; the old Google Charts QR endpoint is defunct.
                             $verifyUrl = route('membership.verifyDirect', $member->id);
-                            $qrUrl = "https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" . urlencode($verifyUrl) . "&choe=UTF-8";
                         @endphp
-                        <img src="{{ $qrUrl }}" width="45" height="45" class="rounded bg-white p-1" alt="Verification QR">
+                        <span class="rounded bg-white p-1 d-inline-flex" title="Scan to verify this membership">
+                            {!! \App\Support\QrCode::svg($verifyUrl, 45) !!}
+                        </span>
                     </div>
                 </div>
 

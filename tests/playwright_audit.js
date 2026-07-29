@@ -42,7 +42,8 @@ bladeFiles.forEach(file => {
 
   const checks = [
     { name: 'Has valid Blade structure', pass: content.includes('@extends') || content.includes('<div') || content.includes('<form') || content.includes('<x-') },
-    { name: 'Unclosed @if directives', pass: (content.match(/@if\b/g) || []).length === (content.match(/@endif\b/g) || []).length },
+    // @hasSection / @sectionMissing / @env also close with @endif.
+    { name: 'Unclosed @if directives', pass: (content.match(/@(if|hasSection|sectionMissing|env)\b/g) || []).length === (content.match(/@endif\b/g) || []).length },
     { name: 'Unclosed @foreach directives', pass: (content.match(/@foreach\b/g) || []).length === (content.match(/@endforeach\b/g) || []).length },
     { name: 'Unclosed @forelse directives', pass: (content.match(/@forelse\b/g) || []).length === (content.match(/@endforelse\b/g) || []).length },
     { name: 'Unclosed @section directives', pass: multilineSections === endsectionsCount },

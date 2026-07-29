@@ -46,8 +46,10 @@ class PaymentGatewayService
      */
     public static function processSuccessfulDonation(array $data): Donation
     {
+        // `donations.id` is an auto-incrementing BIGINT. Do not pass a generated
+        // string ID here: it is not fillable and would be truncated/coerced.
+        // The human-readable reference lives in `payment_ref`.
         $donation = Donation::create([
-            'id' => \App\Models\Transaction::generateDonorId(),
             'donor_name' => $data['donor_name'] ?? 'Anonymous',
             'amount' => $data['amount'],
             'currency' => $data['currency'] ?? 'INR',

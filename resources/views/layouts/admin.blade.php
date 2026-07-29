@@ -3,283 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'KSO Admin CMS Control Panel')</title>
+
+    {{-- Restore theme + sidebar state before first paint to avoid a flash. --}}
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('theme') === 'dark') {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                }
+                if (localStorage.getItem('kso.sidebar') === 'collapsed') {
+                    document.documentElement.classList.add('sidebar-is-collapsed');
+                }
+            } catch (e) { /* storage unavailable */ }
+        })();
+    </script>
+
+    <!-- Web fonts: preconnect + non-blocking load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" media="print" onload="this.media='all'"
+          href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+
     <!-- Local Bootstrap 5 CSS -->
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Local FontAwesome 6 CSS -->
     <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
-    <!-- Local Choices.js CSS -->
-    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
     <!-- Local SweetAlert2 CSS -->
     <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
-    <!-- Custom Styles & Vite Bundle -->
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+
+    {{-- custom.css is bundled by Vite via resources/css/app.css; only link it
+         directly when there is no build, otherwise it loads twice. --}}
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @endif
 
     <!-- Local Alpine.js -->
     <script defer src="{{ asset('vendor/alpine/alpine.min.js') }}"></script>
     <!-- Local SweetAlert2 JS -->
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- Local ApexCharts JS -->
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
-    <!-- Local CKEditor 5 JS -->
-    <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
 
     @stack('styles')
 </head>
-<body class="bg-light" x-data="{ 
-    sidebarOpen: true,
-    darkMode: localStorage.getItem('theme') === 'dark',
-    toggleTheme() {
-        this.darkMode = !this.darkMode;
-        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-    }
-}" :data-bs-theme="darkMode ? 'dark' : 'light'">
+<body
+    x-data="adminShell()"
+    x-init="init()"
+    :class="{ 'sidebar-collapsed': collapsed, 'sidebar-mobile-open': mobileOpen }"
+    :data-bs-theme="darkMode ? 'dark' : 'light'"
+    class="admin-body"
+>
 
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="bg-dark text-white min-vh-100 shadow" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s; width: 260px;">
-            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
-                <div x-show="sidebarOpen" class="fw-bold text-warning">KSO ADMIN PANEL</div>
-                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-            </div>
-            
-            <div class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
-                <ul class="nav flex-column gap-1">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-house me-2"></i> <span x-show="sidebarOpen">Home</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Content</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-images me-2"></i> <span x-show="sidebarOpen">Slider</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.pages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.pages*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-file-lines me-2"></i> <span x-show="sidebarOpen">About & Pages</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.gallery.index') }}" class="nav-link text-white {{ request()->routeIs('admin.gallery*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-image me-2"></i> <span x-show="sidebarOpen">Gallery</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'certificate']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'certificate'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-certificate me-2"></i> <span x-show="sidebarOpen">Certificates</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'achievement']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'achievement'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-trophy me-2"></i> <span x-show="sidebarOpen">Achievements</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'policy']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'policy'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-shield-halved me-2"></i> <span x-show="sidebarOpen">Policies</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.news.index') }}" class="nav-link text-white {{ request()->routeIs('admin.news.index') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-newspaper me-2"></i> <span x-show="sidebarOpen">News</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-bullhorn me-2"></i> <span x-show="sidebarOpen">Notices</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.projects.index') }}" class="nav-link text-white {{ request()->routeIs('admin.projects*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-diagram-project me-2"></i> <span x-show="sidebarOpen">Projects</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'campaign']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'campaign'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-bullseye me-2"></i> <span x-show="sidebarOpen">Campaigns</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-briefcase me-2"></i> <span x-show="sidebarOpen">Careers</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.messages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.messages*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-envelope me-2"></i> <span x-show="sidebarOpen">Messages</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Members</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.index') }}" class="nav-link text-white {{ request()->routeIs('admin.members*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-users me-2"></i> <span x-show="sidebarOpen">All Members</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.index', ['status' => 'Pending']) }}" class="nav-link text-white">
-                            <i class="fa-solid fa-user-clock me-2"></i> <span x-show="sidebarOpen">Member Requests</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.fees') }}" class="nav-link text-white {{ request()->routeIs('admin.members.fees') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-money-bill me-2"></i> <span x-show="sidebarOpen">Membership Fees</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.committee.index') }}" class="nav-link text-white {{ request()->routeIs('admin.committee*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-user-tag me-2"></i> <span x-show="sidebarOpen">Designations</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">People</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-hand-holding-heart me-2"></i> <span x-show="sidebarOpen">Donors</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.beneficiaries.index') }}" class="nav-link text-white {{ request()->routeIs('admin.beneficiaries*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-users-viewfinder me-2"></i> <span x-show="sidebarOpen">Beneficiaries</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Finance</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-money-check-dollar me-2"></i> <span x-show="sidebarOpen">Donations</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.financial.index', ['type' => 'Expense']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.financial.index', ['type' => 'Expense'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i> <span x-show="sidebarOpen">Expenses</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.financial.index') }}" class="nav-link text-white {{ request()->routeIs('admin.financial.index') && !request()->has('type') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-chart-pie me-2"></i> <span x-show="sidebarOpen">Reports</span>
-                        </a>
-                    </li>
+    {{-- Backdrop for the off-canvas sidebar on small screens --}}
+    <div class="admin-backdrop" @click="mobileOpen = false" x-show="mobileOpen" x-cloak></div>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.partners.index') }}" class="nav-link text-white {{ request()->routeIs('admin.partners*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-handshake me-2"></i> <span x-show="sidebarOpen">Partners</span>
-                        </a>
-                    </li>
+    <aside class="admin-sidebar" aria-label="Admin navigation">
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.users.index') }}" class="nav-link text-white {{ request()->routeIs('admin.users*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-user-shield me-2"></i> <span x-show="sidebarOpen">Users</span>
-                        </a>
-                    </li>
-
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Settings</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.index') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.index') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-building-ngo me-2"></i> <span x-show="sidebarOpen">Organization</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.smtp') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.smtp') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-envelope-circle-check me-2"></i> <span x-show="sidebarOpen">SMTP Settings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.gateways') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.gateways') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-credit-card me-2"></i> <span x-show="sidebarOpen">Payment Gateways</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link text-white">
-                            <i class="fa-solid fa-file-code me-2"></i> <span x-show="sidebarOpen">Templates</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.integrations') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.integrations') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-plug me-2"></i> <span x-show="sidebarOpen">Integrations</span>
-                        </a>
-                    </li>
-
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Election & Logs</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.elections.index') }}" class="nav-link text-white {{ request()->routeIs('admin.elections*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-check-to-slot me-2"></i> <span x-show="sidebarOpen">Election Module</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.audit.index') }}" class="nav-link text-white {{ request()->routeIs('admin.audit*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-clipboard-check me-2"></i> <span x-show="sidebarOpen">Audit Trail</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <!-- ─── Brand ─── -->
+        <div class="admin-sidebar__brand">
+            <a href="{{ route('admin.dashboard') }}" class="admin-brand-link">
+                <span class="admin-brand-mark">
+                    <img src="{{ asset('images/kso-logo.jpg') }}" alt=""
+                         onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'admin-brand-fallback',textContent:'K'}))">
+                </span>
+                <span class="admin-brand-text">
+                    <span class="admin-brand-title">KSO Chandigarh</span>
+                    <span class="admin-brand-sub">Admin Console</span>
+                </span>
+            </a>
+            <button type="button" class="admin-sidebar__close d-lg-none"
+                    @click="mobileOpen = false" aria-label="Close navigation">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-grow-1 overflow-hidden">
-            <!-- Top Bar -->
-            <div class="bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
-                <div class="fw-bold">
-                    @yield('title', 'Admin Panel')
+        <!-- ─── Quick filter ─── -->
+        <div class="admin-sidebar__search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" x-model="query" placeholder="Search menu…"
+                   aria-label="Filter navigation" spellcheck="false">
+            <button type="button" x-show="query" @click="query = ''" x-cloak aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- ─── Navigation ─── -->
+        @php
+            /**
+             * Single source of truth for the sidebar.
+             *
+             * Rendering from a structure (rather than ~40 hand-written <li>s)
+             * keeps active-state logic consistent and makes the menu editable in
+             * one place. `match` is the route pattern used for highlighting;
+             * `exact` compares the full URL so query-string views (e.g. the
+             * Content module's ?type=) do not all light up at once.
+             */
+            $nav = [
+                [
+                    'group' => null,
+                    'items' => [
+                        ['label' => 'Dashboard', 'icon' => 'fa-gauge-high', 'url' => route('admin.dashboard'), 'match' => 'admin.dashboard'],
+                    ],
+                ],
+                [
+                    'group' => 'Membership',
+                    'items' => [
+                        ['label' => 'All Members', 'icon' => 'fa-users', 'url' => route('admin.members.index'), 'match' => 'admin.members.index', 'exact' => route('admin.members.index')],
+                        ['label' => 'Pending Requests', 'icon' => 'fa-user-clock', 'url' => route('admin.members.index', ['status' => 'Pending']), 'exact' => route('admin.members.index', ['status' => 'Pending']), 'badge' => $pendingMemberCount ?? null],
+                        ['label' => 'Membership Fees', 'icon' => 'fa-receipt', 'url' => route('admin.members.fees'), 'match' => 'admin.members.fees'],
+                        ['label' => 'Committee & Roles', 'icon' => 'fa-user-tie', 'url' => route('admin.committee.index'), 'match' => 'admin.committee*'],
+                    ],
+                ],
+                [
+                    'group' => 'Content',
+                    'items' => [
+                        ['label' => 'Homepage Slider', 'icon' => 'fa-images', 'url' => route('admin.content.index', ['type' => 'slider']), 'exact' => route('admin.content.index', ['type' => 'slider'])],
+                        ['label' => 'Pages', 'icon' => 'fa-file-lines', 'url' => route('admin.pages.index'), 'match' => 'admin.pages*'],
+                        ['label' => 'News', 'icon' => 'fa-newspaper', 'url' => route('admin.news.index'), 'match' => 'admin.news*'],
+                        ['label' => 'Notices', 'icon' => 'fa-bullhorn', 'url' => route('admin.content.index', ['type' => 'notice']), 'exact' => route('admin.content.index', ['type' => 'notice'])],
+                        ['label' => 'Gallery', 'icon' => 'fa-image', 'url' => route('admin.gallery.index'), 'match' => 'admin.gallery*'],
+                        ['label' => 'Achievements', 'icon' => 'fa-trophy', 'url' => route('admin.content.index', ['type' => 'achievement']), 'exact' => route('admin.content.index', ['type' => 'achievement'])],
+                        ['label' => 'Certificates', 'icon' => 'fa-certificate', 'url' => route('admin.content.index', ['type' => 'certificate']), 'exact' => route('admin.content.index', ['type' => 'certificate'])],
+                        ['label' => 'Policies', 'icon' => 'fa-shield-halved', 'url' => route('admin.content.index', ['type' => 'policy']), 'exact' => route('admin.content.index', ['type' => 'policy'])],
+                        ['label' => 'Careers', 'icon' => 'fa-briefcase', 'url' => route('admin.content.index', ['type' => 'career']), 'exact' => route('admin.content.index', ['type' => 'career'])],
+                        ['label' => 'FAQs', 'icon' => 'fa-circle-question', 'url' => route('admin.faqs.index'), 'match' => 'admin.faqs*'],
+                        ['label' => 'Testimonials', 'icon' => 'fa-quote-left', 'url' => route('admin.testimonials.index'), 'match' => 'admin.testimonials*'],
+                    ],
+                ],
+                [
+                    'group' => 'Programmes',
+                    'items' => [
+                        ['label' => 'Projects', 'icon' => 'fa-diagram-project', 'url' => route('admin.projects.index'), 'match' => 'admin.projects*'],
+                        ['label' => 'Campaigns', 'icon' => 'fa-bullseye', 'url' => route('admin.content.index', ['type' => 'campaign']), 'exact' => route('admin.content.index', ['type' => 'campaign'])],
+                        ['label' => 'Beneficiaries', 'icon' => 'fa-hand-holding-hand', 'url' => route('admin.beneficiaries.index'), 'match' => 'admin.beneficiaries*'],
+                        ['label' => 'Medical Relief', 'icon' => 'fa-kit-medical', 'url' => route('admin.medical.index'), 'match' => 'admin.medical*'],
+                        ['label' => 'Partners', 'icon' => 'fa-handshake', 'url' => route('admin.partners.index'), 'match' => 'admin.partners*'],
+                    ],
+                ],
+                [
+                    'group' => 'Finance',
+                    'items' => [
+                        ['label' => 'Donations', 'icon' => 'fa-hand-holding-heart', 'url' => route('admin.donations.index'), 'match' => 'admin.donations*'],
+                        ['label' => 'Ledger & Reports', 'icon' => 'fa-chart-pie', 'url' => route('admin.financial.index'), 'exact' => route('admin.financial.index')],
+                        ['label' => 'Expenses', 'icon' => 'fa-file-invoice-dollar', 'url' => route('admin.financial.index', ['type' => 'Expense']), 'exact' => route('admin.financial.index', ['type' => 'Expense'])],
+                    ],
+                ],
+                [
+                    'group' => 'Governance',
+                    'items' => [
+                        ['label' => 'Elections', 'icon' => 'fa-check-to-slot', 'url' => route('admin.elections.index'), 'match' => 'admin.elections*'],
+                        ['label' => 'Executive Terms', 'icon' => 'fa-calendar-days', 'url' => route('admin.terms.index'), 'match' => 'admin.terms*'],
+                        ['label' => 'Messages', 'icon' => 'fa-envelope', 'url' => route('admin.messages.index'), 'match' => 'admin.messages*', 'badge' => $unreadMessageCount ?? null],
+                        ['label' => 'Audit Trail', 'icon' => 'fa-clipboard-check', 'url' => route('admin.audit.index'), 'match' => 'admin.audit*'],
+                    ],
+                ],
+                [
+                    'group' => 'System',
+                    'items' => [
+                        ['label' => 'Admin Users', 'icon' => 'fa-user-shield', 'url' => route('admin.users.index'), 'match' => 'admin.users*'],
+                        ['label' => 'Organization', 'icon' => 'fa-sitemap', 'url' => route('admin.settings.index'), 'match' => 'admin.settings.index'],
+                        ['label' => 'Email / SMTP', 'icon' => 'fa-envelope-circle-check', 'url' => route('admin.settings.smtp'), 'match' => 'admin.settings.smtp'],
+                        ['label' => 'Payment Gateways', 'icon' => 'fa-credit-card', 'url' => route('admin.settings.gateways'), 'match' => 'admin.settings.gateways'],
+                        ['label' => 'Integrations', 'icon' => 'fa-plug', 'url' => route('admin.settings.integrations'), 'match' => 'admin.settings.integrations'],
+                    ],
+                ],
+            ];
+        @endphp
+
+        <nav class="admin-sidebar__nav" x-ref="nav">
+            @foreach($nav as $section)
+                <div class="admin-nav-section" x-show="sectionVisible($el)">
+                    @if($section['group'])
+                        <p class="admin-nav-heading"><span>{{ $section['group'] }}</span></p>
+                    @endif
+
+                    <ul class="admin-nav-list">
+                        @foreach($section['items'] as $item)
+                            @php
+                                $isActive = isset($item['exact'])
+                                    ? request()->fullUrlIs($item['exact'])
+                                    : (isset($item['match']) && request()->routeIs($item['match']));
+                            @endphp
+                            <li x-show="matches('{{ Str::lower($item['label']) }}')">
+                                <a href="{{ $item['url'] }}"
+                                   class="admin-nav-link {{ $isActive ? 'is-active' : '' }}"
+                                   @if($isActive) aria-current="page" @endif
+                                   data-label="{{ $item['label'] }}">
+                                    <i class="fa-solid {{ $item['icon'] }}" aria-hidden="true"></i>
+                                    <span class="admin-nav-label">{{ $item['label'] }}</span>
+                                    @if(!empty($item['badge']))
+                                        <span class="admin-nav-badge">{{ $item['badge'] > 99 ? '99+' : $item['badge'] }}</span>
+                                    @endif
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" style="width: 32px; height: 32px;">
-                        <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
-                    </button>
-                    <a href="{{ route('home') }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">View Site</a>
-                    <form action="{{ route('admin.logout') }}" method="POST">
-                        @csrf
-                        <button class="btn btn-sm btn-danger rounded-pill">Logout</button>
-                    </form>
+            @endforeach
+
+            <p class="admin-nav-empty" x-show="query && !$refs.nav.querySelector('li:not([style*=none])')" x-cloak>
+                No menu item matches “<span x-text="query"></span>”.
+            </p>
+        </nav>
+
+        <!-- ─── Footer / account ─── -->
+        <div class="admin-sidebar__footer">
+            <div class="admin-user">
+                <span class="admin-user__avatar">{{ Str::upper(Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
+                <span class="admin-user__meta">
+                    <span class="admin-user__name">{{ auth()->user()->name ?? 'Administrator' }}</span>
+                    <span class="admin-user__role">{{ Str::title(str_replace('_', ' ', auth()->user()->role ?? 'admin')) }}</span>
+                </span>
+            </div>
+            <form action="{{ route('admin.logout') }}" method="POST" class="admin-user__logout">
+                @csrf
+                <button type="submit" title="Sign out" aria-label="Sign out">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ─── Main column ─── -->
+    <div class="admin-main">
+
+        <header class="admin-topbar">
+            <div class="admin-topbar__left">
+                <button type="button" class="admin-icon-btn d-lg-none" @click="mobileOpen = true" aria-label="Open navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <button type="button" class="admin-icon-btn d-none d-lg-inline-flex" @click="toggleCollapsed()"
+                        :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+                        :title="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+                    <i class="fa-solid" :class="collapsed ? 'fa-angles-right' : 'fa-angles-left'"></i>
+                </button>
+                <div class="admin-topbar__titles">
+                    <h1 class="admin-topbar__title">@yield('title', 'Admin Panel')</h1>
+                    @hasSection('subtitle')
+                        <p class="admin-topbar__subtitle">@yield('subtitle')</p>
+                    @endif
                 </div>
             </div>
 
-            <div class="p-4 overflow-auto" style="height: calc(100vh - 70px);">
-        @if(session('success'))
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Admin Action Saved',
-                        text: "{{ session('success') }}",
-                        confirmButtonColor: '#003566'
-                    });
-                });
-            </script>
-        @endif
+            <div class="admin-topbar__right">
+                <button type="button" class="admin-icon-btn" @click="toggleTheme()"
+                        :aria-label="darkMode ? 'Switch to light theme' : 'Switch to dark theme'"
+                        :title="darkMode ? 'Light mode' : 'Dark mode'">
+                    <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                </button>
+                <a href="{{ route('home') }}" target="_blank" rel="noopener" class="admin-ghost-btn">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span class="d-none d-sm-inline">View Site</span>
+                </a>
+            </div>
+        </header>
 
-        @if(session('error'))
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: "{{ session('error') }}",
-                        confirmButtonColor: '#003566'
+        <main class="admin-content">
+            @if(session('success'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Admin Action Saved',
+                            text: @json(session('success')),
+                            confirmButtonColor: '#003566'
+                        });
                     });
-                });
-            </script>
-        @endif
+                </script>
+            @endif
 
-        @yield('content')
-    </div>
-    </div>
+            @if(session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: @json(session('error')),
+                            confirmButtonColor: '#003566'
+                        });
+                    });
+                </script>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger rounded-4 border-0 shadow-sm">
+                    <p class="fw-bold mb-1"><i class="fa-solid fa-circle-exclamation me-1"></i> Please correct the following:</p>
+                    <ul class="mb-0 ps-3 extra-small">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </main>
     </div>
 
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <!-- Local Choices.js JS -->
-    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
 
+    {{-- CKEditor 5 (~1.3 MB) is fetched on demand, only by pages that actually
+         declare a [data-richtext] textarea, instead of on every admin screen. --}}
     <script>
+        // Attach a rich-text editor to any [data-richtext] textarea, loading the
+        // library on demand so screens without one pay nothing.
+        document.addEventListener('DOMContentLoaded', function () {
+            var fields = document.querySelectorAll('textarea[data-richtext]');
+            if (!fields.length) return;
+
+            var s = document.createElement('script');
+            s.src = "{{ asset('vendor/ckeditor/ckeditor.js') }}";
+            s.onload = function () {
+                if (typeof ClassicEditor === 'undefined') return;
+                fields.forEach(function (el) {
+                    ClassicEditor.create(el).catch(function (err) {
+                        console.error('Rich text editor failed to load:', err);
+                    });
+                });
+            };
+            s.onerror = function () {
+                console.warn('CKEditor bundle could not be loaded; falling back to plain textarea.');
+            };
+            document.head.appendChild(s);
+        });
+
+        function adminShell() {
+            return {
+                collapsed: false,
+                mobileOpen: false,
+                darkMode: false,
+                query: '',
+
+                init() {
+                    try {
+                        this.darkMode = localStorage.getItem('theme') === 'dark';
+                        this.collapsed = localStorage.getItem('kso.sidebar') === 'collapsed';
+                    } catch (e) { /* storage unavailable */ }
+
+                    // The pre-paint script set this; Alpine now owns the state.
+                    document.documentElement.classList.remove('sidebar-is-collapsed');
+                    document.documentElement.removeAttribute('data-bs-theme');
+
+                    // Keep the active item in view on long menus.
+                    this.$nextTick(() => {
+                        const active = this.$refs.nav?.querySelector('.admin-nav-link.is-active');
+                        if (active) active.scrollIntoView({ block: 'center' });
+                    });
+                },
+
+                toggleCollapsed() {
+                    this.collapsed = !this.collapsed;
+                    try { localStorage.setItem('kso.sidebar', this.collapsed ? 'collapsed' : 'expanded'); } catch (e) {}
+                },
+
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    try { localStorage.setItem('theme', this.darkMode ? 'dark' : 'light'); } catch (e) {}
+                },
+
+                matches(label) {
+                    if (!this.query) return true;
+                    return label.includes(this.query.trim().toLowerCase());
+                },
+
+                // Hide a whole group when the filter removes all of its items.
+                sectionVisible(el) {
+                    if (!this.query) return true;
+                    const labels = Array.from(el.querySelectorAll('[data-label]'))
+                        .map(a => a.dataset.label.toLowerCase());
+                    return labels.some(l => l.includes(this.query.trim().toLowerCase()));
+                }
+            };
+        }
+
         function confirmDelete(formId, message = 'Are you sure you want to delete this item?') {
             Swal.fire({
                 title: 'Confirm Delete',
@@ -291,7 +390,8 @@
                 confirmButtonText: 'Yes, Delete!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
+                    const form = document.getElementById(formId);
+                    if (form) form.submit();
                 }
             });
         }

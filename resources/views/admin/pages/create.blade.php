@@ -20,7 +20,7 @@
             </div>
             <div class="col-md-12">
                 <label class="form-label fw-bold">Page Content (HTML allowed)</label>
-                <textarea name="content" class="form-control" rows="12" placeholder="Write full HTML or formatted content here..." required></textarea>
+                <textarea name="content" class="form-control" rows="12" data-richtext placeholder="Write full HTML or formatted content here..." required></textarea>
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-bold">Meta Title (SEO)</label>

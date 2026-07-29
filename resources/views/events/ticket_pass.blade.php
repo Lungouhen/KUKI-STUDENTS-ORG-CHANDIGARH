@@ -28,7 +28,9 @@
                 </table>
 
                 <div class="text-center p-2 bg-light rounded border">
-                    <i class="fa-solid fa-qrcode fs-1 text-primary"></i>
+                    <span class="d-inline-flex bg-white p-1 rounded">
+                        {!! \App\Support\QrCode::svg(route('events.ticketPass', $registration->ticket_code), 96) !!}
+                    </span>
                     <div class="extra-small text-muted mt-1">Present this Pass Code at the Venue Entry Desk</div>
                 </div>
             </div>

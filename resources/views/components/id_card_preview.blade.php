@@ -35,6 +35,8 @@
             <div class="fw-bold text-warning">VALID UNTIL: {{ $member->valid_until ? $member->valid_until->format('Y-m-d') : '2027-06-30' }}</div>
             <div class="extra-small opacity-75">Recognized by KSO General HQ</div>
         </div>
-        <i class="fa-solid fa-qrcode fs-2 text-white"></i>
+        <span class="rounded bg-white p-1 d-inline-flex" title="Scan to verify this membership">
+            {!! \App\Support\QrCode::svg(route('membership.verifyDirect', $member->id), 44) !!}
+        </span>
     </div>
 </div>

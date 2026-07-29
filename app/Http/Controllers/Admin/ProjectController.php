@@ -13,33 +13,72 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::with('term')->orderBy('created_at', 'desc')->paginate(15);
-        return view('admin.projects.index', compact('projects'));
+        $terms = Term::orderBy('start_date', 'desc')->get();
+
+        return view('admin.projects.index', compact('projects', 'terms'));
     }
 
+    /**
+     * Projects are created through a modal on the index page, so there is no
+     * standalone create screen.
+     */
     public function create()
     {
-        $terms = Term::all();
-        return view('admin.projects.create', compact('terms'));
+        return redirect()->route('admin.projects.index');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'term_id' => 'required|exists:terms,id',
-            'title' => 'required|string',
-            'budget' => 'required|numeric',
-            'status' => 'required|string',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'budget' => 'required|numeric|min:0',
+            'status' => 'required|string|max:50',
         ]);
 
-        Project::create([
-            'id' => \App\Models\Project::generateProjectId(),
-            'term_id' => $validated['term_id'],
-            'title' => $validated['title'],
-            'budget' => $validated['budget'],
-            'status' => $validated['status'],
-        ]);
-        AuditLog::log('CREATE_PROJECT', "Project: {$validated['title']}");
+        $validated['project_code'] = Project::generateProjectCode();
+
+        $project = Project::create($validated);
+        AuditLog::log('CREATE_PROJECT', "Project: {$project->title} ({$project->project_code})");
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created.');
+    }
+
+    public function edit($id)
+    {
+        $project = Project::findOrFail($id);
+        $terms = Term::orderBy('start_date', 'desc')->get();
+
+        return view('admin.projects.edit', compact('project', 'terms'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $project = Project::findOrFail($id);
+
+        $validated = $request->validate([
+            'term_id' => 'required|exists:terms,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'budget' => 'required|numeric|min:0',
+            'status' => 'required|string|max:50',
+        ]);
+
+        $project->update($validated);
+        AuditLog::log('UPDATE_PROJECT', "Project ID: {$id}");
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project updated.');
+    }
+
+    public function destroy($id)
+    {
+        $project = Project::findOrFail($id);
+        $title = $project->title;
+        $project->delete();
+
+        AuditLog::log('DELETE_PROJECT', "Project: {$title}");
+
+        return back()->with('success', 'Project removed.');
     }
 }

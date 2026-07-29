@@ -71,11 +71,16 @@ php artisan serve
 
 ---
 
-## 🔑 DEFAULT ADMIN CREDENTIALS
+## 🔑 ADMIN ACCESS
 
 - **Admin Login URL**: `http://127.0.0.1:8000/admin/login`
-- **Email**: `admin@ksochandigarh.org`
-- **Password**: `admin123`
+- **Email**: taken from `ADMIN_EMAIL` in `.env` (default `admin@ksochandigarh.org`)
+- **Password**: taken from `ADMIN_PASSWORD` in `.env`
+
+If `ADMIN_PASSWORD` is left blank, the seeder generates a random password and
+prints it **once** in the console output — copy it immediately. In `production`
+the seeder refuses to create an admin account without an explicit password, so
+no publicly documented default credentials ever exist.
 
 ---
 

@@ -115,28 +115,46 @@
 </div>
 
 @push('scripts')
+{{-- ApexCharts is ~796 KB and the dashboard is the only page that charts
+     anything, so it is loaded here rather than in the global admin layout. --}}
+<script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Members Growth Chart
-        var optionsMembers = {
-            series: [{ name: 'New Registrations', data: [12, 19, 25, 30, 42, 58, 75] }],
-            chart: { type: 'area', height: 230, toolbar: { show: false } },
-            colors: ['#003566'],
-            stroke: { curve: 'smooth', width: 3 },
-            fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
-            xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] }
-        };
-        new ApexCharts(document.querySelector("#membersChart"), optionsMembers).render();
+    document.addEventListener('DOMContentLoaded', function () {
+        // Real trailing-12-month data supplied by DashboardController.
+        var categories = @json($chart['labels']);
 
-        // Donations Collection Chart
-        var optionsDonations = {
-            series: [{ name: 'Welfare Funds (₹)', data: [15000, 22000, 18000, 35000, 48000, 52000, 65000] }],
-            chart: { type: 'bar', height: 230, toolbar: { show: false } },
-            colors: ['#0d9488'],
-            plotOptions: { bar: { borderRadius: 6, columnWidth: '45%' } },
-            xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] }
-        };
-        new ApexCharts(document.querySelector("#donationsChart"), optionsDonations).render();
+        var membersEl = document.querySelector('#membersChart');
+        if (membersEl) {
+            new ApexCharts(membersEl, {
+                series: [{ name: 'New Registrations', data: @json($chart['members']) }],
+                chart: { type: 'area', height: 230, toolbar: { show: false }, fontFamily: 'inherit' },
+                colors: ['#003566'],
+                stroke: { curve: 'smooth', width: 3 },
+                dataLabels: { enabled: false },
+                fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
+                xaxis: { categories: categories },
+                yaxis: { labels: { formatter: function (v) { return Math.round(v); } } },
+                noData: { text: 'No registrations in this period' }
+            }).render();
+        }
+
+        var donationsEl = document.querySelector('#donationsChart');
+        if (donationsEl) {
+            new ApexCharts(donationsEl, {
+                series: [{ name: 'Welfare Funds', data: @json($chart['donations']) }],
+                chart: { type: 'bar', height: 230, toolbar: { show: false }, fontFamily: 'inherit' },
+                colors: ['#0d9488'],
+                plotOptions: { bar: { borderRadius: 6, columnWidth: '45%' } },
+                dataLabels: { enabled: false },
+                xaxis: { categories: categories },
+                yaxis: {
+                    labels: {
+                        formatter: function (v) { return '₹' + Number(v).toLocaleString('en-IN'); }
+                    }
+                },
+                noData: { text: 'No donations in this period' }
+            }).render();
+        }
     });
 </script>
 @endpush

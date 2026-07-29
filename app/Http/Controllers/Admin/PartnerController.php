@@ -47,9 +47,13 @@ class PartnerController extends Controller
         return $response;
     }
 
+    /**
+     * Partners are created through a modal on the index page, so there is no
+     * standalone create screen. Kept for route-model completeness.
+     */
     public function create()
     {
-        return view('admin.partners.create');
+        return redirect()->route('admin.partners.index');
     }
 
     public function store(Request $request)
@@ -79,7 +83,20 @@ class PartnerController extends Controller
     public function update(Request $request, $id)
     {
         $partner = Partner::findOrFail($id);
-        $partner->update($request->all());
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'type' => 'required|string|max:50',
+            'category' => 'required|string|max:50',
+            'status' => 'required|string|max:50',
+        ]);
+
+        $partner->update($validated);
         AuditLog::log('UPDATE_PARTNER', "Partner ID: {$id}");
 
         return redirect()->route('admin.partners.index')->with('success', 'Partner updated.');

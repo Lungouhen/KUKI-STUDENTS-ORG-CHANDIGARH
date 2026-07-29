@@ -75,6 +75,8 @@
 </div>
 
 @push('scripts')
+{{-- Loaded here rather than globally: only this page renders a calendar. --}}
+<script src="{{ asset('vendor/fullcalendar/fullcalendar.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('fullCalendarGrid');

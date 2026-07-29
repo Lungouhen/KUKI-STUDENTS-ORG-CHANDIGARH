@@ -29,7 +29,7 @@
             </div>
             <div class="col-12">
                 <label class="form-label fw-bold">Content</label>
-                <textarea name="content" class="form-control" rows="5" required>{{ old('content', $news->content) }}</textarea>
+                <textarea name="content" class="form-control" rows="5" data-richtext required>{{ old('content', $news->content) }}</textarea>
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-bold">Author</label>

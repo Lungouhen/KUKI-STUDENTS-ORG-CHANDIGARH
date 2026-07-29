@@ -57,10 +57,31 @@ class ElectionController extends Controller
 
     public function updateVotes(Request $request, $candidateId)
     {
+        $validated = $request->validate([
+            'votes' => 'required|integer|min:0',
+        ]);
+
         $candidate = Candidate::findOrFail($candidateId);
-        $candidate->votes_received = $request->input('votes', 0);
+        $candidate->votes_received = $validated['votes'];
         $candidate->save();
 
+        AuditLog::log('UPDATE_VOTES', "Candidate ID: {$candidateId}, Votes: {$validated['votes']}");
+
         return back()->with('success', 'Votes updated.');
+    }
+
+    public function destroy($id)
+    {
+        $election = Election::findOrFail($id);
+        $position = $election->position;
+
+        // Remove dependent candidates first: `candidates.election_id` is a
+        // constrained foreign key and would otherwise block the delete.
+        $election->candidates()->delete();
+        $election->delete();
+
+        AuditLog::log('DELETE_ELECTION', "Position: {$position}");
+
+        return redirect()->route('admin.elections.index')->with('success', 'Election removed.');
     }
 }

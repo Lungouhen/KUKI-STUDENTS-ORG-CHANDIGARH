@@ -3,22 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Kuki Students\' Organisation Chandigarh')</title>
-    
+
+    {{-- Apply the saved theme before first paint. Alpine is deferred, so without
+         this a returning dark-mode user sees a white flash on every page load. --}}
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('theme') === 'dark') {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                }
+            } catch (e) { /* private mode / storage disabled */ }
+        })();
+    </script>
+
+    <!-- Web fonts: preconnect + non-blocking load (was a render-blocking @import) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" media="print" onload="this.media='all'"
+          href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+    <noscript>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+    </noscript>
+
     <!-- Local Bootstrap 5 CSS -->
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Local FontAwesome 6 CSS -->
     <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
-    <!-- Local Choices.js CSS -->
-    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
-    <!-- Local FilePond CSS -->
-    <link href="{{ asset('vendor/filepond/filepond.min.css') }}" rel="stylesheet">
     <!-- Local SweetAlert2 CSS -->
     <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
-    <!-- Custom Styles & Vite Assets -->
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+
+    {{-- custom.css is imported by resources/css/app.css, so Vite bundles it.
+         Link it directly only when no build exists, otherwise it downloads twice
+         and the duplicated cascade makes overrides unpredictable. --}}
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @endif
 
     <!-- Local Alpine.js -->
@@ -94,12 +117,10 @@
 
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <!-- Local Choices.js JS -->
-    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
-    <!-- Local FilePond JS -->
-    <script src="{{ asset('vendor/filepond/filepond.min.js') }}"></script>
-    <!-- Local FullCalendar JS -->
-    <script src="{{ asset('vendor/fullcalendar/fullcalendar.min.js') }}"></script>
+
+    {{-- Choices.js and FilePond were loaded on every public page but never
+         initialised anywhere (~224 KB of unused JS/CSS), so they were removed.
+         FullCalendar is now pulled in only by the events page's scripts stack. --}}
 
     <script>
         function confirmDelete(formId, message = 'Are you sure you want to delete this record?') {

@@ -13,29 +13,33 @@ print('\n1. Auditing Route References in Blade Views...')
 with open('routes/web.php', 'r') as f:
     web_routes = f.read()
 
-# Named routes directly in web.php
-public_named_routes = set(re.findall(r"->name\s*\(\s*['\"]([^'\"]+)['\"]", web_routes))
+# Derive route names from routes/web.php rather than a hardcoded allowlist,
+# which silently drifts out of date whenever routes change.
+public_named_routes = set()
+in_admin_group = False
+for line in web_routes.splitlines():
+    if "->name('admin.')" in line:
+        in_admin_group = True
+    m = re.search(r"->name\s*\(\s*['\"]([^'\"]+)['\"]\s*\)\s*;", line)
+    if m:
+        name = m.group(1)
+        if name == 'admin.':
+            continue
+        if in_admin_group and not name.startswith('admin.') and '/admin/' not in line:
+            name = 'admin.' + name
+        public_named_routes.add(name)
 
-# Admin group prefix 'admin.'
-admin_group_routes = {
-    'admin.dashboard',
-    'admin.financial.index', 'admin.financial.storeTransaction', 'admin.financial.createAccount',
-    'admin.pages.index', 'admin.pages.create', 'admin.pages.store', 'admin.pages.edit', 'admin.pages.update', 'admin.pages.destroy',
-    'admin.faqs.index', 'admin.faqs.store', 'admin.faqs.edit', 'admin.faqs.update', 'admin.faqs.destroy',
-    'admin.testimonials.index', 'admin.testimonials.store', 'admin.testimonials.edit', 'admin.testimonials.update', 'admin.testimonials.destroy',
-    'admin.medical.index', 'admin.medical.updateStatus',
-    'admin.audit.index',
-    'admin.members.index', 'admin.members.create', 'admin.members.store', 'admin.members.show', 'admin.members.edit', 'admin.members.update', 'admin.members.updateStatus', 'admin.members.destroy', 'admin.members.exportCsv',
-    'admin.events.index', 'admin.events.store', 'admin.events.edit', 'admin.events.update', 'admin.events.destroy',
-    'admin.news.index', 'admin.news.store', 'admin.news.edit', 'admin.news.update', 'admin.news.destroy',
-    'admin.committee.index', 'admin.committee.store', 'admin.committee.edit', 'admin.committee.update', 'admin.committee.destroy',
-    'admin.gallery.index', 'admin.gallery.store', 'admin.gallery.destroy',
-    'admin.donations.index', 'admin.donations.receipt',
-    'admin.messages.index', 'admin.messages.updateStatus',
-    'admin.settings.index', 'admin.settings.update'
-}
+# Route::resource(...) generates one name per action, honouring ->only([...]).
+for res, only in re.findall(
+    r"Route::resource\(\s*['\"]([\w\-]+)['\"]\s*,\s*\w+::class\s*\)?\s*(?:->only\(\[([^\]]*)\]\))?",
+    web_routes, re.S):
+    actions = ([a.strip().strip("'\"") for a in only.split(',') if a.strip()]
+               if only else
+               ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])
+    for action in actions:
+        public_named_routes.add(f'admin.{res}.{action}')
 
-all_valid_routes = public_named_routes.union(admin_group_routes)
+all_valid_routes = public_named_routes
 
 blade_files = glob.glob('resources/views/**/*.blade.php', recursive=True)
 for bf in blade_files:

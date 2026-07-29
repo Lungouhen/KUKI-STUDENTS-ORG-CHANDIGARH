@@ -4,7 +4,14 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4" x-data="{ memberType: 'Individual' }">
+{{--
+    The Alpine scope must wrap the form: `memberType` is bound by x-model and read
+    by x-show further down the page. Declaring it on the banner alone put those
+    directives outside the scope, so the dependents field never appeared.
+--}}
+<div x-data="{ memberType: 'Individual' }">
+
+<div class="bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1">KSO Chandigarh Membership Registration</h2>
         <p class="small text-light opacity-90 mb-0">Register online to get your official verified Digital Membership ID Card</p>
@@ -101,7 +108,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-3" x-show="memberType === 'Family'">
+                            <div class="col-md-3" x-show="memberType === 'Family'" x-cloak>
                                 <label class="form-label fw-bold">Dependents Count</label>
                                 <input type="number" class="form-control" name="family_count" value="0" min="0">
                             </div>
@@ -180,5 +187,7 @@
         </div>
     </div>
 </div>
+
+</div>{{-- /x-data --}}
 
 @endsection

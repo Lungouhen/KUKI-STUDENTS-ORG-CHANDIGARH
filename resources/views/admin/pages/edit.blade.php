@@ -24,7 +24,7 @@
             </div>
             <div class="col-md-12">
                 <label class="form-label fw-bold">Page Content (HTML allowed)</label>
-                <textarea name="content" class="form-control" rows="12" required>{{ old('content', $page->content) }}</textarea>
+                <textarea name="content" class="form-control" rows="12" data-richtext required>{{ old('content', $page->content) }}</textarea>
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-bold">Meta Title (SEO)</label>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\RateLimiter;
 
 class MembershipController extends Controller
 {
@@ -107,17 +109,59 @@ class MembershipController extends Controller
 
     public function portalLogin(Request $request)
     {
-        $identifier = trim($request->input('identifier'));
+        $validated = $request->validate([
+            'identifier' => 'required|string|max:255',
+            'dob' => 'required|date',
+        ], [
+            'dob.required' => 'Please enter your date of birth to confirm your identity.',
+        ]);
+
+        $identifier = trim($validated['identifier']);
+
+        // Throttle by identifier + IP: membership IDs are sequential and publicly
+        // printed on ID cards, so brute-forcing must not be cheap.
+        $throttleKey = 'member-portal:'.Str::lower($identifier).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()
+                ->withInput($request->only('identifier'))
+                ->with('error', "Too many attempts. Please try again in {$seconds} seconds.");
+        }
+
         $member = Member::where('id', $identifier)
             ->orWhere('email', $identifier)
             ->first();
 
-        if (!$member) {
-            return back()->with('error', 'No member account found matching details.');
+        // Require a second factor the member knows but a stranger holding only a
+        // membership ID does not. Compare on date value, not raw string format.
+        $dobMatches = $member
+            && $member->dob
+            && $member->dob->isSameDay(Carbon::parse($validated['dob']));
+
+        if (! $dobMatches) {
+            RateLimiter::hit($throttleKey, 900);
+
+            // Deliberately generic: do not disclose whether the ID exists.
+            return back()
+                ->withInput($request->only('identifier'))
+                ->with('error', 'The details provided do not match our membership records.');
         }
 
+        if ($member->status !== 'Approved') {
+            RateLimiter::clear($throttleKey);
+
+            return back()->with('error', 'Your membership is '.strtolower($member->status).'. The portal unlocks once it is approved.');
+        }
+
+        RateLimiter::clear($throttleKey);
+
+        // Prevent session fixation: issue a fresh session ID on privilege change.
+        $request->session()->regenerate();
         session(['member_id' => $member->id]);
-        return redirect()->route('membership.portal');
+
+        return redirect()->route('membership.portalDashboard');
     }
 
     public function portalDashboard()
@@ -176,10 +220,16 @@ class MembershipController extends Controller
         return back()->with('success', 'Your medical relief claim has been submitted to the KSO Executive Body.');
     }
 
-    public function portalLogout()
+    public function portalLogout(Request $request)
     {
         session()->forget('member_id');
-        return redirect()->route('membership.portalLogin');
+
+        // Invalidate and re-issue so the logged-out session cannot be replayed.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to the GET login screen, not the POST-only login handler.
+        return redirect()->route('membership.portal')->with('success', 'You have been logged out.');
     }
 
     public function idCard($id)
