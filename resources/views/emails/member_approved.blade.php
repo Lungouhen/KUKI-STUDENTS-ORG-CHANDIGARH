@@ -22,7 +22,7 @@
         </div>
 
         <p style="text-align: center; margin: 25px 0;">
-            <a href="{{ url('/membership/id-card/' . $member->id) }}" style="background: #FFBF00; color: #003566; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 25px; display: inline-block;">Download Digital ID Card</a>
+            <a href="{{ url('/members/id-card/' . $member->id) }}" style="background: #FFBF00; color: #003566; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 25px; display: inline-block;">Download Digital ID Card</a>
         </p>
 
         <p>Welcome to the KSO Chandigarh family!</p>
