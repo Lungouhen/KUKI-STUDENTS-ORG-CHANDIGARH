@@ -21,7 +21,7 @@
                     <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}"><i class="fa-solid fa-circle-info me-1"></i> About Us</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('membership*') ? 'active' : '' }}" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->is('members*') ? 'active' : '' }}" href="#" data-bs-toggle="dropdown">
                         <i class="fa-solid fa-id-card me-1"></i> Membership <i class="fa-solid fa-chevron-down"></i>
                     </a>
                     <ul class="dropdown-menu">

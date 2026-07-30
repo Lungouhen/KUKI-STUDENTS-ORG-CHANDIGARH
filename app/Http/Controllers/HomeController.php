@@ -28,4 +28,31 @@ class HomeController extends Controller
 
         return view('home', compact('stats', 'committee', 'upcomingEvents', 'latestNews', 'galleryHighlights'));
     }
+
+    /**
+     * Public redirection and statistics tracker for the KSO Sponsorship & Ad Network
+     */
+    public function clickAd($id)
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('advertisements')) {
+                $ad = \App\Models\Advertisement::find($id);
+                if ($ad) {
+                    $ad->increment('clicks_count');
+                    return redirect()->away($ad->redirect_url ?? '/');
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::info("Ad click skipped: " . $e->getMessage());
+        }
+
+        // Elegant hardcoded fallbacks for pre-seeded student sponsors
+        $redirects = [
+            101 => 'https://chanakyaiasacademy.com',
+            102 => 'https://google.com', // Safe fallback
+            103 => 'https://britishcouncil.org',
+        ];
+
+        return redirect()->away($redirects[$id] ?? 'https://google.com');
+    }
 }

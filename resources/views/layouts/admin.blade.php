@@ -35,189 +35,235 @@
     toggleTheme() {
         this.darkMode = !this.darkMode;
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-    }
+    },
+    // Dynamic initialization of folder states based on current route
+    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
+    ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
+    financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
+    settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
+    electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
 }" :data-bs-theme="darkMode ? 'dark' : 'light'">
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="bg-dark text-white min-vh-100 shadow" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s; width: 260px;">
-            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
-                <div x-show="sidebarOpen" class="fw-bold text-warning">KSO ADMIN PANEL</div>
+        <div class="admin-sidebar" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s;">
+            <div class="admin-sidebar-header">
+                <div x-show="sidebarOpen" class="brand-title"><i class="fa-solid fa-user-shield me-2"></i> KSO ADMIN CMS</div>
                 <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
             
             <div class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
-                <ul class="nav flex-column gap-1">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-house me-2"></i> <span x-show="sidebarOpen">Home</span>
+                <ul class="nav flex-column gap-2 p-0">
+                    <!-- Home Dashboard (Direct) -->
+                    <li class="admin-nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <i class="fa-solid fa-gauge-high"></i> <span x-show="sidebarOpen">CMS Home Dashboard</span>
                         </a>
                     </li>
                     
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Content</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-images me-2"></i> <span x-show="sidebarOpen">Slider</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.pages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.pages*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-file-lines me-2"></i> <span x-show="sidebarOpen">About & Pages</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.gallery.index') }}" class="nav-link text-white {{ request()->routeIs('admin.gallery*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-image me-2"></i> <span x-show="sidebarOpen">Gallery</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'certificate']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'certificate'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-certificate me-2"></i> <span x-show="sidebarOpen">Certificates</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'achievement']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'achievement'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-trophy me-2"></i> <span x-show="sidebarOpen">Achievements</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'policy']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'policy'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-shield-halved me-2"></i> <span x-show="sidebarOpen">Policies</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.news.index') }}" class="nav-link text-white {{ request()->routeIs('admin.news.index') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-newspaper me-2"></i> <span x-show="sidebarOpen">News</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-bullhorn me-2"></i> <span x-show="sidebarOpen">Notices</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.projects.index') }}" class="nav-link text-white {{ request()->routeIs('admin.projects*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-diagram-project me-2"></i> <span x-show="sidebarOpen">Projects</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'campaign']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'campaign'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-bullseye me-2"></i> <span x-show="sidebarOpen">Campaigns</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-briefcase me-2"></i> <span x-show="sidebarOpen">Careers</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.messages.index') }}" class="nav-link text-white {{ request()->routeIs('admin.messages*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-envelope me-2"></i> <span x-show="sidebarOpen">Messages</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Members</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.index') }}" class="nav-link text-white {{ request()->routeIs('admin.members*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-users me-2"></i> <span x-show="sidebarOpen">All Members</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.index', ['status' => 'Pending']) }}" class="nav-link text-white">
-                            <i class="fa-solid fa-user-clock me-2"></i> <span x-show="sidebarOpen">Member Requests</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.members.fees') }}" class="nav-link text-white {{ request()->routeIs('admin.members.fees') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-money-bill me-2"></i> <span x-show="sidebarOpen">Membership Fees</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.committee.index') }}" class="nav-link text-white {{ request()->routeIs('admin.committee*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-user-tag me-2"></i> <span x-show="sidebarOpen">Designations</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">People</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-hand-holding-heart me-2"></i> <span x-show="sidebarOpen">Donors</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.beneficiaries.index') }}" class="nav-link text-white {{ request()->routeIs('admin.beneficiaries*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-users-viewfinder me-2"></i> <span x-show="sidebarOpen">Beneficiaries</span>
-                        </a>
-                    </li>
-                    
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Finance</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.donations.index') }}" class="nav-link text-white {{ request()->routeIs('admin.donations*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-money-check-dollar me-2"></i> <span x-show="sidebarOpen">Donations</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.financial.index', ['type' => 'Expense']) }}" class="nav-link text-white {{ request()->fullUrlIs(route('admin.financial.index', ['type' => 'Expense'])) ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i> <span x-show="sidebarOpen">Expenses</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.financial.index') }}" class="nav-link text-white {{ request()->routeIs('admin.financial.index') && !request()->has('type') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-chart-pie me-2"></i> <span x-show="sidebarOpen">Reports</span>
-                        </a>
+                    <div class="admin-section-divider" x-show="sidebarOpen">Workspace Folders</div>
+
+                    <!-- 1. Content Manager Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="contentOpen = !contentOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="contentOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-folder-open"></i> <span x-show="sidebarOpen">Content Manager</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="contentOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-images"></i> Slider Banners
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.pages.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.pages*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-file-invoice"></i> About & Pages
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.gallery.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-photo-film"></i> Gallery Items
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'certificate']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'certificate'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-medal"></i> Certificates
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'achievement']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'achievement'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-trophy"></i> Achievements
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'policy']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'policy'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-building-shield"></i> Policies
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.news.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.news.index') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-square-rss"></i> News & Feed
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-bullhorn"></i> Notices
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'campaign']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'campaign'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-bullseye"></i> Campaigns
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-briefcase"></i> Careers
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.messages.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.messages*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-envelope-open-text"></i> Messages
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.partners.index') }}" class="nav-link text-white {{ request()->routeIs('admin.partners*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-handshake me-2"></i> <span x-show="sidebarOpen">Partners</span>
-                        </a>
+                    <!-- 2. Member Control Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="membersOpen = !membersOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="membersOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-user-gear"></i> <span x-show="sidebarOpen">Member Control</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="membersOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.members.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.members*') && !request()->has('status') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-users"></i> All Members
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.members.index', ['status' => 'Pending']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.members.index', ['status' => 'Pending'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-user-clock"></i> Member Requests
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.members.fees') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.members.fees') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-money-bill"></i> Membership Fees
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.committee.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.committee*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-id-badge"></i> Designations
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.users.index') }}" class="nav-link text-white {{ request()->routeIs('admin.users*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-user-shield me-2"></i> <span x-show="sidebarOpen">Users</span>
-                        </a>
+                    <!-- 3. NGO & People Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="ngoOpen = !ngoOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="ngoOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-hands-holding-child"></i> <span x-show="sidebarOpen">NGO & People</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="ngoOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.partners.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.partners*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-handshake"></i> Partners
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.projects.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.projects*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-diagram-project"></i> Projects
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.beneficiaries.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.beneficiaries*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-users-viewfinder"></i> Beneficiaries
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Settings</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.index') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.index') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-building-ngo me-2"></i> <span x-show="sidebarOpen">Organization</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.smtp') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.smtp') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-envelope-circle-check me-2"></i> <span x-show="sidebarOpen">SMTP Settings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.gateways') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.gateways') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-credit-card me-2"></i> <span x-show="sidebarOpen">Payment Gateways</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link text-white">
-                            <i class="fa-solid fa-file-code me-2"></i> <span x-show="sidebarOpen">Templates</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.integrations') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.integrations') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-plug me-2"></i> <span x-show="sidebarOpen">Integrations</span>
-                        </a>
+                    <!-- 4. Financial Ledger Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="financeOpen = !financeOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="financeOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-sack-dollar"></i> <span x-show="sidebarOpen">Financial Ledger</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="financeOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.donations.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.donations*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-hand-holding-dollar"></i> Donations List
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.financial.index', ['type' => 'Expense']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.financial.index', ['type' => 'Expense'])) ? 'active' : '' }}">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i> Expenses Tracker
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.financial.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.financial.index') && !request()->has('type') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-chart-pie"></i> Ledger Reports
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <div class="px-3 small text-uppercase opacity-50 mt-3 mb-1" x-show="sidebarOpen">Election & Logs</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.elections.index') }}" class="nav-link text-white {{ request()->routeIs('admin.elections*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-check-to-slot me-2"></i> <span x-show="sidebarOpen">Election Module</span>
-                        </a>
+                    <!-- 5. System Settings Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="settingsOpen = !settingsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="settingsOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-sliders"></i> <span x-show="sidebarOpen">System Settings</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="settingsOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.settings.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-building-ngo"></i> Organization
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.settings.smtp') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.smtp') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-envelope-circle-check"></i> SMTP Config
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.settings.gateways') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.gateways') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-credit-card"></i> Payment Gateways
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.settings.integrations') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.integrations') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-plug"></i> Integrations
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.users.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-shield-halved"></i> Admin Users
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.audit.index') }}" class="nav-link text-white {{ request()->routeIs('admin.audit*') ? 'bg-primary' : '' }}">
-                            <i class="fa-solid fa-clipboard-check me-2"></i> <span x-show="sidebarOpen">Audit Trail</span>
-                        </a>
+
+                    <!-- 6. Election & Logs Folder -->
+                    <li class="admin-nav-item">
+                        <button @click="electionsOpen = !electionsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="electionsOpen ? 'open' : ''">
+                            <span><i class="fa-solid fa-check-to-slot"></i> <span x-show="sidebarOpen">Election & Logs</span></span>
+                            <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
+                        </button>
+                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="electionsOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.elections.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.elections*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-check-to-slot"></i> Election Module
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.audit.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.audit*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-clipboard-check"></i> System Audit Trail
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -226,7 +272,7 @@
         <!-- Main Content -->
         <div class="flex-grow-1 overflow-hidden">
             <!-- Top Bar -->
-            <div class="bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div class="admin-topbar p-3 d-flex justify-content-between align-items-center">
                 <div class="fw-bold">
                     @yield('title', 'Admin Panel')
                 </div>
@@ -242,7 +288,7 @@
                 </div>
             </div>
 
-            <div class="p-4 overflow-auto" style="height: calc(100vh - 70px);">
+            <div class="admin-main-container p-4">
         @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function() {

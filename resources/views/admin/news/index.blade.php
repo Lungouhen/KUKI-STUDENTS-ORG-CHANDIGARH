@@ -30,11 +30,14 @@
                                     <td>{{ $n->date ? $n->date->format('Y-m-d') : '' }}</td>
                                     <td>{{ $n->author }}</td>
                                     <td>
-                                        <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete announcement?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm btn-outline-primary" title="Edit Post"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete announcement?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-outline-danger" title="Delete Post"><i class="fa-solid fa-trash"></i></button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

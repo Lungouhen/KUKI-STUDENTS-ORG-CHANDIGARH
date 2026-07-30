@@ -12,7 +12,7 @@ class MembershipTest extends TestCase
 
     public function test_can_register_new_member(): void
     {
-        $response = $this->post('/membership/register', [
+        $response = $this->post('/members/register', [
             'full_name' => 'Test Student Haokip',
             'gender' => 'Male',
             'dob' => '2004-01-01',
@@ -55,7 +55,7 @@ class MembershipTest extends TestCase
             'status' => 'Approved',
         ]);
 
-        $response = $this->post('/membership/verify', [
+        $response = $this->post('/members/verify', [
             'member_id' => 'KSO-CHD-2026-9999'
         ]);
 

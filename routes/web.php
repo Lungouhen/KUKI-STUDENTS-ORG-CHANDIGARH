@@ -43,19 +43,24 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
+Route::get('/ads/{id}/click', [HomeController::class, 'clickAd'])->name('ads.click');
 
-// Membership Routes
-Route::get('/membership/register', [MembershipController::class, 'registerForm'])->name('membership.register');
-Route::post('/membership/register', [MembershipController::class, 'store'])->name('membership.store');
-Route::get('/membership/verify', [MembershipController::class, 'verifyForm'])->name('membership.verifyForm');
-Route::post('/membership/verify', [MembershipController::class, 'verify'])->name('membership.verify');
-Route::get('/membership/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
-Route::get('/membership/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
-Route::post('/membership/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
-Route::get('/membership/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
-Route::post('/membership/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
-Route::get('/membership/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
-Route::get('/membership/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
+// Membership/Members Routes
+Route::prefix('members')->group(function () {
+    Route::get('/register', [MembershipController::class, 'registerForm'])->name('membership.register');
+    Route::post('/register', [MembershipController::class, 'store'])->name('membership.store');
+    Route::get('/verify', [MembershipController::class, 'verifyForm'])->name('membership.verifyForm');
+    Route::post('/verify', [MembershipController::class, 'verify'])->name('membership.verify');
+    Route::get('/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
+    Route::get('/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
+    Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
+    Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
+    Route::post('/portal/post', [MembershipController::class, 'storeStudentPost'])->name('membership.storeStudentPost');
+    Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
+    Route::post('/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
+    Route::get('/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
+    Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
+});
 
 // Events & News
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
@@ -76,6 +81,9 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact.index
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Admin Auth Routes
+Route::get('/admin', function () {
+    return redirect()->route('admin.login');
+});
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
