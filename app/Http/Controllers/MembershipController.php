@@ -135,11 +135,43 @@ class MembershipController extends Controller
 
         $medicalClaims = \App\Models\MedicalReliefClaim::where('member_id', $memberId)->get();
         
+        // Fetch all news/notices & student updates as a social feed
+        $posts = \App\Models\News::orderBy('created_at', 'desc')->get();
+        
         // Mock data for dashboard overview requirements
         $totalFeesPaid = 250;
         $paymentsCount = 1;
 
-        return view('membership.portal_dashboard', compact('member', 'medicalClaims', 'totalFeesPaid', 'paymentsCount'));
+        return view('membership.portal_dashboard', compact('member', 'medicalClaims', 'totalFeesPaid', 'paymentsCount', 'posts'));
+    }
+
+    public function storeStudentPost(Request $request)
+    {
+        $memberId = session('member_id');
+        if (!$memberId) {
+            return redirect()->route('membership.portal');
+        }
+
+        $member = Member::find($memberId);
+        if (!$member) {
+            return redirect()->route('membership.portal');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+            'category' => 'nullable|string',
+        ]);
+
+        \App\Models\News::create([
+            'title' => 'Update from ' . $member->full_name,
+            'category' => $validated['category'] ?? 'General',
+            'content' => $validated['content'],
+            'author' => $member->full_name,
+            'date' => now()->toDateString(),
+            'is_important' => false,
+        ]);
+
+        return back()->with('success', 'Your update has been shared with the student feed! 🚀');
     }
 
     public function submitMedicalClaim(Request $request)

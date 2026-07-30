@@ -188,15 +188,195 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
-                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-bullhorn text-warning me-2"></i> KSO Student Notices & Resources</h5>
-                @foreach(\App\Models\News::take(3)->get() as $n)
-                    <div class="p-2 border-bottom extra-small">
-                        <div class="fw-bold text-dark">{{ $n->title }}</div>
-                        <div class="text-muted">{{ $n->content }}</div>
-                        <small class="text-primary fw-semibold">{{ $n->date ? $n->date->format('Y-m-d') : '' }}</small>
+            <!-- ─── CAMPUS SOCIAL FEED (SOCIAL APP STYLE) ─── -->
+            <div class="social-feed-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-square-rss text-primary me-2"></i> KSO Campus Social Feed</h5>
+                    <span class="badge bg-success-lt text-success rounded-pill px-3 py-1 extra-small"><i class="fa-solid fa-circle me-1 animate-pulse"></i> Feed Live</span>
+                </div>
+
+                <!-- Create Post Section -->
+                <div class="share-update-card" x-data="{ selectedCategory: 'Discussion' }">
+                    <form action="{{ route('membership.storeStudentPost') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="category" :value="selectedCategory">
+                        
+                        <div class="share-input-row">
+                            <div class="social-avatar-container shadow-sm">
+                                <img src="{{ asset($member->photo) }}" onerror="this.src='/images/default-avatar-m.png'">
+                            </div>
+                            <div class="flex-grow-1">
+                                <textarea name="content" class="share-textarea" placeholder="What's on your mind, {{ explode(' ', $member->full_name)[0] }}? Share admission info, hosteling tips, or discussion posts..." rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="share-actions-row">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <span class="extra-small text-muted fw-bold me-1">Tag with:</span>
+                                <button type="button" @click="selectedCategory = 'Discussion'" :class="selectedCategory === 'Discussion' ? 'active' : ''" class="share-tag-pill">#Discussion</button>
+                                <button type="button" @click="selectedCategory = 'Housing'" :class="selectedCategory === 'Housing' ? 'active' : ''" class="share-tag-pill">#Housing</button>
+                                <button type="button" @click="selectedCategory = 'Admission'" :class="selectedCategory === 'Admission' ? 'active' : ''" class="share-tag-pill">#Admission</button>
+                                <button type="button" @click="selectedCategory = 'CampusLife'" :class="selectedCategory === 'CampusLife' ? 'active' : ''" class="share-tag-pill">#CampusLife</button>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary rounded-pill btn-sm px-4 fw-bold">
+                                    Share <i class="fa-solid fa-paper-plane ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Posts List -->
+                @if($posts->count() == 0)
+                    <div class="empty-state-card">
+                        <div class="empty-icon"><i class="fa-solid fa-feed"></i></div>
+                        <h6 class="fw-bold text-dark">No updates shared yet</h6>
+                        <p class="text-muted extra-small">Be the first to share an update or start a discussion with fellow students!</p>
                     </div>
-                @endforeach
+                @else
+                    @foreach($posts as $post)
+                        @php
+                            // Check if official notice or student post
+                            $isOfficial = ($post->category === 'Notice' || $post->category === 'Announcement' || $post->author === 'Executive Desk');
+                            
+                            // Generate mock dynamic likes count (seeded by post ID)
+                            $baseLikes = ($post->id * 7 + 13) % 43;
+                        @endphp
+                        
+                        <div class="social-post-card" x-data="{ 
+                            liked: localStorage.getItem('post_liked_' + {{ $post->id }}) === 'true', 
+                            likesCount: {{ $baseLikes }},
+                            commentsOpen: false,
+                            comments: [
+                                { author: 'Welfare Cell', text: 'Please reach out to the KSO helpline if anyone needs direct assistance! 📞' },
+                                { author: 'MCM Student', text: 'This is extremely helpful for us newcomers, thank you KSO!' }
+                            ],
+                            newComment: '',
+                            toggleLike() {
+                                this.liked = !this.liked;
+                                localStorage.setItem('post_liked_' + {{ $post->id }}, this.liked);
+                                if (this.liked) {
+                                    this.likesCount++;
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'You liked this post!',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                } else {
+                                    this.likesCount--;
+                                }
+                            },
+                            addComment() {
+                                if (this.newComment.trim() === '') return;
+                                this.comments.push({
+                                    author: '{{ explode(' ', $member->full_name)[0] }} (You)',
+                                    text: this.newComment
+                                });
+                                this.newComment = '';
+                            },
+                            sharePost() {
+                                navigator.clipboard.writeText(window.location.origin + '/members/portal?post=' + {{ $post->id }});
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Post link copied to clipboard!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                        }">
+                            
+                            <!-- Post Header -->
+                            <div class="social-header">
+                                <div class="social-author-info">
+                                    <div class="social-avatar-container shadow-sm border-{{ $isOfficial ? 'warning' : 'primary' }}">
+                                        @if($isOfficial)
+                                            <img src="{{ asset('images/kso-logo.jpg') }}" onerror="this.src='/images/default-avatar-m.png'">
+                                        @else
+                                            <img src="/images/default-avatar-m.png" onerror="this.src='/images/default-avatar-m.png'">
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <div class="social-author-name">
+                                            {{ $post->author }}
+                                            @if($isOfficial)
+                                                <span class="social-author-badge official"><i class="fa-solid fa-crown me-1 text-warning"></i> KSO Official</span>
+                                            @else
+                                                <span class="social-author-badge"><i class="fa-solid fa-user-graduate me-1 text-teal"></i> Member</span>
+                                            @endif
+                                        </div>
+                                        <span class="social-post-time">
+                                            <i class="fa-regular fa-clock me-1"></i>
+                                            @if($post->created_at)
+                                                {{ $post->created_at->diffForHumans() }}
+                                            @else
+                                                {{ $post->date ? $post->date->format('Y-m-d') : 'Recently' }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <span class="badge bg-primary-lt text-primary px-3 py-1 rounded-pill extra-small">
+                                    #{{ $post->category }}
+                                </span>
+                            </div>
+
+                            <!-- Post Body -->
+                            <div class="social-body">
+                                <p class="mb-0">
+                                    {!! preg_replace('/(#\w+)/', '<span class="text-teal fw-bold">$1</span>', e($post->content)) !!}
+                                </p>
+                            </div>
+
+                            <!-- Post Actions -->
+                            <div class="social-actions">
+                                <button class="social-action-btn" :class="liked ? 'liked' : ''" @click="toggleLike()">
+                                    <i class="fa-solid fa-heart"></i>
+                                    <span x-text="likesCount"></span> Likes
+                                </button>
+                                
+                                <button class="social-action-btn" @click="commentsOpen = !commentsOpen">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                    <span x-text="comments.length"></span> Comments
+                                </button>
+                                
+                                <button class="social-action-btn" @click="sharePost()">
+                                    <i class="fa-solid fa-share-nodes"></i> Share
+                                </button>
+                            </div>
+
+                            <!-- Comments Drawer -->
+                            <div class="social-comments-drawer" x-show="commentsOpen" x-transition x-cloak>
+                                <div class="social-comment-thread">
+                                    <template x-for="comment in comments">
+                                        <div class="social-comment-item">
+                                            <div class="comment-avatar bg-light d-flex align-items-center justify-content-center text-primary fw-bold" style="font-size: 0.7rem;">
+                                                <i class="fa-solid fa-user"></i>
+                                            </div>
+                                            <div class="comment-bubble shadow-sm">
+                                                <div class="comment-author-name" x-text="comment.author"></div>
+                                                <div class="comment-text" x-text="comment.text"></div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="comment-form-container">
+                                    <input type="text" class="comment-input-field form-control" placeholder="Write a comment..." x-model="newComment" @keyup.enter="addComment()">
+                                    <button class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" @click="addComment()">
+                                        <i class="fa-solid fa-paper-plane" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    @endforeach
+                @endif
             </div>
 
             <div class="card shadow-sm border-0 rounded-4 p-4 mt-4 bg-white">
