@@ -1249,3 +1249,131 @@ a.btn.rounded-pill:hover {
     border-color: var(--accent);
 }
 
+/* ─── Premium Admin CMS Sidebar & Layout ─── */
+.w-sidebar {
+    width: 270px !important;
+}
+
+.w-icon-sidebar {
+    width: 80px !important;
+}
+
+.admin-sidebar {
+    background: #090e1a !important; /* Deep space dark space */
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.admin-sidebar-header {
+    background: #060a12 !important;
+    padding: 1.15rem 1rem;
+    border-bottom: 3px solid var(--amber-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.admin-sidebar-header .brand-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: var(--amber-gold) !important;
+    font-size: 1rem;
+}
+
+.admin-nav-item {
+    padding: 0 0.85rem;
+    margin-bottom: 0.2rem;
+    list-style-type: none;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 10px;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    gap: 0.75rem;
+}
+
+.admin-nav-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--accent);
+    transition: var(--transition-smooth);
+}
+
+.admin-nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
+}
+
+.admin-nav-link:hover i {
+    color: var(--amber-gold);
+    transform: scale(1.15) rotate(5deg);
+}
+
+.admin-nav-link.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(13, 148, 136, 0.25);
+}
+
+.admin-nav-link.active i {
+    color: #fff !important;
+}
+
+.admin-section-divider {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 1px;
+    padding: 1.25rem 1.85rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-section-divider::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.admin-topbar {
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-main-container {
+    height: calc(100vh - 72px);
+    overflow-y: auto;
+    background: var(--bg-body);
+}
+
+/* Custom Scrollbar for Sidebar Nav */
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+
