@@ -56,6 +56,7 @@ Route::prefix('members')->group(function () {
     Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
     Route::post('/portal/post', [MembershipController::class, 'storeStudentPost'])->name('membership.storeStudentPost');
+    Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
     Route::post('/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
     Route::get('/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
