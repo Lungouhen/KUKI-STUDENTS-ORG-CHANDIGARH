@@ -4,6 +4,11 @@
 
 @section('content')
 
+@php
+    $sidebarAds = \App\Models\Advertisement::getActiveByPlacement('Portal_Sidebar');
+    $feedAds = \App\Models\Advertisement::getActiveByPlacement('Feed_Banner');
+@endphp
+
 <div class="bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1">Welcome, {{ $member->full_name }}!</h2>
@@ -75,6 +80,23 @@
                 <p class="extra-small text-muted">Upcoming executive body elections for the next term.</p>
                 <button class="btn btn-sm btn-outline-primary rounded-pill w-100" disabled>No Active Elections</button>
             </div>
+
+            <!-- ─── STUDENT SPONSORS (AD SYSTEM) ─── -->
+            @if($sidebarAds->count() > 0)
+                @foreach($sidebarAds as $ad)
+                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-4 bg-white p-0 text-start hover-lift">
+                        <div class="position-relative">
+                            <img src="{{ $ad->image_url }}" class="img-fluid w-100" style="height: 150px; object-fit: cover;">
+                            <span class="position-absolute top-0 end-0 m-2 badge bg-success text-white fw-bold extra-small" style="font-size: 0.65rem;"><i class="fa-solid fa-bullhorn me-1"></i> Sponsored</span>
+                        </div>
+                        <div class="p-3">
+                            <small class="text-muted extra-small fw-bold text-uppercase">{{ $ad->company_name }}</small>
+                            <h6 class="fw-bold text-dark mt-1 mb-2" style="font-size: 0.85rem;">{{ $ad->title }}</h6>
+                            <a href="{{ route('ads.click', $ad->id) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill w-100 extra-small fw-bold">Learn More <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 0.7rem;"></i></a>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
 
         <div class="col-lg-8">
@@ -414,6 +436,36 @@
                             </div>
 
                         </div>
+
+                        <!-- Interleaved Feed Banner Ad (after first post) -->
+                        @if($loop->first && $feedAds->count() > 0)
+                            @foreach($feedAds as $ad)
+                                <div class="social-post-card overflow-hidden hover-lift border-warning-lt" style="border-left: 4px solid var(--amber-gold);">
+                                    <div class="social-header py-2 bg-light bg-opacity-50">
+                                        <div class="social-author-info">
+                                            <div class="social-avatar-container shadow-sm border-warning d-flex align-items-center justify-content-center bg-warning-lt" style="width: 32px; height: 32px;">
+                                                <i class="fa-solid fa-rectangle-ad fs-6 text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <div class="social-author-name text-dark" style="font-size: 0.82rem;">
+                                                    {{ $ad->company_name }} <span class="badge bg-success text-white fw-bold ms-1" style="font-size: 0.6rem;"><i class="fa-solid fa-circle-nodes"></i> Sponsored Partner</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="social-body pb-2">
+                                        <h6 class="fw-bold text-dark mb-2" style="font-size: 0.95rem;">{{ $ad->title }}</h6>
+                                        <div class="rounded-3 overflow-hidden border">
+                                            <img src="{{ $ad->image_url }}" class="img-fluid w-100" style="max-height: 240px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-light bg-opacity-25 d-flex align-items-center justify-content-between border-top">
+                                        <span class="extra-small text-muted fw-bold">KSO Chandigarh Trusted Student Sponsor Partner</span>
+                                        <a href="{{ route('ads.click', $ad->id) }}" target="_blank" class="btn btn-sm btn-primary rounded-pill px-4 fw-bold shadow-sm">Visit Sponsor <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 0.75rem;"></i></a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
                     @endforeach
                 @endif
             </div>

@@ -43,6 +43,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
+Route::get('/ads/{id}/click', [HomeController::class, 'clickAd'])->name('ads.click');
 
 // Membership/Members Routes
 Route::prefix('members')->group(function () {
