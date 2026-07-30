@@ -328,9 +328,48 @@
 
                             <!-- Post Body -->
                             <div class="social-body">
-                                <p class="mb-0">
-                                    {!! preg_replace('/(#\w+)/', '<span class="text-teal fw-bold">$1</span>', e($post->content)) !!}
-                                </p>
+                                @php
+                                    $rawContent = $post->content;
+                                    
+                                    // 1. Identify and extract YouTube URL if present
+                                    $ytId = null;
+                                    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/i', $rawContent, $ytMatch)) {
+                                        $ytId = $ytMatch[1];
+                                    }
+                                    
+                                    // 2. Identify and extract direct Image URL if present
+                                    $imgUrl = null;
+                                    if (preg_match('/(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp))/i', $rawContent, $imgMatch)) {
+                                        $imgUrl = $imgMatch[1];
+                                    }
+                                    
+                                    // 3. Escape and format text content
+                                    $formattedContent = e($rawContent);
+                                    
+                                    // 4. Colorize Hashtags
+                                    $formattedContent = preg_replace('/(#\w+)/', '<span class="text-teal fw-bold">$1</span>', $formattedContent);
+                                    
+                                    // 5. Convert URLs to clickable links
+                                    $formattedContent = preg_replace_callback('/(https?:\/\/[^\s]+)/i', function($matches) {
+                                        $url = $matches[1];
+                                        return '<a href="' . $url . '" target="_blank" class="text-primary fw-semibold text-decoration-underline">' . (strlen($url) > 45 ? substr($url, 0, 42) . '...' : $url) . '</a>';
+                                    }, $formattedContent);
+                                @endphp
+                                
+                                <p class="mb-0">{!! $formattedContent !!}</p>
+                                
+                                <!-- Render Auto-Embedded Media (Images / Videos) -->
+                                @if($imgUrl)
+                                    <div class="mt-3 rounded-4 overflow-hidden border shadow-sm" style="max-height: 350px;">
+                                        <img src="{{ $imgUrl }}" class="w-100 h-100" style="object-fit: cover; max-height: 350px;" alt="Attached Image" onerror="this.style.display='none'">
+                                    </div>
+                                @endif
+                                
+                                @if($ytId)
+                                    <div class="mt-3 rounded-4 overflow-hidden border shadow-sm ratio ratio-16x9">
+                                        <iframe src="https://www.youtube.com/embed/{{ $ytId }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Post Actions -->
