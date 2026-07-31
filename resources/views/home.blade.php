@@ -36,7 +36,7 @@
                 <div class="icon-circle bg-primary-lt mx-auto mb-3 text-primary fs-3">
                     <i class="fa-solid fa-users"></i>
                 </div>
-                <h3 class="fw-bold text-primary mb-1">{{ $stats['membersCount'] }}+</h3>
+                <h3 class="fw-bold text-primary mb-1"><span class="counter">{{ $stats['membersCount'] }}</span><span>+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Active Members</p>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <div class="icon-circle bg-success-lt mx-auto mb-3 text-success fs-3">
                     <i class="fa-solid fa-university"></i>
                 </div>
-                <h3 class="fw-bold text-success mb-1">{{ $stats['collegesCount'] }}+</h3>
+                <h3 class="fw-bold text-success mb-1"><span class="counter">{{ $stats['collegesCount'] }}</span><span>+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Colleges & Universities</p>
             </div>
         </div>
@@ -54,7 +54,7 @@
                 <div class="icon-circle bg-warning-lt mx-auto mb-3 text-warning fs-3">
                     <i class="fa-solid fa-calendar-days"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">{{ $stats['eventsCount'] }}+</h3>
+                <h3 class="fw-bold text-dark mb-1"><span class="counter">{{ $stats['eventsCount'] }}</span><span>+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Annual Events Held</p>
             </div>
         </div>
@@ -67,6 +67,45 @@
                 <p class="text-muted small mb-0 fw-semibold">Emergency Helpline</p>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Swiper Slider Demo -->
+<div class="container my-5">
+    <h3 class="fw-black text-center mb-4">Moments & Highlights <span class="text-primary">Swiper JS</span></h3>
+    <div class="swiper" style="padding-bottom: 40px;">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/003566/ffffff?text=KSO+Event'">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Cultural Extravaganza</h5>
+                        <p class="small text-muted mb-0">Chavang Kut 2025 — Preserving heritage.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/0d9488/ffffff?text=Student+Life'">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Student Life</h5>
+                        <p class="small text-muted mb-0">Hostel & Accommodation Desk.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/d97706/ffffff?text=Emergency+Relief'">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Emergency Relief</h5>
+                        <p class="small text-muted mb-0">24/7 Support Cell for students.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
 </div>
 

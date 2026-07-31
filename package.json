@@ -16,7 +16,15 @@
         "apexcharts": "^6.5.0",
         "bootstrap": "^5.3.8",
         "choices.js": "^11.2.3",
+        "counterup": "^1.0.2",
         "filepond": "^4.32.12",
-        "sweetalert2": "^11.26.25"
+        "imagesloaded": "^5.0.0",
+        "jquery": "^3.7.1",
+        "lightgallery": "^2.9.0",
+        "magnific-popup": "^1.2.0",
+        "masonry-layout": "^4.2.2",
+        "sweetalert2": "^11.26.25",
+        "swiper": "^14.0.7",
+        "waypoints": "^4.0.1"
     }
 }

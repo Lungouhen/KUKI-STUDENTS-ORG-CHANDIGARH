@@ -29,7 +29,7 @@
 
     @stack('styles')
 </head>
-<body class="bg-light" x-data="{ 
+<body :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
     sidebarOpen: true,
     darkMode: localStorage.getItem('theme') === 'dark',
     toggleTheme() {
@@ -68,7 +68,7 @@
 
                     <!-- 1. Content Manager Folder -->
                     <li class="admin-nav-item">
-                        <button @click="contentOpen = !contentOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="contentOpen ? 'open' : ''">
+                        <button type="button" @click="contentOpen = !contentOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="contentOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-folder-open"></i> <span x-show="sidebarOpen">Content Manager</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
@@ -133,7 +133,7 @@
 
                     <!-- 2. Member Control Folder -->
                     <li class="admin-nav-item">
-                        <button @click="membersOpen = !membersOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="membersOpen ? 'open' : ''">
+                        <button type="button" @click="membersOpen = !membersOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="membersOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-user-gear"></i> <span x-show="sidebarOpen">Member Control</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
@@ -163,7 +163,7 @@
 
                     <!-- 3. NGO & People Folder -->
                     <li class="admin-nav-item">
-                        <button @click="ngoOpen = !ngoOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="ngoOpen ? 'open' : ''">
+                        <button type="button" @click="ngoOpen = !ngoOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="ngoOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-hands-holding-child"></i> <span x-show="sidebarOpen">NGO & People</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
@@ -188,7 +188,7 @@
 
                     <!-- 4. Financial Ledger Folder -->
                     <li class="admin-nav-item">
-                        <button @click="financeOpen = !financeOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="financeOpen ? 'open' : ''">
+                        <button type="button" @click="financeOpen = !financeOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="financeOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-sack-dollar"></i> <span x-show="sidebarOpen">Financial Ledger</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
@@ -213,7 +213,7 @@
 
                     <!-- 5. System Settings Folder -->
                     <li class="admin-nav-item">
-                        <button @click="settingsOpen = !settingsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="settingsOpen ? 'open' : ''">
+                        <button type="button" @click="settingsOpen = !settingsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="settingsOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-sliders"></i> <span x-show="sidebarOpen">System Settings</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
@@ -248,7 +248,7 @@
 
                     <!-- 6. Election & Logs Folder -->
                     <li class="admin-nav-item">
-                        <button @click="electionsOpen = !electionsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="electionsOpen ? 'open' : ''">
+                        <button type="button" @click="electionsOpen = !electionsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="electionsOpen ? 'open' : ''">
                             <span><i class="fa-solid fa-check-to-slot"></i> <span x-show="sidebarOpen">Election & Logs</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
