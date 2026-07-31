@@ -12,11 +12,13 @@
 </div>
 
 <div class="container my-4">
-    <div class="row g-4">
+    <div class="masonry-grid" id="galleryGrid">
         @foreach($gallery as $g)
-            <div class="col-md-4 col-6">
+            <div class="masonry-item">
                 <div class="gallery-item shadow-sm border bg-white p-2 text-center">
-                    <img src="{{ asset($g->image_url) }}" class="img-fluid rounded gallery-img w-100" style="height: 200px; object-fit: cover;" alt="{{ $g->title }}" onerror="this.src='/images/gallery-1.jpg'">
+                    <a href="{{ asset($g->image_url) }}" class="popup-gallery d-block" title="{{ $g->title }}">
+                        <img src="{{ asset($g->image_url) }}" class="img-fluid rounded gal-img w-100" style="height: 200px; object-fit: cover;" alt="{{ $g->title }}" onerror="this.src='/images/gallery-1.jpg'">
+                    </a>
                     <div class="mt-2">
                         <h6 class="fw-bold text-dark mb-0 extra-small">{{ $g->title }}</h6>
                         <span class="badge bg-light text-muted extra-small">{{ $g->category }}</span>
