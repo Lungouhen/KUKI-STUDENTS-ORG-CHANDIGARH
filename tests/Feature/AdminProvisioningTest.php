@@ -38,7 +38,7 @@ class AdminProvisioningTest extends TestCase
         $passwordHash = Hash::make('existing account password');
         $existing = User::create([
             'name' => 'Existing Admin',
-            'email' => 'existing-admin@example.org',
+            'email' => 'EXISTING-ADMIN@example.org',
             'password' => $passwordHash,
             'is_admin' => true,
         ]);

@@ -22,7 +22,7 @@ class CreateAdminCommand extends Command
             return self::FAILURE;
         }
 
-        if (User::where('email', $email)->exists()) {
+        if (User::whereRaw('LOWER(email) = ?', [$email])->exists()) {
             $this->error('An account with this email already exists. Existing accounts are never changed.');
 
             return self::FAILURE;
