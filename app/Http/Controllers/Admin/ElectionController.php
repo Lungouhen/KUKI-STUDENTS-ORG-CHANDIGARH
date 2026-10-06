@@ -9,6 +9,7 @@ use App\Models\Candidate;
 use App\Models\Term;
 use App\Models\Member;
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\DB;
 
 class ElectionController extends Controller
 {
@@ -57,10 +58,22 @@ class ElectionController extends Controller
 
     public function updateVotes(Request $request, $candidateId)
     {
-        $candidate = Candidate::findOrFail($candidateId);
-        $candidate->votes_received = $request->input('votes', 0);
-        $candidate->save();
+        $validated = $request->validate([
+            'votes' => 'required|integer|min:0|max:2147483647',
+        ]);
 
-        return back()->with('success', 'Votes updated.');
+        DB::transaction(function () use ($candidateId, $validated) {
+            $candidate = Candidate::whereKey($candidateId)->lockForUpdate()->firstOrFail();
+            $previousVotes = $candidate->votes_received;
+            $candidate->votes_received = $validated['votes'];
+            $candidate->save();
+
+            AuditLog::log(
+                'ELECTION_VOTES_UPDATED',
+                "Candidate #{$candidate->id} in election #{$candidate->election_id}: {$previousVotes} to {$candidate->votes_received} votes."
+            );
+        });
+
+        return back()->with('success', 'Votes updated and audit logged.');
     }
 }
