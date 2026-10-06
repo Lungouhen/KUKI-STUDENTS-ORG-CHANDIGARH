@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Page;
 use App\Models\AuditLog;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
@@ -42,6 +43,7 @@ class PageController extends Controller
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
+            'template' => ['required', 'string', Rule::in(array_keys(config('page_templates')))],
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
             'is_published' => 'sometimes|boolean',
@@ -52,12 +54,16 @@ class PageController extends Controller
             'slug' => $this->uniqueSlug($validated['title']),
             'excerpt' => $validated['excerpt'] ?? null,
             'content' => $validated['content'],
+            'template' => $validated['template'],
             'meta_title' => $validated['meta_title'] ?? $validated['title'],
             'meta_description' => $validated['meta_description'] ?? null,
             'is_published' => $request->boolean('is_published'),
         ]);
 
-        AuditLog::log('CREATE_PAGE', "Page title: {$validated['title']}");
+        AuditLog::log('CREATE_PAGE', [
+            'title' => $validated['title'],
+            'template' => $validated['template'],
+        ]);
 
         return redirect()->route('admin.pages.index')->with('success', 'Page created successfully.');
     }
@@ -75,6 +81,7 @@ class PageController extends Controller
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
+            'template' => ['required', 'string', Rule::in(array_keys(config('page_templates')))],
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
             'is_published' => 'sometimes|boolean',
@@ -83,14 +90,21 @@ class PageController extends Controller
         $validated['is_published'] = $request->boolean('is_published');
         $page->update($validated);
 
-        AuditLog::log('UPDATE_PAGE', "Page title: {$page->title}");
+        AuditLog::log('UPDATE_PAGE', [
+            'title' => $page->title,
+            'template' => $page->template,
+        ]);
 
         return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully.');
     }
 
     public function destroy($id)
     {
-        Page::findOrFail($id)->delete();
+        $page = Page::findOrFail($id);
+        $title = $page->title;
+        $page->delete();
+        AuditLog::log('DELETE_PAGE', ['title' => $title]);
+
         return back()->with('success', 'Page deleted.');
     }
 

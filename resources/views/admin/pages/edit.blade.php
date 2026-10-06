@@ -26,6 +26,22 @@
                 <label class="form-label fw-bold">Page Content (HTML allowed)</label>
                 <textarea name="content" class="form-control" rows="12" required>{{ old('content', $page->content) }}</textarea>
             </div>
+            <div class="col-12">
+                <fieldset>
+                    <legend class="form-label fw-bold">Choose a page template</legend>
+                    <div class="row g-3">
+                        @foreach(config('page_templates') as $key => $template)
+                            <div class="col-sm-6 col-xl-3">
+                                <input class="btn-check" type="radio" name="template" id="template-{{ $key }}" value="{{ $key }}" @checked(old('template', $page->template ?? 'standard') === $key) required>
+                                <label class="btn btn-outline-primary text-start w-100 h-100 p-3" for="template-{{ $key }}">
+                                    <span class="d-block fw-bold">{{ $template['name'] }}</span>
+                                    <span class="d-block small mt-2">{{ $template['description'] }}</span>
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                </fieldset>
+            </div>
             <div class="col-md-6">
                 <label class="form-label fw-bold">Meta Title (SEO)</label>
                 <input type="text" name="meta_title" class="form-control" value="{{ old('meta_title', $page->meta_title) }}">
