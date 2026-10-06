@@ -101,6 +101,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
     Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}/preview', [AdminPageController::class, 'preview'])->name('pages.preview');
     Route::get('/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');

@@ -4,6 +4,12 @@
 
 @section('content')
 
+@if($isPreview ?? false)
+    <div class="alert alert-warning rounded-0 mb-0 text-center" role="status">
+        Preview only — this page is not publicly available until it is published.
+    </div>
+@endif
+
 <div class="bg-primary text-white py-5 mb-5">
     <div class="container text-center">
         <h1 class="fw-black display-5 mb-2">{{ $page->title }}</h1>

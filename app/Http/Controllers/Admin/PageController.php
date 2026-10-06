@@ -12,8 +12,23 @@ class PageController extends Controller
 {
     public function index()
     {
-        $pages = Page::orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.pages.index', compact('pages'));
+        $status = request()->query('status', 'all');
+        if (! in_array($status, ['all', 'published', 'draft'], true)) {
+            $status = 'all';
+        }
+
+        $pages = Page::when($status !== 'all', function ($query) use ($status) {
+            $query->where('is_published', $status === 'published');
+        })->orderByDesc('updated_at')->paginate(10)->withQueryString();
+
+        return view('admin.pages.index', compact('pages', 'status'));
+    }
+
+    public function preview($id)
+    {
+        $page = Page::findOrFail($id);
+
+        return view('pages.show', ['page' => $page, 'isPreview' => true]);
     }
 
     public function create()
@@ -29,19 +44,17 @@ class PageController extends Controller
             'content' => 'required|string',
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
-            'is_published' => 'boolean',
+            'is_published' => 'sometimes|boolean',
         ]);
-
-        $slug = Str::slug($validated['title']);
 
         Page::create([
             'title' => $validated['title'],
-            'slug' => $slug,
+            'slug' => $this->uniqueSlug($validated['title']),
             'excerpt' => $validated['excerpt'] ?? null,
             'content' => $validated['content'],
             'meta_title' => $validated['meta_title'] ?? $validated['title'],
             'meta_description' => $validated['meta_description'] ?? null,
-            'is_published' => $request->has('is_published'),
+            'is_published' => $request->boolean('is_published'),
         ]);
 
         AuditLog::log('CREATE_PAGE', "Page title: {$validated['title']}");
@@ -64,9 +77,10 @@ class PageController extends Controller
             'content' => 'required|string',
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
+            'is_published' => 'sometimes|boolean',
         ]);
 
-        $validated['is_published'] = $request->has('is_published');
+        $validated['is_published'] = $request->boolean('is_published');
         $page->update($validated);
 
         AuditLog::log('UPDATE_PAGE', "Page title: {$page->title}");
@@ -78,5 +92,20 @@ class PageController extends Controller
     {
         Page::findOrFail($id)->delete();
         return back()->with('success', 'Page deleted.');
+    }
+
+    private function uniqueSlug(string $title): string
+    {
+        $base = trim(substr(Str::slug($title), 0, 240), '-');
+        $base = $base !== '' ? $base : 'page';
+        $slug = $base;
+        $suffix = 2;
+
+        while (Page::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $suffix;
+            $suffix++;
+        }
+
+        return $slug;
     }
 }
