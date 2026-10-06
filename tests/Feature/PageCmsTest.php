@@ -105,13 +105,76 @@ class PageCmsTest extends TestCase
             'title' => 'Revised title',
             'content' => 'Updated content',
             'is_published' => '1',
+            'template' => 'wide',
         ])->assertRedirect(route('admin.pages.index'));
 
         $this->assertDatabaseHas('pages', [
             'id' => $page->id,
             'title' => 'Revised title',
             'slug' => 'stable-public-url',
+            'template' => 'wide',
             'is_published' => true,
         ]);
+    }
+
+    public function test_admin_can_select_and_render_a_builtin_page_template(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post(route('admin.pages.store'), [
+            'title' => 'Registration notice',
+            'content' => '<p>Applications are open.</p>',
+            'template' => 'notice',
+        ])->assertRedirect(route('admin.pages.index'));
+
+        $page = Page::where('slug', 'registration-notice')->firstOrFail();
+        $this->assertSame('notice', $page->template);
+
+        $this->get(route('page.show', $page->slug))
+            ->assertOk()
+            ->assertSee('NOTICE')
+            ->assertSee('Applications are open.', false);
+    }
+
+    public function test_unknown_template_is_rejected(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post(route('admin.pages.store'), [
+            'title' => 'Invalid template page',
+            'content' => 'Content',
+            'template' => '../admin/dashboard',
+        ])->assertSessionHasErrors('template');
+
+        $this->assertDatabaseMissing('pages', ['slug' => 'invalid-template-page']);
+    }
+
+    public function test_omitted_template_defaults_to_standard_and_existing_pages_can_still_be_updated(): void
+    {
+        $admin = $this->admin();
+        $page = Page::create([
+            'title' => 'Existing page',
+            'slug' => 'existing-page',
+            'content' => 'Original content',
+        ]);
+
+        $this->assertSame('standard', $page->fresh()->template);
+        $this->actingAs($admin)->put(route('admin.pages.update', $page->id), [
+            'title' => 'Existing page revised',
+            'content' => 'Revised content',
+        ])->assertRedirect(route('admin.pages.index'));
+
+        $this->assertSame('standard', $page->fresh()->template);
+    }
+
+    public function test_invalid_stored_template_falls_back_to_standard_view(): void
+    {
+        $page = Page::create([
+            'title' => 'Legacy page',
+            'slug' => 'legacy-page',
+            'content' => 'Legacy content',
+        ]);
+        $page->forceFill(['template' => '../admin/dashboard']);
+        $this->assertSame('pages.templates.standard', $page->templateView());
     }
 }

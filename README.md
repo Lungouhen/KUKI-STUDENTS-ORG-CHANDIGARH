@@ -35,6 +35,7 @@ An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki St
   - Gallery Photo Uploader CMS
   - Dynamic Page Builder (`/page/{slug}`)
   - Draft-first page editing, publication filters, and admin-only previews before publication; existing public page URLs stay stable when titles change.
+  - Built-in page layouts: standard article, landing page, notice, and wide content. Select a layout when creating or editing a page; existing pages default to the standard layout.
   - FAQ Manager
   - Testimonial Manager
   - Medical Emergency Claims Desk

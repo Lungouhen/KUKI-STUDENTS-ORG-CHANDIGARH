@@ -12,10 +12,10 @@
     </div>
 </header>
 
-<main class="container py-5">
+<section class="container py-5">
     <article class="row justify-content-center">
         <div class="col-lg-10 col-xl-9 fs-5 leading-relaxed">
             {!! $page->content !!}
         </div>
     </article>
-</main>
+</section>

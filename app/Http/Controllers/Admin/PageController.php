@@ -43,7 +43,7 @@ class PageController extends Controller
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
-            'template' => ['required', 'string', Rule::in(array_keys(config('page_templates')))],
+            'template' => ['sometimes', 'string', Rule::in(array_keys(config('page_templates')))],
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
             'is_published' => 'sometimes|boolean',
@@ -54,7 +54,7 @@ class PageController extends Controller
             'slug' => $this->uniqueSlug($validated['title']),
             'excerpt' => $validated['excerpt'] ?? null,
             'content' => $validated['content'],
-            'template' => $validated['template'],
+            'template' => $validated['template'] ?? 'standard',
             'meta_title' => $validated['meta_title'] ?? $validated['title'],
             'meta_description' => $validated['meta_description'] ?? null,
             'is_published' => $request->boolean('is_published'),
@@ -81,13 +81,14 @@ class PageController extends Controller
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
-            'template' => ['required', 'string', Rule::in(array_keys(config('page_templates')))],
+            'template' => ['sometimes', 'string', Rule::in(array_keys(config('page_templates')))],
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
             'is_published' => 'sometimes|boolean',
         ]);
 
         $validated['is_published'] = $request->boolean('is_published');
+        $validated['template'] ??= $page->template ?: 'standard';
         $page->update($validated);
 
         AuditLog::log('UPDATE_PAGE', [
