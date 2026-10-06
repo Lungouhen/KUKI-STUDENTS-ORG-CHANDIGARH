@@ -17,7 +17,7 @@ class FinancialController extends Controller
         $accounts = FinancialAccount::all();
         $type = $request->query('type');
         
-        $query = Transaction::with('account');
+        $query = Transaction::with(['account', 'targetAccount']);
         if ($type) {
             $query->where('type', $type);
         }
@@ -36,6 +36,7 @@ class FinancialController extends Controller
         $validated = $request->validate([
             'financial_account_id' => 'required|exists:financial_accounts,id',
             'type' => 'required|in:Income,Expense,Transfer',
+            'target_account_id' => 'required_if:type,Transfer|nullable|different:financial_account_id|exists:financial_accounts,id',
             'category' => 'required|string',
             'amount' => 'required|numeric|min:0.01',
             'transaction_date' => 'required|date',
@@ -55,13 +56,26 @@ class FinancialController extends Controller
         }
 
         DB::transaction(function () use ($validated, $voucherNo, $attachmentPath) {
-            $account = FinancialAccount::whereKey($validated['financial_account_id'])
+            $accountIds = array_unique(array_filter([
+                (int) $validated['financial_account_id'],
+                isset($validated['target_account_id']) ? (int) $validated['target_account_id'] : null,
+            ]));
+            $accounts = FinancialAccount::whereIn('id', $accountIds)
+                ->orderBy('id')
                 ->lockForUpdate()
-                ->firstOrFail();
+                ->get()
+                ->keyBy('id');
+            $account = $accounts->get((int) $validated['financial_account_id']);
+            $targetAccount = isset($validated['target_account_id'])
+                ? $accounts->get((int) $validated['target_account_id'])
+                : null;
+
+            abort_unless($account && (! isset($validated['target_account_id']) || $targetAccount), 404);
 
             Transaction::create([
                 'voucher_no' => $voucherNo,
                 'financial_account_id' => $account->id,
+                'target_account_id' => $targetAccount?->id,
                 'type' => $validated['type'],
                 'category' => $validated['category'],
                 'amount' => $validated['amount'],
@@ -78,9 +92,16 @@ class FinancialController extends Controller
                 $account->increment('current_balance', $validated['amount']);
             } elseif ($validated['type'] === 'Expense') {
                 $account->decrement('current_balance', $validated['amount']);
+            } elseif ($validated['type'] === 'Transfer') {
+                $account->decrement('current_balance', $validated['amount']);
+                $targetAccount->increment('current_balance', $validated['amount']);
             }
 
-            AuditLog::log('CREATE_TRANSACTION', "Voucher: {$voucherNo}, Amount: ₹{$validated['amount']}, Type: {$validated['type']}");
+            $details = "Voucher: {$voucherNo}, Amount: ₹{$validated['amount']}, Type: {$validated['type']}";
+            if ($targetAccount) {
+                $details .= ", From: {$account->account_code}, To: {$targetAccount->account_code}";
+            }
+            AuditLog::log('CREATE_TRANSACTION', $details);
         });
 
         return back()->with('success', "Transaction voucher {$voucherNo} recorded successfully!");

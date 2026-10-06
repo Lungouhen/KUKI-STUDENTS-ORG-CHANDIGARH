@@ -12,6 +12,7 @@ class Transaction extends Model
     protected $fillable = [
         'voucher_no',
         'financial_account_id',
+        'target_account_id',
         'type',
         'category',
         'amount',
@@ -43,6 +44,11 @@ class Transaction extends Model
     public function account()
     {
         return $this->belongsTo(FinancialAccount::class, 'financial_account_id');
+    }
+
+    public function targetAccount()
+    {
+        return $this->belongsTo(FinancialAccount::class, 'target_account_id');
     }
 
     public function user()

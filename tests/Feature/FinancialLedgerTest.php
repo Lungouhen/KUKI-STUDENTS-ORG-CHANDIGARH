@@ -16,6 +16,7 @@ class FinancialLedgerTest extends TestCase
 
     private User $admin;
     private FinancialAccount $account;
+    private FinancialAccount $destination;
 
     protected function setUp(): void
     {
@@ -35,6 +36,14 @@ class FinancialLedgerTest extends TestCase
             'current_balance' => 100,
             'is_active' => true,
         ]);
+
+        $this->destination = FinancialAccount::create([
+            'account_code' => 'BANK-001',
+            'account_name' => 'Bank Account',
+            'account_type' => 'Asset',
+            'current_balance' => 20,
+            'is_active' => true,
+        ]);
     }
 
     public function test_voucher_types_apply_the_expected_account_balance_changes(): void
@@ -49,10 +58,26 @@ class FinancialLedgerTest extends TestCase
             ->assertRedirect();
         $this->assertEquals(115.25, (float) $this->account->fresh()->current_balance);
 
-        $this->post(route('admin.financial.storeTransaction'), $this->voucher('Transfer', '7.50'))
+        $this->post(route('admin.financial.storeTransaction'), $this->voucher('Transfer', '7.50', $this->destination->id))
             ->assertRedirect();
-        $this->assertEquals(115.25, (float) $this->account->fresh()->current_balance);
+        $this->assertEquals(107.75, (float) $this->account->fresh()->current_balance);
+        $this->assertEquals(27.50, (float) $this->destination->fresh()->current_balance);
         $this->assertSame(3, Transaction::count());
+        $this->assertSame($this->destination->id, Transaction::where('type', 'Transfer')->value('target_account_id'));
+    }
+
+    public function test_transfer_requires_a_distinct_destination_account(): void
+    {
+        $this->actingAs($this->admin)
+            ->post(route('admin.financial.storeTransaction'), $this->voucher('Transfer', '10.00'))
+            ->assertSessionHasErrors('target_account_id');
+
+        $this->post(route('admin.financial.storeTransaction'), $this->voucher('Transfer', '10.00', $this->account->id))
+            ->assertSessionHasErrors('target_account_id');
+
+        $this->assertSame(0, Transaction::count());
+        $this->assertEquals(100, (float) $this->account->fresh()->current_balance);
+        $this->assertEquals(20, (float) $this->destination->fresh()->current_balance);
     }
 
     public function test_failed_audit_write_rolls_back_voucher_and_balance_update(): void
@@ -73,11 +98,12 @@ class FinancialLedgerTest extends TestCase
         $this->assertEquals(100.00, (float) $this->account->fresh()->current_balance);
     }
 
-    private function voucher(string $type, string $amount): array
+    private function voucher(string $type, string $amount, ?int $targetAccountId = null): array
     {
         return [
             'financial_account_id' => $this->account->id,
             'type' => $type,
+            'target_account_id' => $targetAccountId,
             'category' => 'Membership Fee',
             'amount' => $amount,
             'transaction_date' => '2026-10-06',

@@ -62,10 +62,15 @@
                             @foreach($transactions as $t)
                                 <tr>
                                     <td class="fw-bold text-primary">{{ $t->voucher_no }}</td>
-                                    <td>{{ $t->account->account_name ?? 'General' }}</td>
+                                    <td>
+                                        {{ $t->account->account_name ?? 'General' }}
+                                        @if($t->targetAccount)
+                                            <span class="text-muted">→ {{ $t->targetAccount->account_name }}</span>
+                                        @endif
+                                    </td>
                                     <td><span class="badge bg-light text-dark">{{ $t->category }}</span></td>
-                                    <td><span class="badge {{ $t->type === 'Income' ? 'bg-success' : 'bg-danger' }}">{{ $t->type }}</span></td>
-                                    <td class="fw-bold {{ $t->type === 'Income' ? 'text-success' : 'text-danger' }}">₹{{ number_format($t->amount, 2) }}</td>
+                                    <td><span class="badge {{ $t->type === 'Income' ? 'bg-success' : ($t->type === 'Transfer' ? 'bg-primary' : 'bg-danger') }}">{{ $t->type }}</span></td>
+                                    <td class="fw-bold {{ $t->type === 'Income' ? 'text-success' : ($t->type === 'Transfer' ? 'text-primary' : 'text-danger') }}">₹{{ number_format($t->amount, 2) }}</td>
                                     <td>{{ $t->payer_payee_name ?? '-' }}</td>
                                     <td>{{ $t->transaction_date ? $t->transaction_date->format('Y-m-d') : '' }}</td>
                                 </tr>
@@ -87,8 +92,17 @@
             <form action="{{ route('admin.financial.storeTransaction') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Ledger Account</label>
-                    <select name="financial_account_id" class="form-select" required>
+                    <label class="form-label fw-bold" for="financial-account">Source Ledger Account</label>
+                    <select id="financial-account" name="financial_account_id" class="form-select" required>
+                        @foreach($accounts as $acc)
+                            <option value="{{ $acc->id }}">{{ $acc->account_name }} ({{ $acc->account_code }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="target-account">Destination Account (required for transfers)</label>
+                    <select id="target-account" name="target_account_id" class="form-select">
+                        <option value="">Not a transfer</option>
                         @foreach($accounts as $acc)
                             <option value="{{ $acc->id }}">{{ $acc->account_name }} ({{ $acc->account_code }})</option>
                         @endforeach
@@ -148,5 +162,22 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var type = document.querySelector('select[name="type"]');
+        var target = document.getElementById('target-account');
+
+        function updateTransferTarget() {
+            target.required = type.value === 'Transfer';
+            if (!target.required) target.value = '';
+        }
+
+        type.addEventListener('change', updateTransferTarget);
+        updateTransferTarget();
+    });
+</script>
+@endpush
 
 @endsection
