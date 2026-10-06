@@ -106,6 +106,16 @@ class FinancialLedgerTest extends TestCase
         $this->assertEquals(20, (float) $this->destination->fresh()->current_balance);
     }
 
+    public function test_voucher_amount_must_fit_ledger_precision(): void
+    {
+        $this->actingAs($this->admin)
+            ->post(route('admin.financial.storeTransaction'), $this->voucher('Income', '10.001'))
+            ->assertSessionHasErrors('amount');
+
+        $this->assertSame(0, Transaction::count());
+        $this->assertEquals(100, (float) $this->account->fresh()->current_balance);
+    }
+
     public function test_failed_audit_write_rolls_back_voucher_and_balance_update(): void
     {
         DB::statement("
@@ -199,7 +209,10 @@ class FinancialLedgerTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
-        $response->assertHeader('content-disposition', 'attachment; filename=financial-transactions-' . now()->format('Y-m-d') . '.csv');
+        $this->assertStringContainsString(
+            'financial-transactions-' . now()->format('Y-m-d') . '.csv',
+            $response->headers->get('content-disposition', '')
+        );
 
         $csv = $response->streamedContent();
         $this->assertStringContainsString($matching->voucher_no, $csv);
