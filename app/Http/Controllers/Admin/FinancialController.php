@@ -8,6 +8,7 @@ use App\Models\FinancialAccount;
 use App\Models\Transaction;
 use App\Models\AuditLog;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class FinancialController extends Controller
 {
@@ -53,30 +54,34 @@ class FinancialController extends Controller
             $attachmentPath = '/storage/' . $path;
         }
 
-        $tx = Transaction::create([
-            'voucher_no' => $voucherNo,
-            'financial_account_id' => $validated['financial_account_id'],
-            'type' => $validated['type'],
-            'category' => $validated['category'],
-            'amount' => $validated['amount'],
-            'transaction_date' => $validated['transaction_date'],
-            'payment_method' => $validated['payment_method'],
-            'reference_no' => $validated['reference_no'] ?? null,
-            'payer_payee_name' => $validated['payer_payee_name'] ?? null,
-            'narration' => $validated['narration'],
-            'attachment' => $attachmentPath,
-            'created_by' => auth()->id(),
-        ]);
+        DB::transaction(function () use ($validated, $voucherNo, $attachmentPath) {
+            $account = FinancialAccount::whereKey($validated['financial_account_id'])
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        // Update account balance
-        $acc = FinancialAccount::find($validated['financial_account_id']);
-        if ($validated['type'] === 'Income') {
-            $acc->increment('current_balance', $validated['amount']);
-        } elseif ($validated['type'] === 'Expense') {
-            $acc->decrement('current_balance', $validated['amount']);
-        }
+            Transaction::create([
+                'voucher_no' => $voucherNo,
+                'financial_account_id' => $account->id,
+                'type' => $validated['type'],
+                'category' => $validated['category'],
+                'amount' => $validated['amount'],
+                'transaction_date' => $validated['transaction_date'],
+                'payment_method' => $validated['payment_method'],
+                'reference_no' => $validated['reference_no'] ?? null,
+                'payer_payee_name' => $validated['payer_payee_name'] ?? null,
+                'narration' => $validated['narration'],
+                'attachment' => $attachmentPath,
+                'created_by' => auth()->id(),
+            ]);
 
-        AuditLog::log('CREATE_TRANSACTION', "Voucher: {$voucherNo}, Amount: ₹{$validated['amount']}, Type: {$validated['type']}");
+            if ($validated['type'] === 'Income') {
+                $account->increment('current_balance', $validated['amount']);
+            } elseif ($validated['type'] === 'Expense') {
+                $account->decrement('current_balance', $validated['amount']);
+            }
+
+            AuditLog::log('CREATE_TRANSACTION', "Voucher: {$voucherNo}, Amount: ₹{$validated['amount']}, Type: {$validated['type']}");
+        });
 
         return back()->with('success', "Transaction voucher {$voucherNo} recorded successfully!");
     }
