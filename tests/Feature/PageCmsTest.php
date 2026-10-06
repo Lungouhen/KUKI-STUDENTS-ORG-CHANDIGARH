@@ -68,6 +68,29 @@ class PageCmsTest extends TestCase
             ->assertRedirect(route('admin.login'));
     }
 
+    public function test_admin_can_filter_pages_by_publication_status(): void
+    {
+        $admin = $this->admin();
+        Page::create([
+            'title' => 'Published resource',
+            'slug' => 'published-resource',
+            'content' => 'Published content',
+            'is_published' => true,
+        ]);
+        Page::create([
+            'title' => 'Unpublished draft',
+            'slug' => 'unpublished-draft',
+            'content' => 'Draft content',
+            'is_published' => false,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.pages.index', ['status' => 'draft']))
+            ->assertOk()
+            ->assertSee('Unpublished draft')
+            ->assertDontSee('Published resource');
+    }
+
     public function test_editing_page_title_preserves_existing_public_slug(): void
     {
         $admin = $this->admin();

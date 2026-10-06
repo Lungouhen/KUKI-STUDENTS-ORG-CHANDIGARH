@@ -34,6 +34,7 @@ An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki St
   - Executive Body Directory CMS
   - Gallery Photo Uploader CMS
   - Dynamic Page Builder (`/page/{slug}`)
+  - Draft-first page editing, publication filters, and admin-only previews before publication; existing public page URLs stay stable when titles change.
   - FAQ Manager
   - Testimonial Manager
   - Medical Emergency Claims Desk
