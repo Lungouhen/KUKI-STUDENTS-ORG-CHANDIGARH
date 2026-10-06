@@ -108,6 +108,20 @@ class MedicalReliefWorkflowTest extends TestCase
         $this->assertEquals(500, (float) $this->reliefFund->fresh()->current_balance);
     }
 
+    public function test_approved_claim_displays_its_immutable_amount_for_disbursement(): void
+    {
+        $this->claim->update([
+            'status' => 'Approved',
+            'amount_approved' => 250,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.medical.index'))
+            ->assertOk()
+            ->assertSee('value="250.00"', false)
+            ->assertSee('readonly', false);
+    }
+
     public function test_missing_relief_fund_does_not_save_an_approval(): void
     {
         $this->reliefFund->delete();

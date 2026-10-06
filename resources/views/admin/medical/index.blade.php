@@ -36,7 +36,7 @@
                             <td>
                                 <form action="{{ route('admin.medical.updateStatus', $c->id) }}" method="POST" class="d-inline-flex gap-1">
                                     @csrf
-                                    <input type="number" name="amount_approved" value="{{ $c->amount_requested }}" class="form-control form-control-sm" style="width:90px;">
+                                    <input type="number" name="amount_approved" value="{{ in_array($c->status, ['Approved', 'Disbursed'], true) ? $c->amount_approved : $c->amount_requested }}" min="0.01" max="{{ $c->amount_requested }}" step="0.01" {{ in_array($c->status, ['Approved', 'Disbursed'], true) ? 'readonly' : '' }} class="form-control form-control-sm" style="width:90px;">
                                     <select name="status" class="form-select form-select-sm" style="width:110px;">
                                         <option value="Pending" {{ $c->status == 'Pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="Approved" {{ $c->status == 'Approved' ? 'selected' : '' }}>Approved</option>

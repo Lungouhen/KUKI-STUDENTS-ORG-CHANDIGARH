@@ -29,6 +29,7 @@ class MedicalReliefController extends Controller
                 'required_if:status,Approved,Disbursed',
                 'nullable',
                 'numeric',
+                'decimal:0,2',
                 'min:0.01',
                 'max:' . $claim->amount_requested,
             ],
