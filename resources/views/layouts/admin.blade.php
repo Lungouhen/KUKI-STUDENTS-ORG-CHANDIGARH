@@ -8,8 +8,6 @@
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Local FontAwesome 6 CSS -->
     <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
-    <!-- Local Choices.js CSS -->
-    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
     <!-- Local SweetAlert2 CSS -->
     <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
     <!-- Custom Styles & Vite Bundle -->
@@ -22,10 +20,9 @@
     <script defer src="{{ asset('vendor/alpine/alpine.min.js') }}"></script>
     <!-- Local SweetAlert2 JS -->
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- Local ApexCharts JS -->
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
-    <!-- Local CKEditor 5 JS -->
-    <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
+    @if(request()->routeIs('admin.dashboard'))
+        <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+    @endif
 
     @stack('styles')
 </head>
@@ -324,8 +321,6 @@
 
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <!-- Local Choices.js JS -->
-    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
 
     <script>
         function confirmDelete(formId, message = 'Are you sure you want to delete this item?') {
