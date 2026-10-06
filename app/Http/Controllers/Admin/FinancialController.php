@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\FinancialAccount;
 use App\Models\Transaction;
 use App\Models\AuditLog;
+use App\Models\Term;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -24,11 +25,18 @@ class FinancialController extends Controller
 
         $transactions = $query->orderBy('transaction_date', 'desc')->paginate(15);
 
-        $totalIncome = Transaction::where('type', 'Income')->sum('amount');
-        $totalExpense = Transaction::where('type', 'Expense')->sum('amount');
+        $term = Term::current();
+        $summaryQuery = Transaction::query();
+
+        if ($term) {
+            $summaryQuery->whereBetween('transaction_date', [$term->start_date, $term->end_date]);
+        }
+
+        $totalIncome = (clone $summaryQuery)->where('type', 'Income')->sum('amount');
+        $totalExpense = (clone $summaryQuery)->where('type', 'Expense')->sum('amount');
         $netBalance = $totalIncome - $totalExpense;
 
-        return view('admin.financial.index', compact('accounts', 'transactions', 'totalIncome', 'totalExpense', 'netBalance', 'type'));
+        return view('admin.financial.index', compact('accounts', 'transactions', 'totalIncome', 'totalExpense', 'netBalance', 'type', 'term'));
     }
 
     public function storeTransaction(Request $request)
