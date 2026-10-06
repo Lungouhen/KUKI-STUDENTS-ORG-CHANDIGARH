@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Faq;
+use App\Models\AuditLog;
 
 class FaqController extends Controller
 {
@@ -22,13 +23,15 @@ class FaqController extends Controller
             'category' => 'required|string',
         ]);
 
-        Faq::create([
+        $faq = Faq::create([
             'question' => $validated['question'],
             'answer' => $validated['answer'],
             'category' => $validated['category'],
             'sort_order' => Faq::count() + 1,
             'is_published' => true,
         ]);
+
+        AuditLog::log('CREATE_FAQ', "FAQ ID: {$faq->id}, question: {$faq->question}");
 
         return back()->with('success', 'FAQ added.');
     }
@@ -50,12 +53,17 @@ class FaqController extends Controller
 
         $faq->update($validated);
 
+        AuditLog::log('UPDATE_FAQ', "FAQ ID: {$faq->id}, question: {$faq->question}");
+
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ updated.');
     }
 
     public function destroy($id)
     {
-        Faq::findOrFail($id)->delete();
+        $faq = Faq::findOrFail($id);
+        AuditLog::log('DELETE_FAQ', "FAQ ID: {$faq->id}, question: {$faq->question}");
+        $faq->delete();
+
         return back()->with('success', 'FAQ deleted.');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\News;
+use App\Models\AuditLog;
 
 class NewsController extends Controller
 {
@@ -23,13 +24,15 @@ class NewsController extends Controller
             'author' => 'nullable|string',
         ]);
 
-        News::create([
+        $news = News::create([
             'title' => $validated['title'],
             'category' => $validated['category'],
             'content' => $validated['content'],
             'author' => $validated['author'] ?? 'Executive Desk',
             'date' => now()->toDateString(),
         ]);
+
+        AuditLog::log('CREATE_NEWS', "News ID: {$news->id}, title: {$news->title}");
 
         return back()->with('success', 'Announcement published successfully.');
     }
@@ -52,12 +55,17 @@ class NewsController extends Controller
 
         $news->update($validated);
 
+        AuditLog::log('UPDATE_NEWS', "News ID: {$news->id}, title: {$news->title}");
+
         return redirect()->route('admin.news.index')->with('success', 'Announcement updated.');
     }
 
     public function destroy($id)
     {
-        News::findOrFail($id)->delete();
+        $news = News::findOrFail($id);
+        AuditLog::log('DELETE_NEWS', "News ID: {$news->id}, title: {$news->title}");
+        $news->delete();
+
         return back()->with('success', 'News deleted.');
     }
 }
