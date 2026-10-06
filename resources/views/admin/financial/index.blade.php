@@ -32,17 +32,74 @@
     </div>
 </div>
 
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+            <div>
+                <h5 class="fw-bold text-primary mb-1">Transaction Report</h5>
+                <p class="text-muted small mb-0">Filter the ledger by date, account, and transaction type. Active-term totals above are separate.</p>
+            </div>
+            <a href="{{ route('admin.financial.export', $filters) }}" class="btn btn-outline-success btn-sm">
+                <i class="fa-solid fa-file-csv me-1"></i> Export filtered CSV
+            </a>
+        </div>
+        <form action="{{ route('admin.financial.index') }}" method="GET" class="row g-2 align-items-end">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label for="report-from" class="form-label small fw-bold">From date</label>
+                <input id="report-from" type="date" name="from" value="{{ $filters['from'] ?? '' }}" class="form-control">
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label for="report-to" class="form-label small fw-bold">To date</label>
+                <input id="report-to" type="date" name="to" value="{{ $filters['to'] ?? '' }}" class="form-control">
+            </div>
+            <div class="col-12 col-sm-6 col-lg-2">
+                <label for="report-account" class="form-label small fw-bold">Account</label>
+                <select id="report-account" name="account_id" class="form-select">
+                    <option value="">All accounts</option>
+                    @foreach($accounts as $account)
+                        <option value="{{ $account->id }}" {{ (string) ($filters['account_id'] ?? '') === (string) $account->id ? 'selected' : '' }}>
+                            {{ $account->account_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-2">
+                <label for="report-type" class="form-label small fw-bold">Type</label>
+                <select id="report-type" name="type" class="form-select">
+                    <option value="">All types</option>
+                    @foreach(['Income', 'Expense', 'Transfer'] as $reportType)
+                        <option value="{{ $reportType }}" {{ ($filters['type'] ?? '') === $reportType ? 'selected' : '' }}>
+                            {{ $reportType }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-12 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Apply</button>
+                <a href="{{ route('admin.financial.index') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+        <div class="row g-2 mt-3">
+            @foreach(['Income' => 'success', 'Expense' => 'danger', 'Transfer' => 'primary'] as $summaryType => $color)
+                @php($summary = $reportSummary->get($summaryType))
+                <div class="col-12 col-sm-4">
+                    <div class="rounded border p-2 h-100">
+                        <span class="small text-muted">{{ $summaryType }} · {{ $summary?->transaction_count ?? 0 }} entries</span>
+                        <div class="fw-bold text-{{ $color }}">₹{{ number_format((float) ($summary?->total_amount ?? 0), 2) }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     <!-- Transaction Ledger -->
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Financial Transaction Vouchers</h5>
-                <div class="btn-group btn-group-sm">
-                    <a href="{{ route('admin.financial.index') }}" class="btn {{ !$type ? 'btn-primary' : 'btn-outline-primary' }}">All</a>
-                    <a href="{{ route('admin.financial.index', ['type' => 'Income']) }}" class="btn {{ $type == 'Income' ? 'btn-success' : 'btn-outline-success' }}">Income</a>
-                    <a href="{{ route('admin.financial.index', ['type' => 'Expense']) }}" class="btn {{ $type == 'Expense' ? 'btn-danger' : 'btn-outline-danger' }}">Expense</a>
-                </div>
+                <span class="badge bg-light text-dark">{{ $transactions->total() }} matching vouchers</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -94,7 +151,7 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold" for="financial-account">Source Ledger Account</label>
                     <select id="financial-account" name="financial_account_id" class="form-select" required>
-                        @foreach($accounts as $acc)
+                        @foreach($activeAccounts as $acc)
                             <option value="{{ $acc->id }}">{{ $acc->account_name }} ({{ $acc->account_code }})</option>
                         @endforeach
                     </select>
@@ -103,7 +160,7 @@
                     <label class="form-label fw-bold" for="target-account">Destination Account (required for transfers)</label>
                     <select id="target-account" name="target_account_id" class="form-select">
                         <option value="">Not a transfer</option>
-                        @foreach($accounts as $acc)
+                        @foreach($activeAccounts as $acc)
                             <option value="{{ $acc->id }}">{{ $acc->account_name }} ({{ $acc->account_code }})</option>
                         @endforeach
                     </select>

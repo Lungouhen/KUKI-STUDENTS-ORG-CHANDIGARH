@@ -81,6 +81,31 @@ class FinancialLedgerTest extends TestCase
         $this->assertEquals(20, (float) $this->destination->fresh()->current_balance);
     }
 
+    public function test_vouchers_cannot_be_posted_to_inactive_accounts(): void
+    {
+        $this->account->update(['is_active' => false]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.financial.storeTransaction'), $this->voucher('Income', '25.50'))
+            ->assertSessionHasErrors('financial_account_id');
+
+        $this->assertSame(0, Transaction::count());
+        $this->assertEquals(100, (float) $this->account->fresh()->current_balance);
+    }
+
+    public function test_transfers_cannot_be_posted_to_inactive_destination_accounts(): void
+    {
+        $this->destination->update(['is_active' => false]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.financial.storeTransaction'), $this->voucher('Transfer', '10.00', $this->destination->id))
+            ->assertSessionHasErrors('financial_account_id');
+
+        $this->assertSame(0, Transaction::count());
+        $this->assertEquals(100, (float) $this->account->fresh()->current_balance);
+        $this->assertEquals(20, (float) $this->destination->fresh()->current_balance);
+    }
+
     public function test_failed_audit_write_rolls_back_voucher_and_balance_update(): void
     {
         DB::statement("
@@ -133,6 +158,67 @@ class FinancialLedgerTest extends TestCase
             ->assertSee('All time')
             ->assertSee('All-time Income')
             ->assertSee('125.00');
+    }
+
+    public function test_transaction_report_filters_by_date_type_and_either_transfer_account(): void
+    {
+        $this->createTransaction('Income', '125.00', '2026-05-01');
+        $transfer = $this->createTransaction('Transfer', '40.00', '2026-05-10');
+        $transfer->update(['target_account_id' => $this->destination->id]);
+        $this->createTransaction('Expense', '20.00', '2026-06-01');
+        $this->createTransaction('Income', '900.00', '2025-05-01');
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.financial.index', [
+                'from' => '2026-05-01',
+                'to' => '2026-05-31',
+                'account_id' => $this->destination->id,
+            ]))
+            ->assertOk()
+            ->assertSee($transfer->voucher_no)
+            ->assertDontSee('2026-06-01')
+            ->assertDontSee('2025-05-01')
+            ->assertSee('Transfer · 1 entries')
+            ->assertSee('₹40.00');
+    }
+
+    public function test_filtered_csv_export_matches_report_scope_and_neutralizes_formula_cells(): void
+    {
+        $matching = $this->createTransaction('Expense', '20.00', '2026-05-10');
+        $matching->update([
+            'payer_payee_name' => '=HYPERLINK("https://example.org")',
+            'narration' => '@SUM(1,1)',
+        ]);
+        $this->createTransaction('Income', '900.00', '2025-05-01');
+
+        $response = $this->actingAs($this->admin)->get(route('admin.financial.export', [
+            'type' => 'Expense',
+            'from' => '2026-05-01',
+            'to' => '2026-05-31',
+        ]));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $response->assertHeader('content-disposition', 'attachment; filename=financial-transactions-' . now()->format('Y-m-d') . '.csv');
+
+        $csv = $response->streamedContent();
+        $this->assertStringContainsString($matching->voucher_no, $csv);
+        $this->assertStringContainsString("'=HYPERLINK", $csv);
+        $this->assertStringContainsString("'@SUM", $csv);
+        $this->assertStringNotContainsString('900.00', $csv);
+    }
+
+    public function test_transaction_report_rejects_invalid_filters_and_requires_admin_access(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.financial.index', [
+                'from' => '2026-06-01',
+                'to' => '2026-05-01',
+            ]))
+            ->assertSessionHasErrors('to');
+
+        $this->get(route('admin.financial.export'))
+            ->assertRedirect(route('admin.login'));
     }
 
     private function createTransaction(string $type, string $amount, string $date): Transaction
