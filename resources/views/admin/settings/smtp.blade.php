@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label extra-small fw-bold">Password</label>
-                    <input type="password" name="mail_password" class="form-control" value="{{ $settings['mail_password'] }}">
+                    <input type="password" name="mail_password" class="form-control" autocomplete="new-password" placeholder="{{ $settings['hasMailPassword'] ? 'Configured; enter a new password to replace' : 'Enter SMTP password' }}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label extra-small fw-bold">Encryption</label>
