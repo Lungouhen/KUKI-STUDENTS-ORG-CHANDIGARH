@@ -17,18 +17,19 @@
                 <form action="{{ route('admin.login.post') }}" method="POST">
                     @csrf
                     <div class="mb-3 text-start">
-                        <label class="form-label fw-bold">Admin Email</label>
-                        <input type="email" name="email" class="form-control" value="admin@ksochandigarh.org" required>
+                        <label for="admin-email" class="form-label fw-bold">Admin Email</label>
+                        <input id="admin-email" type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" autocomplete="username" required @if($errors->has('email')) aria-invalid="true" aria-describedby="admin-email-error" @endif>
+                        @error('email')<div id="admin-email-error" class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-4 text-start">
-                        <label class="form-label fw-bold">Password</label>
-                        <input type="password" name="password" class="form-control" value="admin123" required>
+                        <label for="admin-password" class="form-label fw-bold">Password</label>
+                        <input id="admin-password" type="password" name="password" class="form-control @error('password') is-invalid @enderror" autocomplete="current-password" required @if($errors->has('password')) aria-invalid="true" aria-describedby="admin-password-error" @endif>
+                        @error('password')<div id="admin-password-error" class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <button type="submit" class="btn btn-teal text-white btn-lg w-100 fw-bold shadow-sm" style="background:#0d9488;">
                         Sign In <i class="fa-solid fa-right-to-bracket ms-1"></i>
                     </button>
                 </form>
-                <div class="mt-3 text-muted extra-small">Default Credentials: <code>admin@ksochandigarh.org</code> / <code>admin123</code></div>
             </div>
         </div>
     </div>

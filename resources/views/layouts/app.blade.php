@@ -43,6 +43,8 @@
     }
 }" :data-bs-theme="darkMode ? 'dark' : 'light'">
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- ─── TOPBAR COMPONENT ─── -->
     <x-topbar />
 
@@ -50,9 +52,9 @@
     <div class="announcement-ticker">
         <div class="container-fluid px-lg-5 d-flex align-items-center">
             <span class="badge bg-dark me-3 px-2 py-1"><i class="fa-solid fa-bullhorn me-1"></i> NOTICE</span>
-            <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+            <span role="status">
                 {{ \App\Models\Setting::get('announcement', '📢 Welcome to KSO Chandigarh! Annual Membership Registration 2025-2026 is now OPEN. Get your official digital student ID card online!') }}
-            </marquee>
+            </span>
         </div>
     </div>
 
@@ -60,7 +62,7 @@
     <x-navbar />
 
     <!-- ─── MAIN CONTENT ─── -->
-    <main>
+    <main id="main-content" tabindex="-1">
         @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -128,8 +130,10 @@
     <script>
         (function () {
             function initPlugins() {
+                var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
                 // Counter-Up (needs jQuery & Waypoints)
-                if (window.jQuery && jQuery.fn.counterUp) {
+                if (!reduceMotion && window.jQuery && jQuery.fn.counterUp) {
                     jQuery('.counter').counterUp({ delay: 10, time: 1500, offset: 70, beginAt: 0 });
                 }
 
@@ -165,7 +169,7 @@
                 // Swiper
                 if (window.Swiper) {
                     document.querySelectorAll('.swiper').forEach(function (el) {
-                        new Swiper(el, { loop: true, pagination: { el: '.swiper-pagination', clickable: true }, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, autoplay: { delay: 2500, disableOnInteraction: false } });
+                        new Swiper(el, { loop: true, pagination: { el: '.swiper-pagination', clickable: true }, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, autoplay: reduceMotion ? false : { delay: 2500, disableOnInteraction: false } });
                     });
                 }
             }

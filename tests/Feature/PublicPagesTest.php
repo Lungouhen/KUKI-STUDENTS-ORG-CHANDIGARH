@@ -46,4 +46,23 @@ class PublicPagesTest extends TestCase
         $response = $this->get('/contact');
         $response->assertStatus(200);
     }
+
+    public function test_shared_navigation_has_keyboard_accessible_controls(): void
+    {
+        $this->get('/')
+            ->assertSee('Skip to main content')
+            ->assertSee('aria-label="Toggle navigation"', false)
+            ->assertSee('aria-controls="membershipDropdownMenu"', false)
+            ->assertSee('role="status"', false);
+    }
+
+    public function test_admin_login_does_not_disclose_default_credentials(): void
+    {
+        $this->get('/admin/login')
+            ->assertOk()
+            ->assertDontSee('admin123')
+            ->assertDontSee('value="admin@ksochandigarh.org"', false)
+            ->assertSee('for="admin-email"', false)
+            ->assertSee('for="admin-password"', false);
+    }
 }

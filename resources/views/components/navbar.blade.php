@@ -21,10 +21,10 @@
                     <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}"><i class="fa-solid fa-circle-info me-1"></i> About Us</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('members*') ? 'active' : '' }}" href="#" data-bs-toggle="dropdown">
+                    <button class="nav-link dropdown-toggle {{ request()->is('members*') ? 'active' : '' }}" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="membershipDropdownMenu">
                         <i class="fa-solid fa-id-card me-1"></i> Membership <i class="fa-solid fa-chevron-down"></i>
-                    </a>
-                    <ul class="dropdown-menu">
+                    </button>
+                    <ul class="dropdown-menu" id="membershipDropdownMenu">
                         <li><a class="dropdown-item" href="{{ route('membership.register') }}"><i class="fa-solid fa-user-plus text-teal me-2"></i> Register Member</a></li>
                         <li><a class="dropdown-item" href="{{ route('membership.verifyForm') }}"><i class="fa-solid fa-circle-check text-success me-2"></i> Verify Student ID</a></li>
                         <li><a class="dropdown-item" href="{{ route('membership.portal') }}"><i class="fa-solid fa-right-to-bracket text-primary me-2"></i> Member Portal Login</a></li>

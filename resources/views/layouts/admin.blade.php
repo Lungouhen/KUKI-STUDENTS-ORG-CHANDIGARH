@@ -45,17 +45,19 @@
     electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
 }" :data-bs-theme="darkMode ? 'dark' : 'light'">
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="admin-sidebar" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s;">
             <div class="admin-sidebar-header">
                 <div x-show="sidebarOpen" class="brand-title"><i class="fa-solid fa-user-shield me-2"></i> KSO ADMIN CMS</div>
-                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning">
+                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning" type="button" aria-controls="admin-sidebar-navigation" :aria-expanded="sidebarOpen" :aria-label="sidebarOpen ? 'Collapse admin sidebar' : 'Expand admin sidebar'">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
             
-            <div class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
+            <div id="admin-sidebar-navigation" class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
                 <ul class="nav flex-column gap-2 p-0">
                     <!-- Home Dashboard (Direct) -->
                     <li class="admin-nav-item">
@@ -288,7 +290,7 @@
                 </div>
             </div>
 
-            <div class="admin-main-container p-4">
+            <main id="main-content" class="admin-main-container p-4" tabindex="-1">
         @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -316,7 +318,7 @@
         @endif
 
         @yield('content')
-    </div>
+            </main>
     </div>
     </div>
 

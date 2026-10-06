@@ -46,6 +46,7 @@ An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki St
 ### Prerequisites
 - PHP >= 8.2
 - Composer
+- Node.js and npm (to build frontend assets)
 - SQLite / MySQL
 
 ### Local Setup Instructions
@@ -62,20 +63,27 @@ composer install
 cp .env.example .env
 php artisan key:generate
 
-# 4. Run automated deployment & database seeding
-php artisan kso:deploy --seed
+# 4. Run database migrations
+php artisan kso:deploy
 
-# 5. Start the development server
+# 5. Create the first admin account (password is entered securely at the prompt)
+php artisan kso:admin:create admin@example.org --name="KSO Administrator"
+
+# 6. Build frontend assets
+npm ci
+npm run build
+
+# 7. Start the development server
 php artisan serve
 ```
 
----
+Use `php artisan kso:deploy --seed` only when you intentionally want the project's sample data. Seeding does not create or reset admin accounts. To add another admin, run `php artisan kso:admin:create` with that person's unique email. Existing accounts are never promoted, renamed, or assigned a new password by this command or by seeding.
 
-## 🔑 DEFAULT ADMIN CREDENTIALS
+## 🧪 Testing
 
-- **Admin Login URL**: `http://127.0.0.1:8000/admin/login`
-- **Email**: `admin@ksochandigarh.org`
-- **Password**: `admin123`
+Run the automated PHP feature tests with `php artisan test`. They use an isolated in-memory SQLite database. Build assets with `npm ci && npm run build`.
+
+The committed audit scripts perform static checks only; they are not substitutes for the PHPUnit feature tests or a security/accessibility certification.
 
 ---
 
