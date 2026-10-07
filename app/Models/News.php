@@ -18,10 +18,17 @@ class News extends Model
         'content',
         'author',
         'is_important',
+        'is_member_post',
     ];
 
     protected $casts = [
         'date' => 'date',
         'is_important' => 'boolean',
+        'is_member_post' => 'boolean',
     ];
+
+    public function scopeOfficial($query)
+    {
+        return $query->where('is_member_post', false);
+    }
 }

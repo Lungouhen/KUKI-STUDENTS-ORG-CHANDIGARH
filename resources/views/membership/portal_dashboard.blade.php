@@ -7,7 +7,6 @@
 @php
     $sidebarAds = \App\Models\Advertisement::getActiveByPlacement('Portal_Sidebar');
     $feedAds = \App\Models\Advertisement::getActiveByPlacement('Feed_Banner');
-    $hasVoted = session('voted_election_mock', false) || session('voted_election_1', false);
 @endphp
 
 <div class="bg-primary text-white py-4 mb-4" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;">
@@ -163,7 +162,46 @@
                                 <div class="fw-bold text-dark">{{ $member->membership_category }}</div>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="extra-small text-muted mb-1 text-uppercase fw-bold">Fee {{ $currentPeriod }}</div>
+                                <span class="badge {{ $currentFeePaid ? 'bg-success' : 'bg-warning text-dark' }}">{{ $currentFeePaid ? 'Paid' : 'Due' }}</span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Membership Fee History -->
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-black text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-receipt text-primary me-2"></i> Membership Fee History</h5>
+                    @if($feePayments->isEmpty())
+                        <p class="text-muted small mb-0">No fee payments recorded yet. Pay your membership fee at the KSO office to activate full benefits for {{ $currentPeriod }}.</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr class="extra-small text-muted text-uppercase">
+                                        <th>Period</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Receipt No.</th>
+                                        <th>Paid On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($feePayments as $payment)
+                                        <tr class="small">
+                                            <td class="fw-bold">{{ $payment->period }}</td>
+                                            <td class="text-success fw-bold">₹{{ number_format($payment->amount, 2) }}</td>
+                                            <td>{{ $payment->payment_method }}</td>
+                                            <td><code class="extra-small">{{ $payment->voucher_no ?? $payment->reference_no ?? '—' }}</code></td>
+                                            <td>{{ $payment->paid_on?->format('d M Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Campus Social Feed -->
@@ -446,122 +484,92 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Medical Relief Claim Desk -->
-                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
-                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-notes-medical text-danger me-2"></i> Medical Relief Claim Desk</h5>
-                    
-                    @if($medicalClaims->count() > 0)
-                        <div class="mb-4">
-                            <h6 class="fw-bold extra-small text-muted text-uppercase mb-2">My Recent Claims</h6>
-                            @foreach($medicalClaims as $claim)
-                                <div class="d-flex justify-content-between align-items-center p-2 border-bottom extra-small">
-                                    <div>
-                                        <div class="fw-bold">{{ $claim->hospital_name }}</div>
-                                        <div class="text-muted">Requested: ₹{{ number_format($claim->amount_requested) }}</div>
-                                    </div>
-                                    <span class="badge {{ $claim->status === 'Approved' ? 'bg-success' : ($claim->status === 'Rejected' ? 'bg-danger' : 'bg-warning text-dark') }}">
-                                        {{ strtoupper($claim->status) }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <p class="extra-small text-muted mb-3">If you are facing a medical emergency at PGIMER, GMCH-32, or any other hospital, you can submit a relief request here. KSO Chandigarh may provide partial financial assistance based on fund availability.</p>
-                    
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#medicalClaimModal">
-                        <i class="fa-solid fa-plus-circle me-1"></i> New Relief Request
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 
     <!-- ─── TAB 2: INTERACTIVE ELECTRONIC VOTING BOOTH ─── -->
     <div x-show="activeTab === 'election'" x-transition x-cloak>
-        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-vote-yea text-primary me-2"></i> KSO Executive Council Election (Term 2025-2026)</h5>
-                <span class="badge bg-success text-white px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-circle me-1 animate-pulse"></i> Booth Open</span>
-            </div>
+        @forelse($openElections as $election)
+            @php
+                $alreadyVoted = in_array($election->id, $votedElectionIds);
+                $totalVotes = $election->candidates->sum('votes_received');
+            @endphp
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-vote-yea text-primary me-2"></i> KSO Executive Council Election — {{ $election->position }}{{ $election->term ? ' (' . $election->term->name . ')' : '' }}</h5>
+                    <span class="badge bg-success text-white px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-circle me-1 animate-pulse"></i> Booth Open</span>
+                </div>
 
-            @if($hasVoted)
-                <!-- Locked Result Screen after voting -->
-                <div class="text-center py-5">
-                    <div class="display-3 text-success mb-3"><i class="fa-solid fa-circle-check"></i></div>
-                    <h4 class="fw-bold text-dark">Thank you! Your vote has been securely recorded</h4>
-                    <p class="text-muted small mx-auto" style="max-width: 500px;">Participation is the key to student democracy. Your single secret ballot has been cast and double-voting prevention is locked for your student account ID.</p>
-                    
-                    <div class="mt-4 p-4 bg-light rounded-4 text-start mx-auto" style="max-width: 450px;">
-                        <h6 class="fw-bold text-primary mb-3 text-uppercase extra-small tracking-wider text-center"><i class="fa-solid fa-square-poll-vertical me-1"></i> Live Voting Poll Statistics</h6>
-                        
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
-                                <span>Haopu Kipgen (DAV-10)</span>
-                                <span>54% (214 Votes)</span>
-                            </div>
-                            <div class="progress" style="height: 10px; border-radius: 50rem;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 54%;" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
+                @if($alreadyVoted)
+                    <!-- Locked Result Screen after voting -->
+                    <div class="text-center py-5">
+                        <div class="display-3 text-success mb-3"><i class="fa-solid fa-circle-check"></i></div>
+                        <h4 class="fw-bold text-dark">Thank you! Your vote has been securely recorded</h4>
+                        <p class="text-muted small mx-auto" style="max-width: 500px;">Participation is the key to student democracy. Your single secret ballot has been cast and double-voting prevention is locked for your student account ID.</p>
 
-                        <div class="mb-0">
-                            <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
-                                <span>Lhingnei Hangsing (MCM-36)</span>
-                                <span>46% (182 Votes)</span>
-                            </div>
-                            <div class="progress" style="height: 10px; border-radius: 50rem;">
-                                <div class="progress-bar bg-teal" role="progressbar" style="width: 46%; background-color:#0d9488;" aria-valuenow="46" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
+                        <div class="mt-4 p-4 bg-light rounded-4 text-start mx-auto" style="max-width: 450px;">
+                            <h6 class="fw-bold text-primary mb-3 text-uppercase extra-small tracking-wider text-center"><i class="fa-solid fa-square-poll-vertical me-1"></i> Live Voting Poll Statistics</h6>
+
+                            @foreach($election->candidates as $candidate)
+                                @php $share = $totalVotes > 0 ? round($candidate->votes_received / $totalVotes * 100) : 0; @endphp
+                                <div class="{{ $loop->last ? 'mb-0' : 'mb-3' }}">
+                                    <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
+                                        <span>{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</span>
+                                        <span>{{ $share }}% ({{ $candidate->votes_received }} {{ \Illuminate\Support\Str::plural('Vote', $candidate->votes_received) }})</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px; border-radius: 50rem;">
+                                        <div class="progress-bar {{ $loop->even ? 'bg-teal' : 'bg-primary' }}" role="progressbar" style="width: {{ $share }}%;{{ $loop->even ? ' background-color:#0d9488;' : '' }}" aria-valuenow="{{ $share }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-                </div>
-            @else
-                <!-- Active Interactive Balloting Booth -->
-                <div x-data="{ selectedCandidate: null }">
-                    <p class="extra-small text-muted mb-4">Please read candidate profile manifestos below and select the candidate you wish to vote for. You can only vote for **one** candidate for the position of **President**.</p>
-                    
-                    <form action="{{ route('membership.castVote') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="candidate_id" :value="selectedCandidate">
-                        
-                        <div class="row g-4 justify-content-center mb-4">
-                            <!-- Candidate A -->
-                            <div class="col-md-5">
-                                <div @click="selectedCandidate = 101" :class="selectedCandidate === 101 ? 'selected' : ''" class="candidate-voter-card">
-                                    <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
-                                    <img src="/images/default-avatar-m.png" class="candidate-voter-photo" onerror="this.src='/images/default-avatar-m.png'">
-                                    <h5 class="fw-bold text-dark mb-1">Haopu Kipgen</h5>
-                                    <span class="badge bg-primary rounded-pill px-2 py-1 extra-small mb-2">Presidential Candidate</span>
-                                    <p class="extra-small text-muted mb-3"><i class="fa-solid fa-university me-1"></i> DAV College Sector 10</p>
-                                    <p class="extra-small text-secondary text-start" style="line-height: 1.5;"><strong>Manifesto:</strong> "To advocate for student hostel priority quotas, establish a direct grievance liaison with college administrations, and expand our emergency welfare and scholarship desk to reach every North-East student scholar in Tricity."</p>
-                                </div>
+                @elseif($election->candidates->isEmpty())
+                    <p class="text-muted small mb-0 py-4 text-center">Candidates for this election have not been announced yet. Please check back soon.</p>
+                @else
+                    <!-- Active Interactive Balloting Booth -->
+                    <div x-data="{ selectedCandidate: null }">
+                        <p class="extra-small text-muted mb-4">Please read candidate profiles below and select the candidate you wish to vote for. You can only vote for <strong>one</strong> candidate for the position of <strong>{{ $election->position }}</strong>.</p>
+
+                        <form action="{{ route('membership.castVote') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="candidate_id" :value="selectedCandidate">
+
+                            <div class="row g-4 justify-content-center mb-4">
+                                @foreach($election->candidates as $candidate)
+                                    <div class="col-md-5">
+                                        <div @click="selectedCandidate = {{ $candidate->id }}" :class="selectedCandidate === {{ $candidate->id }} ? 'selected' : ''" class="candidate-voter-card">
+                                            <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
+                                            <img src="{{ asset($candidate->member->photo ?? '/images/default-avatar-m.png') }}" class="candidate-voter-photo" alt="Candidate photo" onerror="this.src='/images/default-avatar-m.png'">
+                                            <h5 class="fw-bold text-dark mb-1">{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</h5>
+                                            <span class="badge bg-primary rounded-pill px-2 py-1 extra-small mb-2">{{ $election->position }} Candidate</span>
+                                            @if($candidate->member)
+                                                <p class="extra-small text-muted mb-0"><i class="fa-solid fa-university me-1"></i> {{ $candidate->member->institution }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
 
-                            <!-- Candidate B -->
-                            <div class="col-md-5">
-                                <div @click="selectedCandidate = 102" :class="selectedCandidate === 102 ? 'selected' : ''" class="candidate-voter-card">
-                                    <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
-                                    <img src="/images/default-avatar-f.png" class="candidate-voter-photo" onerror="this.src='/images/default-avatar-f.png'">
-                                    <h5 class="fw-bold text-dark mb-1">Lhingnei Hangsing</h5>
-                                    <span class="badge bg-teal rounded-pill px-2 py-1 extra-small mb-2" style="background:#0d9488;">Presidential Candidate</span>
-                                    <p class="extra-small text-muted mb-3"><i class="fa-solid fa-university me-1"></i> MCM DAV College Sector 36</p>
-                                    <p class="extra-small text-secondary text-start" style="line-height: 1.5;"><strong>Manifesto:</strong> "Focusing on women's safety helplines, establishing regular cultural folk arts workshops, providing high-quality career mentorship for final year students studying across Tricity colleges, and building robust legal support partnerships."</p>
-                                </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow" :disabled="!selectedCandidate">
+                                    <i class="fa-solid fa-vote-yea me-1"></i> Cast Secret Ballot Vote
+                                </button>
                             </div>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow" :disabled="!selectedCandidate">
-                                <i class="fa-solid fa-vote-yea me-1"></i> Cast Secret Ballot Vote
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            @endif
-        </div>
+                        </form>
+                    </div>
+                @endif
+            </div>
+        @empty
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4 text-center py-5">
+                <div class="display-4 text-muted mb-3"><i class="fa-solid fa-box-archive"></i></div>
+                <h5 class="fw-bold text-dark">No elections are open right now</h5>
+                <p class="text-muted small mx-auto mb-0" style="max-width: 480px;">The electronic voting booth opens here when the Executive Council announces an election. Watch the student feed for the official schedule.</p>
+            </div>
+        @endforelse
     </div>
+
 
     <!-- ─── TAB 3: HOSTEL & PG FINDER DIRECTORY ─── -->
     <div x-show="activeTab === 'accommodation'" x-transition x-cloak>
@@ -570,78 +578,48 @@
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-hotel text-primary me-2"></i> KSO Verified Hostels & PG Accommodations</h5>
                 <span class="badge bg-teal text-white px-3 py-1 rounded-pill extra-small" style="background:#0d9488;"><i class="fa-solid fa-house-circle-check me-1"></i> Checked & Recommended</span>
             </div>
-            
+
             <p class="extra-small text-muted mb-4">We are committed to helping newly arriving students find secure, affordable, and welcoming accommodation near their colleges in Chandigarh, Mohali, and Panchkula.</p>
-            
-            <div class="row g-4">
-                <!-- Listing 1 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-success text-white">Co-Living PG</span>
-                            <span class="accommodation-rent">₹5,500/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 15-B, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 5 mins to PU</small>
-                            </div>
-                            <h6 class="fw-bold text-dark mb-2">Tricity Student Co-Living Hostels</h6>
-                            <p class="extra-small text-muted mb-3">High-speed Wi-Fi, 3 healthy home-style meals, AC/Geyser, study desk setup, 24/7 power backup and dedicated laundry.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543210" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Listing 2 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-danger text-white">Girls PG</span>
-                            <span class="accommodation-rent">₹6,000/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 36-C, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 2 mins to MCM</small>
-                            </div>
-                            <h6 class="fw-bold text-dark mb-2">Elite Girls Student Hostel</h6>
-                            <p class="extra-small text-muted mb-3">Fully secure biometric entries, warden-controlled property, clean dining hall, library lounge, double sharing spacious rooms.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543211" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
-                        </div>
-                    </div>
+            @if($accommodations->isEmpty())
+                <div class="text-center py-5">
+                    <div class="display-4 text-muted mb-3"><i class="fa-solid fa-house-circle-exclamation"></i></div>
+                    <h6 class="fw-bold text-dark">No verified listings right now</h6>
+                    <p class="text-muted extra-small mx-auto mb-0" style="max-width: 440px;">The accommodation desk verifies every hostel and PG before listing it here. New verified listings will appear as soon as they are approved.</p>
                 </div>
-
-                <!-- Listing 3 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-primary text-white">Furnished Flatshare</span>
-                            <span class="accommodation-rent">₹4,800/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 11-A, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 4 mins to PGGC</small>
+            @else
+                <div class="row g-4">
+                    @foreach($accommodations as $listing)
+                        <div class="col-md-4">
+                            <div class="accommodation-card h-100">
+                                <div class="accommodation-img-wrapper">
+                                    <img src="{{ asset($listing->photo ?? '/images/default-avatar-m.png') }}" alt="{{ $listing->name }}" onerror="this.src='/images/kso-logo.jpg'">
+                                    <span class="accommodation-tag badge bg-success text-white">{{ $listing->type }}</span>
+                                    <span class="accommodation-rent">₹{{ number_format($listing->rent_monthly) }}/mo</span>
+                                </div>
+                                <div class="p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-primary fw-bold extra-small">{{ $listing->location }}</small>
+                                        @if($listing->landmark)
+                                            <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> {{ $listing->landmark }}</small>
+                                        @endif
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">{{ $listing->name }}</h6>
+                                    @if($listing->description)
+                                        <p class="extra-small text-muted mb-3">{{ $listing->description }}</p>
+                                    @endif
+                                    <div class="d-flex gap-2">
+                                        <a href="tel:{{ preg_replace('/[^+\d]/', '', $listing->contact_phone) }}" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
+                                    </div>
+                                </div>
                             </div>
-                            <h6 class="fw-bold text-dark mb-2">Sector 11 Flatshare for Boys</h6>
-                            <p class="extra-small text-muted mb-3">Self-cooking kitchen equipped with gas and fridge, spacious attached bathroom, high-speed fiber internet connection.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543212" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
+
 
     <!-- ─── TAB 4: ACADEMIC & CAREER RESOURCES DESK ─── -->
     <div x-show="activeTab === 'academic'" x-transition x-cloak>
@@ -650,115 +628,42 @@
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-book-open text-primary me-2"></i> KSO Student Academic Resources & Question Bank</h5>
                 <span class="badge bg-primary-lt text-primary px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-graduation-cap me-1"></i> Free Download Portal</span>
             </div>
-            
+
             <p class="extra-small text-muted mb-4">Access official university guidelines, scholarship instructions, syllabi, admission prospectuses, and previous years question papers compiled by our cultural and academic desks.</p>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> Institutional Guides & Schedules</h6>
-                    
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-primary-lt text-primary">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">Panjab University Exam Calendar (2025-2026)</div>
-                                <small class="text-muted extra-small">PDF File • 1.2 MB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
 
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-success-lt text-success">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">KSO Scholarship & Financial Aid Resource Guide</div>
-                                <small class="text-muted extra-small">PDF File • 820 KB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
+            @if($resources->isEmpty())
+                <div class="text-center py-5">
+                    <div class="display-4 text-muted mb-3"><i class="fa-regular fa-folder-open"></i></div>
+                    <h6 class="fw-bold text-dark">The resource library is being stocked</h6>
+                    <p class="text-muted extra-small mx-auto mb-0" style="max-width: 440px;">Guides, prospectuses, and question banks uploaded by the academic desk will appear here for download.</p>
                 </div>
+            @else
+                <div class="row">
+                    @foreach($resources as $category => $items)
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> {{ $category }}</h6>
 
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> Admission Prospectuses & Banks</h6>
-                    
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-warning-lt text-warning">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">DAV College Sector 10 Admission Prospectus</div>
-                                <small class="text-muted extra-small">PDF File • 2.4 MB</small>
-                            </div>
+                            @foreach($items as $resource)
+                                <div class="resource-list-item shadow-sm">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="resource-icon-box bg-primary-lt text-primary">
+                                            <i class="fa-regular {{ str_ends_with($resource->file_path, '.zip') ? 'fa-file-zipper' : 'fa-file-pdf' }}"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark extra-small">{{ $resource->title }}</div>
+                                            <small class="text-muted extra-small">{{ strtoupper(pathinfo($resource->file_path, PATHINFO_EXTENSION)) }} File • {{ $resource->humanFileSize() }} • {{ $resource->download_count }} downloads</small>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('membership.downloadResource', $resource->id) }}" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" aria-label="Download {{ $resource->title }}"><i class="fa-solid fa-download"></i></a>
+                                </div>
+                            @endforeach
                         </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
-
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-danger-lt text-danger">
-                                <i class="fa-regular fa-file-zipper"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">Previous Year Humanities Question Papers (PU)</div>
-                                <small class="text-muted extra-small">ZIP Archive • 14.5 MB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
-</div>
-
-<!-- Medical Relief Claim Modal -->
-<div class="modal fade" id="medicalClaimModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content rounded-4 border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold text-danger">New Medical Relief Request</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('membership.submitMedicalClaim') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Patient Name</label>
-                        <input type="text" name="patient_name" class="form-control" required placeholder="Full Name of Patient">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Hospital Name</label>
-                        <input type="text" name="hospital_name" class="form-control" required placeholder="e.g. PGIMER Sector 12">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Nature of Illness / Emergency</label>
-                        <textarea name="nature_of_illness" class="form-control" rows="2" required placeholder="Describe the medical situation..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Amount Requested (₹)</label>
-                        <input type="number" name="amount_requested" class="form-control" required min="1" placeholder="Estimated assistance needed">
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label extra-small fw-bold">Support Document (Prescription/Bill)</label>
-                        <input type="file" name="medical_document" class="form-control">
-                        <div class="form-text extra-small">Max size 5MB (JPG, PNG, PDF)</div>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow">Submit Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 @endsection

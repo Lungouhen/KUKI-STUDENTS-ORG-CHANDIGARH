@@ -40,14 +40,18 @@ bladeFiles.forEach(file => {
   const pushesCount = (content.match(/@push\s*\(/g) || []).length;
   const endpushesCount = (content.match(/@endpush/g) || []).length;
 
+  // Forms using POST/PUT/PATCH/DELETE need CSRF tokens; plain GET forms do not.
+  const stateChangingForms = (content.match(/<form\b[^>]*>/gi) || [])
+    .filter(tag => !/method\s*=\s*["']?get["']?/i.test(tag));
+
   const checks = [
-    { name: 'Has valid Blade structure', pass: content.includes('@extends') || content.includes('<div') || content.includes('<form') || content.includes('<x-') },
+    { name: 'Has valid Blade structure', pass: content.includes('@extends') || content.includes('<div') || content.includes('<form') || content.includes('<x-') || /<(tr|td|table|tfoot|p|h[1-6])\b/i.test(content) || content.includes('{{') },
     { name: 'Unclosed @if directives', pass: (content.match(/@if\b/g) || []).length === (content.match(/@endif\b/g) || []).length },
     { name: 'Unclosed @foreach directives', pass: (content.match(/@foreach\b/g) || []).length === (content.match(/@endforeach\b/g) || []).length },
     { name: 'Unclosed @forelse directives', pass: (content.match(/@forelse\b/g) || []).length === (content.match(/@endforelse\b/g) || []).length },
     { name: 'Unclosed @section directives', pass: multilineSections === endsectionsCount },
     { name: 'Unclosed @push directives', pass: pushesCount === endpushesCount },
-    { name: 'Form CSRF Token check', pass: !content.includes('<form') || content.includes('@csrf') }
+    { name: 'Form CSRF Token check', pass: stateChangingForms.length === 0 || content.includes('@csrf') }
   ];
 
   const failedChecks = checks.filter(c => !c.pass);

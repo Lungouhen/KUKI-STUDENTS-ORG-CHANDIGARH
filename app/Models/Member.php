@@ -45,7 +45,7 @@ class Member extends Model
         'dob' => 'date',
         'applied_date' => 'date',
         'approval_date' => 'date',
-        'valid_until' => 'date',
+        'valid_until' => 'date:Y-m-d',
     ];
 
     /**
@@ -76,5 +76,15 @@ class Member extends Model
         }
 
         return "{$validYear}-06-30";
+    }
+
+    public function feePayments()
+    {
+        return $this->hasMany(MemberFeePayment::class, 'member_id', 'id');
+    }
+
+    public function electionVotes()
+    {
+        return $this->hasMany(ElectionVote::class, 'member_id', 'id');
     }
 }

@@ -24,7 +24,6 @@ use App\Http\Controllers\Admin\FinancialController as AdminFinancialController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
-use App\Http\Controllers\Admin\MedicalReliefController as AdminMedicalReliefController;
 use App\Http\Controllers\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ProjectController;
@@ -32,6 +31,8 @@ use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
+use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
+use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,12 +55,12 @@ Route::prefix('members')->group(function () {
     Route::post('/verify', [MembershipController::class, 'verify'])->name('membership.verify');
     Route::get('/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
     Route::get('/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
-    Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
+    Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->middleware('throttle:10,1')->name('membership.portalLogin');
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
     Route::post('/portal/post', [MembershipController::class, 'storeStudentPost'])->name('membership.storeStudentPost');
     Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
-    Route::post('/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
     Route::get('/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
+    Route::get('/portal/resources/{id}/download', [MembershipController::class, 'downloadResource'])->name('membership.downloadResource');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
 });
 
@@ -123,10 +124,6 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::put('/testimonials/{id}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
     Route::delete('/testimonials/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
 
-    // Medical Emergency Relief Desk
-    Route::get('/medical', [AdminMedicalReliefController::class, 'index'])->name('medical.index');
-    Route::post('/medical/{id}/status', [AdminMedicalReliefController::class, 'updateStatus'])->name('medical.updateStatus');
-
     // Content Management
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');
     Route::post('/content', [ContentController::class, 'store'])->name('content.store');
@@ -140,6 +137,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
     Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
+    Route::post('/members/{id}/fees', [AdminMemberController::class, 'recordFeePayment'])->name('members.recordFee');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
     Route::post('/members', [AdminMemberController::class, 'store'])->name('members.store');
@@ -183,6 +181,15 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Partners
     Route::get('/partners/export/csv', [PartnerController::class, 'exportCsv'])->name('partners.exportCsv');
     Route::resource('partners', PartnerController::class);
+
+    // Accommodations (Hostel & PG directory)
+    Route::resource('accommodations', AdminAccommodationController::class)->except(['show']);
+
+    // Student resources library
+    Route::get('/resources', [AdminStudentResourceController::class, 'index'])->name('resources.index');
+    Route::post('/resources', [AdminStudentResourceController::class, 'store'])->name('resources.store');
+    Route::post('/resources/{id}/toggle', [AdminStudentResourceController::class, 'toggle'])->name('resources.toggle');
+    Route::delete('/resources/{id}', [AdminStudentResourceController::class, 'destroy'])->name('resources.destroy');
 
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

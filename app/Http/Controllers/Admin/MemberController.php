@@ -4,7 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use App\Models\Member;
+use App\Models\MemberFeePayment;
+use App\Models\FinancialAccount;
+use App\Models\Transaction;
 use App\Models\AuditLog;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -223,7 +229,83 @@ class MemberController extends Controller
 
     public function fees()
     {
-        $members = Member::where('status', 'Approved')->paginate(15);
-        return view('admin.members.fees', compact('members'));
+        $currentPeriod = MemberFeePayment::periodFor(now());
+        $members = Member::where('status', 'Approved')
+            ->with(['feePayments' => fn ($q) => $q->orderByDesc('paid_on')])
+            ->paginate(15);
+        $accounts = FinancialAccount::where('is_active', true)->orderBy('account_name')->get();
+
+        return view('admin.members.fees', compact('members', 'currentPeriod', 'accounts'));
+    }
+
+    public function recordFeePayment(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+
+        $validated = $request->validate([
+            'financial_account_id' => 'required|exists:financial_accounts,id',
+            'period' => ['required', 'string', 'max:10', 'regex:/^\d{4}-\d{2}$/'],
+            'amount' => 'required|numeric|decimal:0,2|min:0.01|max:9999999999.99',
+            'payment_method' => 'required|string|max:50',
+            'reference_no' => 'nullable|string|max:100',
+            'paid_on' => 'required|date',
+        ]);
+
+        if ($member->feePayments()->where('period', $validated['period'])->exists()) {
+            throw ValidationException::withMessages([
+                'period' => "A fee payment for {$validated['period']} is already recorded for this member.",
+            ]);
+        }
+
+        $voucherNo = 'VOUCH-' . date('Y') . '-' . strtoupper(Str::random(6));
+
+        try {
+            DB::transaction(function () use ($validated, $voucherNo, $member) {
+                $account = FinancialAccount::whereKey($validated['financial_account_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if (! $account->is_active) {
+                    throw ValidationException::withMessages([
+                        'financial_account_id' => 'Fee payments can only be posted to active accounts.',
+                    ]);
+                }
+
+                Transaction::create([
+                    'voucher_no' => $voucherNo,
+                    'financial_account_id' => $account->id,
+                    'type' => 'Income',
+                    'category' => 'Membership Fee',
+                    'amount' => $validated['amount'],
+                    'transaction_date' => $validated['paid_on'],
+                    'payment_method' => $validated['payment_method'],
+                    'reference_no' => $validated['reference_no'] ?? null,
+                    'payer_payee_name' => "{$member->full_name} ({$member->id})",
+                    'narration' => "Membership fee {$validated['period']} — {$member->full_name} ({$member->id})",
+                    'created_by' => auth()->id(),
+                ]);
+
+                $account->increment('current_balance', $validated['amount']);
+
+                MemberFeePayment::create([
+                    'member_id' => $member->id,
+                    'period' => $validated['period'],
+                    'amount' => $validated['amount'],
+                    'payment_method' => $validated['payment_method'],
+                    'reference_no' => $validated['reference_no'] ?? null,
+                    'voucher_no' => $voucherNo,
+                    'paid_on' => $validated['paid_on'],
+                    'recorded_by' => auth()->id(),
+                ]);
+
+                AuditLog::log('RECORD_FEE_PAYMENT', "Member: {$member->id}, Period: {$validated['period']}, Amount: ₹{$validated['amount']}, Voucher: {$voucherNo}");
+            });
+        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            throw ValidationException::withMessages([
+                'period' => "A fee payment for {$validated['period']} is already recorded for this member.",
+            ]);
+        }
+
+        return back()->with('success', "Fee payment for {$member->full_name} ({$validated['period']}) recorded — voucher {$voucherNo}.");
     }
 }

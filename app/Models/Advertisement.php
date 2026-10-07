@@ -92,7 +92,7 @@ class Advertisement extends Model
 
         // Convert array to collection of models
         return collect(array_map(function($ad) {
-            return new self($ad);
+            return (new self)->forceFill($ad);
         }, $filtered));
     }
 }

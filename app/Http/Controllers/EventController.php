@@ -20,7 +20,7 @@ class EventController extends Controller
         }
 
         $events = $query->orderBy('date', 'desc')->get();
-        $news = News::orderBy('date', 'desc')->get();
+        $news = News::official()->orderBy('date', 'desc')->get();
 
         return view('events.index', compact('events', 'news', 'category'));
     }

@@ -26,10 +26,7 @@ class SmtpConfiguration
                 'mail.default' => $fallback['default'],
                 'mail.mailers.smtp' => $fallback['mailers']['smtp'],
             ]);
-            $mailManager = app('mail.manager');
-            if (method_exists($mailManager, 'purge')) {
-                $mailManager->purge('smtp');
-            }
+            $this->purgeResolvedSmtpMailer();
 
             return false;
         }
@@ -48,11 +45,21 @@ class SmtpConfiguration
             'mail.mailers.smtp.password' => Setting::get('mail_password') ?: $fallback['mailers']['smtp']['password'],
         ]);
 
-        $mailManager = app('mail.manager');
-        if (method_exists($mailManager, 'purge')) {
-            $mailManager->purge('smtp');
-        }
+        $this->purgeResolvedSmtpMailer();
 
         return true;
+    }
+
+    private function purgeResolvedSmtpMailer(): void
+    {
+        try {
+            $mailManager = app('mail.manager');
+            if (method_exists($mailManager, 'purge')) {
+                $mailManager->purge('smtp');
+            }
+        } catch (Throwable) {
+            // Purging cached mailers is best-effort; a fresh mailer will be
+            // built from the updated configuration on the next resolution.
+        }
     }
 }
