@@ -2016,7 +2016,7 @@ a.btn.rounded-pill:hover {
 
 .admin-app[data-bs-theme="dark"] .admin-topbar,
 .admin-app[data-bs-theme="dark"] .admin-site-link,
-.admin-app[data-bs-theme="dark"] .admin-app .card {
+.admin-app[data-bs-theme="dark"] .card {
     background: #20232e !important;
     color: #edf0f5;
 }
@@ -2052,20 +2052,6 @@ a.btn.rounded-pill:hover {
     .admin-sidebar .admin-profile {
         justify-content: flex-start;
         padding-inline: 1rem;
-    }
-
-    .admin-sidebar .admin-profile-copy,
-    .admin-sidebar .admin-section-divider,
-    .admin-sidebar .sidebar-submenu {
-        display: flex !important;
-    }
-
-    .admin-sidebar .admin-section-divider {
-        display: flex !important;
-    }
-
-    .admin-sidebar .sidebar-submenu {
-        display: block !important;
     }
 
     .admin-sidebar .admin-nav-item {
@@ -2107,7 +2093,7 @@ a.btn.rounded-pill:hover {
     }
 
     .admin-page-title {
-        max-width: min(45vw, 240px);
+        max-width: min(30vw, 170px);
         font-size: 0.95rem;
     }
 
@@ -2136,6 +2122,10 @@ a.btn.rounded-pill:hover {
 
 @media (max-width: 420px) {
     .admin-site-link span {
+        display: none;
+    }
+
+    .admin-logout span {
         display: none;
     }
 
