@@ -38,9 +38,13 @@
                 </div>
                 <div class="col-12 mt-4">
                     <button type="submit" class="btn btn-primary px-5 fw-bold shadow">Save SMTP Settings</button>
-                    <button type="button" class="btn btn-outline-secondary px-4 ms-2">Send Test Mail</button>
                 </div>
             </div>
+        </form>
+        <form action="{{ route('admin.settings.smtp.test') }}" method="POST" class="mt-3">
+            @csrf
+            <button type="submit" class="btn btn-outline-secondary px-4">Send Test Mail to My Admin Email</button>
+            <p class="form-text mb-0">Save settings first. The test message goes only to your signed-in admin email.</p>
         </form>
     </div>
 </div>

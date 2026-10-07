@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\AuditLog;
+use App\Services\SmtpConfiguration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class SettingController extends Controller
 {
@@ -98,17 +101,38 @@ class SettingController extends Controller
 
     public function integrations()
     {
-        return view('admin.settings.integrations');
+        return view('admin.settings.integrations', [
+            'hasSmtpSettings' => filled(Setting::get('mail_host'))
+                || (config('mail.default') === 'smtp' && filled(config('mail.mailers.smtp.host'))),
+            'hasRazorpayCredentials' => filled(Setting::get('razorpayKey')) && filled(Setting::get('razorpaySecret')),
+        ]);
+    }
+
+    public function testSmtp(SmtpConfiguration $smtpConfiguration)
+    {
+        if (! $smtpConfiguration->applySavedSettings()) {
+            return back()->with('error', 'Save an SMTP host before sending a test email.');
+        }
+
+        try {
+            Mail::to(auth()->user()->email)->send(new \App\Mail\IntegrationTestMail());
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Test email could not be sent. Check the saved SMTP settings and application logs.');
+        }
+
+        return back()->with('success', 'Test email sent to your admin email address.');
     }
 
     public function smtp()
     {
         $settings = [
-            'mail_host' => Setting::get('mail_host', 'smtp.mailtrap.io'),
-            'mail_port' => Setting::get('mail_port', '2525'),
+            'mail_host' => Setting::get('mail_host', config('mail.mailers.smtp.host')),
+            'mail_port' => Setting::get('mail_port', config('mail.mailers.smtp.port')),
             'mail_username' => Setting::get('mail_username', ''),
             'hasMailPassword' => filled(Setting::get('mail_password')),
-            'mail_encryption' => Setting::get('mail_encryption', 'tls'),
+            'mail_encryption' => Setting::get('mail_encryption', config('mail.mailers.smtp.encryption', 'tls') ?: 'none'),
         ];
         return view('admin.settings.smtp', compact('settings'));
     }

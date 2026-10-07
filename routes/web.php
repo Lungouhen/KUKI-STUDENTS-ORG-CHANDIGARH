@@ -201,6 +201,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/integrations', [AdminSettingController::class, 'integrations'])->name('settings.integrations');
+    Route::post('/settings/smtp/test', [AdminSettingController::class, 'testSmtp'])->middleware('throttle:3,1')->name('settings.smtp.test');
     Route::get('/settings/smtp', [AdminSettingController::class, 'smtp'])->name('settings.smtp');
     Route::get('/settings/gateways', [AdminSettingController::class, 'gateways'])->name('settings.gateways');
 });
