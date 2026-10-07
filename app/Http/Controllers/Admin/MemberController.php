@@ -63,7 +63,7 @@ class MemberController extends Controller
             'current_address' => 'required|string',
             'emergency_contact' => 'required|string',
             'emergency_phone' => 'required|string',
-            'status' => 'required|string',
+            'status' => 'required|in:Pending,Approved,Rejected',
             'photoFile' => 'nullable|image|max:5120',
         ]);
 
@@ -134,7 +134,7 @@ class MemberController extends Controller
             'current_address' => 'required|string',
             'emergency_contact' => 'required|string',
             'emergency_phone' => 'required|string',
-            'status' => 'required|string',
+            'status' => 'required|in:Pending,Approved,Rejected',
             'photoFile' => 'nullable|image|max:5120',
         ]);
 
@@ -152,7 +152,10 @@ class MemberController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $member = Member::findOrFail($id);
-        $status = $request->input('status');
+        $validated = $request->validate([
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+        $status = $validated['status'];
 
         $member->status = $status;
         if ($status === 'Approved' && !$member->approval_date) {

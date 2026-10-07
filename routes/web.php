@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,7 +86,7 @@ Route::get('/admin', function () {
     return redirect()->route('admin.login');
 });
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:5,1')->name('admin.login.post');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 // Protected Admin Routes
@@ -94,6 +95,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     
     // Financial Management Module
     Route::get('/financial', [AdminFinancialController::class, 'index'])->name('financial.index');
+    Route::get('/financial/print', [AdminFinancialController::class, 'print'])->name('financial.print');
+    Route::get('/financial/export', [AdminFinancialController::class, 'export'])->name('financial.export');
     Route::post('/financial/transaction', [AdminFinancialController::class, 'storeTransaction'])->name('financial.storeTransaction');
     Route::post('/financial/account', [AdminFinancialController::class, 'createAccount'])->name('financial.createAccount');
 
@@ -101,6 +104,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
     Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}/preview', [AdminPageController::class, 'preview'])->name('pages.preview');
     Route::get('/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');
@@ -132,6 +136,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
 
     // Members Management
+    Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
+    Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
+    Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
     Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
@@ -199,6 +206,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/integrations', [AdminSettingController::class, 'integrations'])->name('settings.integrations');
+    Route::post('/settings/smtp/test', [AdminSettingController::class, 'testSmtp'])->middleware('throttle:3,1')->name('settings.smtp.test');
     Route::get('/settings/smtp', [AdminSettingController::class, 'smtp'])->name('settings.smtp');
     Route::get('/settings/gateways', [AdminSettingController::class, 'gateways'])->name('settings.gateways');
 });

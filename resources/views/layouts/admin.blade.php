@@ -8,8 +8,6 @@
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Local FontAwesome 6 CSS -->
     <link href="{{ asset('vendor/fontawesome/all.min.css') }}" rel="stylesheet">
-    <!-- Local Choices.js CSS -->
-    <link href="{{ asset('vendor/choices/choices.min.css') }}" rel="stylesheet">
     <!-- Local SweetAlert2 CSS -->
     <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
     <!-- Custom Styles & Vite Bundle -->
@@ -22,41 +20,53 @@
     <script defer src="{{ asset('vendor/alpine/alpine.min.js') }}"></script>
     <!-- Local SweetAlert2 JS -->
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- Local ApexCharts JS -->
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
-    <!-- Local CKEditor 5 JS -->
-    <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
+    @if(request()->routeIs('admin.dashboard'))
+        <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+    @endif
 
     @stack('styles')
 </head>
-<body :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
+<body class="admin-app" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
     sidebarOpen: true,
+    sidebarMobileOpen: false,
     darkMode: localStorage.getItem('theme') === 'dark',
+    toggleSidebar() {
+        if (window.matchMedia('(max-width: 767.98px)').matches) {
+            this.sidebarOpen = true;
+            this.sidebarMobileOpen = !this.sidebarMobileOpen;
+        } else {
+            this.sidebarOpen = !this.sidebarOpen;
+        }
+    },
     toggleTheme() {
         this.darkMode = !this.darkMode;
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
     },
     // Dynamic initialization of folder states based on current route
     contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
-    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
     settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
     electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
-}" :data-bs-theme="darkMode ? 'dark' : 'light'">
+}" :data-bs-theme="darkMode ? 'dark' : 'light'" @keydown.escape.window="sidebarMobileOpen = false">
+
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="admin-sidebar" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s;">
-            <div class="admin-sidebar-header">
-                <div x-show="sidebarOpen" class="brand-title"><i class="fa-solid fa-user-shield me-2"></i> KSO ADMIN CMS</div>
-                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+        <aside class="admin-sidebar" :class="[sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar', sidebarMobileOpen ? 'sidebar-mobile-open' : '']">
+            <div class="admin-profile">
+                <div class="admin-profile-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::substr(auth()->user()->name, 0, 1) }}</div>
+                <div class="admin-profile-copy" x-show="sidebarOpen">
+                    <span class="admin-profile-eyebrow">KSO CHANDIGARH</span>
+                    <strong>{{ auth()->user()->name }}</strong>
+                    <span>Administrator</span>
+                </div>
             </div>
             
-            <div class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
-                <ul class="nav flex-column gap-2 p-0">
+            <nav id="admin-sidebar-navigation" class="sidebar-nav overflow-auto" aria-label="Admin navigation">
+                <ul class="nav flex-column p-0">
                     <!-- Home Dashboard (Direct) -->
                     <li class="admin-nav-item">
                         <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -68,11 +78,11 @@
 
                     <!-- 1. Content Manager Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="contentOpen = !contentOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="contentOpen ? 'open' : ''">
+                        <button type="button" @click="contentOpen = !contentOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="contentOpen ? 'open' : ''" :aria-expanded="contentOpen" aria-controls="content-submenu" aria-label="Toggle content manager menu">
                             <span><i class="fa-solid fa-folder-open"></i> <span x-show="sidebarOpen">Content Manager</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="contentOpen" x-transition x-cloak>
+                        <ul id="content-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="contentOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'active' : '' }}">
                                     <i class="fa-solid fa-images"></i> Slider Banners
@@ -133,11 +143,16 @@
 
                     <!-- 2. Member Control Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="membersOpen = !membersOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="membersOpen ? 'open' : ''">
+                        <button type="button" @click="membersOpen = !membersOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="membersOpen ? 'open' : ''" :aria-expanded="membersOpen" aria-controls="members-submenu" aria-label="Toggle member control menu">
                             <span><i class="fa-solid fa-user-gear"></i> <span x-show="sidebarOpen">Member Control</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="membersOpen" x-transition x-cloak>
+                        <ul id="members-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="membersOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.membershipForms.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.membershipForms*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-file-invoice"></i> Membership Forms
+                                </a>
+                            </li>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.members.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.members*') && !request()->has('status') ? 'active' : '' }}">
                                     <i class="fa-solid fa-users"></i> All Members
@@ -163,11 +178,11 @@
 
                     <!-- 3. NGO & People Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="ngoOpen = !ngoOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="ngoOpen ? 'open' : ''">
+                        <button type="button" @click="ngoOpen = !ngoOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="ngoOpen ? 'open' : ''" :aria-expanded="ngoOpen" aria-controls="ngo-submenu" aria-label="Toggle NGO and people menu">
                             <span><i class="fa-solid fa-hands-holding-child"></i> <span x-show="sidebarOpen">NGO & People</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="ngoOpen" x-transition x-cloak>
+                        <ul id="ngo-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="ngoOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.partners.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.partners*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-handshake"></i> Partners
@@ -188,11 +203,11 @@
 
                     <!-- 4. Financial Ledger Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="financeOpen = !financeOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="financeOpen ? 'open' : ''">
+                        <button type="button" @click="financeOpen = !financeOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="financeOpen ? 'open' : ''" :aria-expanded="financeOpen" aria-controls="finance-submenu" aria-label="Toggle financial ledger menu">
                             <span><i class="fa-solid fa-sack-dollar"></i> <span x-show="sidebarOpen">Financial Ledger</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="financeOpen" x-transition x-cloak>
+                        <ul id="finance-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="financeOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.donations.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.donations*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-hand-holding-dollar"></i> Donations List
@@ -213,11 +228,11 @@
 
                     <!-- 5. System Settings Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="settingsOpen = !settingsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="settingsOpen ? 'open' : ''">
+                        <button type="button" @click="settingsOpen = !settingsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="settingsOpen ? 'open' : ''" :aria-expanded="settingsOpen" aria-controls="settings-submenu" aria-label="Toggle system settings menu">
                             <span><i class="fa-solid fa-sliders"></i> <span x-show="sidebarOpen">System Settings</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="settingsOpen" x-transition x-cloak>
+                        <ul id="settings-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="settingsOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.settings.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}">
                                     <i class="fa-solid fa-building-ngo"></i> Organization
@@ -248,11 +263,11 @@
 
                     <!-- 6. Election & Logs Folder -->
                     <li class="admin-nav-item">
-                        <button type="button" @click="electionsOpen = !electionsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="electionsOpen ? 'open' : ''">
+                        <button type="button" @click="electionsOpen = !electionsOpen" class="admin-nav-link sidebar-dropdown-toggle" :class="electionsOpen ? 'open' : ''" :aria-expanded="electionsOpen" aria-controls="elections-submenu" aria-label="Toggle elections and logs menu">
                             <span><i class="fa-solid fa-check-to-slot"></i> <span x-show="sidebarOpen">Election & Logs</span></span>
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
-                        <ul class="sidebar-submenu p-0 m-0 mt-1" x-show="electionsOpen" x-transition x-cloak>
+                        <ul id="elections-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="electionsOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.elections.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.elections*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-check-to-slot"></i> Election Module
@@ -266,29 +281,35 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-        </div>
+            </nav>
+        </aside>
 
         <!-- Main Content -->
-        <div class="flex-grow-1 overflow-hidden">
+        <div class="admin-workspace flex-grow-1">
             <!-- Top Bar -->
-            <div class="admin-topbar p-3 d-flex justify-content-between align-items-center">
-                <div class="fw-bold">
-                    @yield('title', 'Admin Panel')
+            <header class="admin-topbar d-flex justify-content-between align-items-center">
+                <div class="admin-topbar-heading d-flex align-items-center gap-3">
+                    <button @click="toggleSidebar()" class="admin-menu-toggle" type="button" aria-controls="admin-sidebar-navigation" :aria-expanded="window.matchMedia('(max-width: 767.98px)').matches ? sidebarMobileOpen : sidebarOpen" :aria-label="window.matchMedia('(max-width: 767.98px)').matches ? (sidebarMobileOpen ? 'Close admin navigation' : 'Open admin navigation') : (sidebarOpen ? 'Collapse admin navigation' : 'Expand admin navigation')">
+                        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <div>
+                        <span class="admin-breadcrumb">KSO ADMIN / WORKSPACE</span>
+                        <h1 class="admin-page-title">@yield('title', 'Admin Panel')</h1>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" style="width: 32px; height: 32px;">
+                <div class="admin-topbar-actions d-flex align-items-center gap-2 gap-md-3">
+                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center admin-theme-toggle" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" aria-label="Toggle dark mode" style="width: 38px; height: 38px;">
                         <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
                     </button>
-                    <a href="{{ route('home') }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">View Site</a>
+                    <a href="{{ route('home') }}" target="_blank" rel="noopener" class="btn btn-sm admin-site-link"><i class="fa-solid fa-arrow-up-right-from-square me-1" aria-hidden="true"></i><span>View site</span></a>
                     <form action="{{ route('admin.logout') }}" method="POST">
                         @csrf
-                        <button class="btn btn-sm btn-danger rounded-pill">Logout</button>
+                        <button class="btn btn-sm admin-logout" aria-label="Log out of the admin panel"><i class="fa-solid fa-arrow-right-from-bracket me-1" aria-hidden="true"></i><span>Logout</span></button>
                     </form>
                 </div>
-            </div>
+            </header>
 
-            <div class="admin-main-container p-4">
+            <main id="main-content" class="admin-main-container p-4" tabindex="-1">
         @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -316,14 +337,13 @@
         @endif
 
         @yield('content')
+            </main>
     </div>
     </div>
-    </div>
+    <button class="admin-sidebar-backdrop" type="button" x-show="sidebarMobileOpen" x-transition.opacity @click="sidebarMobileOpen = false" aria-label="Close admin navigation"></button>
 
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <!-- Local Choices.js JS -->
-    <script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
 
     <script>
         function confirmDelete(formId, message = 'Are you sure you want to delete this item?') {

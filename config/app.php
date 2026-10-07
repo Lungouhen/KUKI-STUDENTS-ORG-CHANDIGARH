@@ -23,6 +23,7 @@ return [
     'cipher' => 'AES-256-CBC',
 
     'providers' => [
+        App\Providers\AppServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,

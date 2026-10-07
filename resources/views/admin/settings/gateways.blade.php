@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label extra-small fw-bold">Razorpay Secret Key</label>
-                    <input type="password" name="razorpaySecret" class="form-control" value="{{ $settings['razorpaySecret'] }}">
+                    <input type="password" name="razorpaySecret" class="form-control" autocomplete="new-password" placeholder="{{ $settings['hasRazorpaySecret'] ? 'Configured; enter a new secret to replace' : 'Enter Razorpay secret' }}">
                 </div>
 
                 <div class="col-12 border-bottom pb-2 mt-4 mb-2">

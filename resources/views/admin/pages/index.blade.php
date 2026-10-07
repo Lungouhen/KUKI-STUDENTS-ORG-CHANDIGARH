@@ -7,7 +7,18 @@
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-file-lines me-2"></i> Custom Dynamic Web Pages</h5>
-        <a href="{{ route('admin.pages.create') }}" class="btn btn-primary btn-sm fw-bold"><i class="fa-solid fa-plus me-1"></i> Build New Page</a>
+        <div class="d-flex gap-2 align-items-center">
+            <form action="{{ route('admin.pages.index') }}" method="GET" class="d-flex align-items-center gap-2">
+                <label class="visually-hidden" for="page-status">Filter pages by status</label>
+                <select id="page-status" name="status" class="form-select form-select-sm">
+                    <option value="all" @selected($status === 'all')>All statuses</option>
+                    <option value="published" @selected($status === 'published')>Published</option>
+                    <option value="draft" @selected($status === 'draft')>Drafts</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-outline-primary">Filter</button>
+            </form>
+            <a href="{{ route('admin.pages.create') }}" class="btn btn-primary btn-sm fw-bold"><i class="fa-solid fa-plus me-1"></i> Build New Page</a>
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -29,7 +40,8 @@
                             <td>{{ $p->view_count }}</td>
                             <td><span class="badge {{ $p->is_published ? 'bg-success' : 'bg-secondary' }}">{{ $p->is_published ? 'Published' : 'Draft' }}</span></td>
                             <td>
-                                <a href="{{ route('page.show', $p->slug) }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Preview"><i class="fa-solid fa-eye"></i></a>
+                                <a href="{{ route('admin.pages.preview', $p->id) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary" aria-label="Preview {{ $p->title }}"><i class="fa-solid fa-eye"></i></a>
+                                <a href="{{ route('admin.pages.edit', $p->id) }}" class="btn btn-sm btn-outline-secondary" aria-label="Edit {{ $p->title }}"><i class="fa-solid fa-pen"></i></a>
                                 <form action="{{ route('admin.pages.destroy', $p->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete page?')">
                                     @csrf
                                     @method('DELETE')

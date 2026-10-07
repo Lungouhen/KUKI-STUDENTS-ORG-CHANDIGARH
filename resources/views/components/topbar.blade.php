@@ -9,7 +9,7 @@
                 <span><i class="fa-solid fa-envelope topbar-icon"></i> <a href="mailto:{{ \App\Models\Setting::get('email', 'ksochandigarh@gmail.com') }}">{{ \App\Models\Setting::get('email', 'ksochandigarh@gmail.com') }}</a></span>
             </div>
             <div class="d-flex align-items-center">
-                <button @click="toggleTheme()" class="btn btn-sm p-0 me-3 text-white border-0 shadow-none" title="Toggle Theme">
+                <button @click="toggleTheme()" class="btn btn-sm p-0 me-3 text-white border-0 shadow-none" type="button" title="Toggle Theme" aria-label="Toggle dark mode">
                     <i class="fa-solid" :class="darkMode ? 'fa-sun text-warning' : 'fa-moon'"></i>
                 </button>
                 <span class="me-2 extra-small">Follow Us:</span>
