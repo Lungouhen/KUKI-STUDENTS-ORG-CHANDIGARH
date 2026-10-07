@@ -58,7 +58,7 @@
             <div class="verification">
                 <strong>Issued:</strong> {{ $document->issued_at->format('d M Y') }}<br>
                 <strong>Verify:</strong> {{ $verificationUrl }}<br>
-                <img src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={{ urlencode($verificationUrl) }}" alt="QR code for certificate verification">
+                <img src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={{ urlencode($verificationUrl) }}" alt="QR code for certificate verification" referrerpolicy="no-referrer">
             </div>
             <div class="signature">
                 <strong>{{ $document->issued_by_name ?: 'Authorised Officer' }}</strong><br>

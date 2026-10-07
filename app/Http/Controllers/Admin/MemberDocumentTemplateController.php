@@ -83,19 +83,21 @@ class MemberDocumentTemplateController extends Controller
 
             $version = ((int) MemberDocumentTemplate::where('document_type', $validated['document_type'])->max('version')) + 1;
 
-            return MemberDocumentTemplate::create([
+            $template = MemberDocumentTemplate::create([
                 ...$validated,
                 'version' => $version,
                 'is_active' => true,
                 'created_by' => auth()->id(),
             ]);
-        });
 
-        AuditLog::log('MEMBER_DOCUMENT_TEMPLATE_VERSION_CREATED', [
-            'template_id' => $template->id,
-            'document_type' => $template->document_type,
-            'version' => $template->version,
-        ]);
+            AuditLog::log('MEMBER_DOCUMENT_TEMPLATE_VERSION_CREATED', [
+                'template_id' => $template->id,
+                'document_type' => $template->document_type,
+                'version' => $template->version,
+            ]);
+
+            return $template;
+        });
 
         return redirect()->route('admin.memberDocumentTemplates.index')
             ->with('success', "{$template->document_type} template version {$template->version} is now active.");

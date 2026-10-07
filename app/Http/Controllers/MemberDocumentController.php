@@ -81,7 +81,8 @@ class MemberDocumentController extends Controller
             ->view('membership.documents.show', compact('document'))
             ->header('Cache-Control', 'private, no-store')
             ->header('X-Frame-Options', 'DENY')
-            ->header('X-Content-Type-Options', 'nosniff');
+            ->header('X-Content-Type-Options', 'nosniff')
+            ->header('Referrer-Policy', 'no-referrer');
     }
 
     public function verify(string $certificateNumber)
@@ -96,7 +97,8 @@ class MemberDocumentController extends Controller
             ->setStatusCode($document ? 200 : 404)
             ->header('Cache-Control', 'no-store')
             ->header('X-Frame-Options', 'DENY')
-            ->header('X-Content-Type-Options', 'nosniff');
+            ->header('X-Content-Type-Options', 'nosniff')
+            ->header('Referrer-Policy', 'no-referrer');
     }
 
     private function portalMember(): ?Member

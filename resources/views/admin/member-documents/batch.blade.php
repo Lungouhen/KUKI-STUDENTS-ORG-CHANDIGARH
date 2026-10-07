@@ -8,8 +8,8 @@
         <div><h1 class="h3 fw-bold mb-1">Batch #{{ $batch->id }}</h1><div class="text-muted">{{ $batch->created_at->format('d M Y H:i') }} · {{ $batch->template?->title ?? 'Template unavailable' }} · version {{ $batch->template_version }}</div></div>
         <div class="d-flex gap-2">
             @if($batch->issued_count > 0)<a href="{{ route('admin.memberDocuments.batches.print', $batch->id) }}" class="btn btn-outline-primary" target="_blank" rel="noopener">Print batch</a>@endif
-            @if(in_array($batch->status, ['partial', 'failed'], true))
-                <form action="{{ route('admin.memberDocuments.batches.retry', $batch->id) }}" method="POST">@csrf<button class="btn btn-warning" type="submit">Retry failed recipients</button></form>
+            @if(in_array($batch->status, ['partial', 'failed', 'processing'], true))
+                <form action="{{ route('admin.memberDocuments.batches.retry', $batch->id) }}" method="POST">@csrf<button class="btn btn-warning" type="submit">{{ $batch->status === 'processing' ? 'Resume incomplete recipients' : 'Retry failed recipients' }}</button></form>
             @endif
             <a href="{{ route('admin.memberDocuments.index') }}" class="btn btn-outline-secondary">Back to register</a>
         </div>

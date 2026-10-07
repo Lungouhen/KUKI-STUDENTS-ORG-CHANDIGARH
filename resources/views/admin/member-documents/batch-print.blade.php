@@ -33,7 +33,7 @@
         <div><p>This is to certify that</p><p class="name">{{ $member['full_name'] ?? '' }}</p><p class="statement">{{ $snapshot['statement'] ?? $document->typeStatement() }}</p><p>{{ $snapshot['details'] ?? $document->document_details }}</p></div>
         <div class="bottom">
             <div><strong>Issued:</strong> {{ $document->issued_at?->format('d M Y') }}<br><strong>Institution:</strong> {{ $member['institution'] ?? '' }}<br><strong>Issuer:</strong> {{ $document->issued_by_name }}</div>
-            <div><img class="qr" src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={{ urlencode($verificationUrl) }}" alt="QR code for certificate verification"><br>{{ $document->certificate_number }}</div>
+            <div><img class="qr" src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={{ urlencode($verificationUrl) }}" alt="QR code for certificate verification" referrerpolicy="no-referrer"><br>{{ $document->certificate_number }}</div>
         </div>
     </main>
 @endforeach

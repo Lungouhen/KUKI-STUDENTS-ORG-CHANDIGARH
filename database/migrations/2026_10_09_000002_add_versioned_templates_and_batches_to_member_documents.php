@@ -77,6 +77,7 @@ return new class extends Migration
             $table->string('notification_status', 20)->default('not_sent')->index();
             $table->timestamp('notification_sent_at')->nullable();
             $table->index(['document_type', 'status', 'issued_at']);
+            $table->index('issued_at');
             $table->index(['batch_id', 'member_id']);
         });
     }
@@ -86,7 +87,9 @@ return new class extends Migration
         Schema::table('member_documents', function (Blueprint $table) {
             $table->dropForeign(['template_id']);
             $table->dropForeign(['batch_id']);
+            $table->dropIndex(['notification_status']);
             $table->dropIndex(['document_type', 'status', 'issued_at']);
+            $table->dropIndex(['issued_at']);
             $table->dropIndex(['batch_id', 'member_id']);
             $table->dropColumn([
                 'template_id',

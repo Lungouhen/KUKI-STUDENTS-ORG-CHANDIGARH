@@ -205,6 +205,11 @@ class MemberDocumentGenerationTest extends TestCase
             ->assertRedirect(route('admin.memberDocuments.batches.show', $batch->id));
         $this->assertSame(1, MemberDocument::count());
         $this->assertSame(1, $batch->fresh()->issued_count);
+        $this->actingAs($this->admin)->post(route('admin.memberDocuments.generateBulk'), [
+            ...$payload,
+            'document_details' => 'Different operation reusing the same key',
+        ])->assertStatus(409);
+        $this->assertSame(1, MemberDocument::count());
         $this->assertDatabaseHas('audit_logs', [
             'action' => 'MEMBER_DOCUMENT_BATCH_CREATED',
             'user_id' => $this->admin->id,

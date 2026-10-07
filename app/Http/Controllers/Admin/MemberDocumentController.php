@@ -11,10 +11,11 @@ use App\Models\MemberDocumentBatchItem;
 use App\Models\MemberDocumentTemplate;
 use App\Services\MemberDocumentIssuer;
 use App\Services\MemberDocumentTemplateRenderer;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Database\QueryException;
 use Illuminate\Validation\Rule;
 use Throwable;
 
@@ -44,8 +45,8 @@ class MemberDocumentController extends Controller
             ->when($validated['member_id'] ?? null, fn ($query, $value) => $query->where('member_id', $value))
             ->when($validated['member_name'] ?? null, fn ($query, $value) => $query->whereHas('member', fn ($members) => $members->where('full_name', 'like', '%'.$value.'%')))
             ->when($validated['batch_id'] ?? null, fn ($query, $value) => $query->where('batch_id', $value))
-            ->when($validated['date_from'] ?? null, fn ($query, $value) => $query->whereDate('issued_at', '>=', $value))
-            ->when($validated['date_to'] ?? null, fn ($query, $value) => $query->whereDate('issued_at', '<=', $value))
+            ->when($validated['date_from'] ?? null, fn ($query, $value) => $query->where('issued_at', '>=', $value.' 00:00:00'))
+            ->when($validated['date_to'] ?? null, fn ($query, $value) => $query->where('issued_at', '<', Carbon::parse($value)->addDay()->toDateString().' 00:00:00'))
             ->latest()
             ->paginate(20)
             ->withQueryString();
@@ -257,6 +258,9 @@ class MemberDocumentController extends Controller
             'idempotency_key' => 'required|uuid',
         ]);
         $memberIds = array_values(array_unique(array_filter(preg_split('/[\s,;]+/', $validated['member_ids']))));
+        if (! $memberIds) {
+            return back()->withErrors(['member_ids' => 'A batch must contain at least one member ID.']);
+        }
         if (count($memberIds) > self::MAX_BATCH_RECIPIENTS) {
             return back()->withErrors(['member_ids' => 'A batch can include at most 500 members.']);
         }
@@ -264,12 +268,12 @@ class MemberDocumentController extends Controller
             return back()->withErrors(['member_ids' => 'One or more member IDs were not found.']);
         }
 
+        $template = MemberDocumentTemplate::findOrFail($validated['template_id']);
         $batch = MemberDocumentBatch::where('idempotency_key', $validated['idempotency_key'])->first();
         if (! $batch) {
-            $template = MemberDocumentTemplate::findOrFail($validated['template_id']);
             try {
                 $batch = DB::transaction(function () use ($validated, $memberIds, $template) {
-                    return MemberDocumentBatch::create([
+                    $batch = MemberDocumentBatch::create([
                         'idempotency_key' => $validated['idempotency_key'],
                         'document_type' => $template->document_type,
                         'template_id' => $template->id,
@@ -281,6 +285,21 @@ class MemberDocumentController extends Controller
                         'recipient_count' => count($memberIds),
                         'started_at' => now(),
                     ]);
+
+                    AuditLog::log('MEMBER_DOCUMENT_BATCH_CREATED', [
+                        'batch_id' => $batch->id,
+                        'template_version' => $batch->template_version,
+                        'recipient_count' => $batch->recipient_count,
+                    ]);
+                    foreach ($memberIds as $memberId) {
+                        MemberDocumentBatchItem::create([
+                            'batch_id' => $batch->id,
+                            'member_id' => $memberId,
+                            'status' => 'pending',
+                        ]);
+                    }
+
+                    return $batch;
                 });
             } catch (QueryException $exception) {
                 $batch = MemberDocumentBatch::where('idempotency_key', $validated['idempotency_key'])->first();
@@ -289,14 +308,16 @@ class MemberDocumentController extends Controller
                 }
             }
 
-            if ($batch->wasRecentlyCreated) {
-                AuditLog::log('MEMBER_DOCUMENT_BATCH_CREATED', [
-                    'batch_id' => $batch->id,
-                    'template_version' => $batch->template_version,
-                    'recipient_count' => $batch->recipient_count,
-                ]);
-                $this->processBatch($batch, $issuer);
-            }
+        }
+
+        if ((int) $batch->template_id !== (int) $template->id
+            || trim($batch->shared_details) !== trim($validated['document_details'])
+            || ($batch->criteria['recipient_ids'] ?? []) !== $memberIds) {
+            abort(409, 'This batch idempotency key was already used for different generation details.');
+        }
+
+        if ($batch->wasRecentlyCreated || $batch->status === 'processing') {
+            $this->processBatch($batch, $issuer);
         }
 
         return redirect()->route('admin.memberDocuments.batches.show', $batch->id);
@@ -318,13 +339,14 @@ class MemberDocumentController extends Controller
             ->view('membership.documents.show', ['document' => $document, 'adminPreview' => true])
             ->header('Cache-Control', 'private, no-store')
             ->header('X-Frame-Options', 'DENY')
-            ->header('X-Content-Type-Options', 'nosniff');
+            ->header('X-Content-Type-Options', 'nosniff')
+            ->header('Referrer-Policy', 'no-referrer');
     }
 
     public function retryBatch(int $id, Request $request, MemberDocumentIssuer $issuer)
     {
         $batch = MemberDocumentBatch::findOrFail($id);
-        abort_unless(in_array($batch->status, ['partial', 'failed'], true), 404);
+        abort_unless(in_array($batch->status, ['partial', 'failed', 'processing'], true), 404);
         AuditLog::log('MEMBER_DOCUMENT_BATCH_RETRY', ['batch_id' => $batch->id]);
         $this->processBatch($batch, $issuer, true);
 
@@ -340,7 +362,9 @@ class MemberDocumentController extends Controller
         return response()
             ->view('admin.member-documents.batch-print', compact('batch'))
             ->header('Cache-Control', 'private, no-store')
-            ->header('X-Frame-Options', 'DENY');
+            ->header('X-Frame-Options', 'DENY')
+            ->header('X-Content-Type-Options', 'nosniff')
+            ->header('Referrer-Policy', 'no-referrer');
     }
 
     public function reject(Request $request, int $id)
@@ -407,13 +431,23 @@ class MemberDocumentController extends Controller
 
         foreach (array_chunk($batch->criteria['recipient_ids'] ?? [], self::BATCH_CHUNK_SIZE) as $memberIds) {
             foreach ($memberIds as $memberId) {
-                $existing = MemberDocumentBatchItem::where('batch_id', $batch->id)->where('member_id', $memberId)->first();
-                if ($existing && ($existing->status !== 'failed' || ! $retryFailures)) {
+                $existing = MemberDocumentBatchItem::with('document')
+                    ->where('batch_id', $batch->id)
+                    ->where('member_id', $memberId)
+                    ->first();
+                if ($existing && (
+                    in_array($existing->status, ['issued', 'skipped'], true)
+                    || ($existing->status === 'failed' && ! $retryFailures)
+                )) {
+                    if ($existing->status === 'issued' && $existing->document?->notification_status === 'pending') {
+                        $issuer->notify($existing->document);
+                    }
+
                     continue;
                 }
 
                 try {
-                    DB::transaction(function () use ($batch, $memberId, $template, $issuer, $existing) {
+                    DB::transaction(function () use ($batch, $memberId, $template, $issuer) {
                         $member = Member::whereKey($memberId)->lockForUpdate()->firstOrFail();
                         $latestItem = MemberDocumentBatchItem::where('batch_id', $batch->id)
                             ->where('member_id', $member->id)

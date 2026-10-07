@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Member;
 use App\Models\MemberDocument;
+use App\Models\MemberDocumentTemplate;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -203,7 +204,7 @@ class MemberDocumentTest extends TestCase
 
     private function templateId(): int
     {
-        return \App\Models\MemberDocumentTemplate::where('document_type', 'character')->where('is_active', true)->value('id');
+        return MemberDocumentTemplate::where('document_type', 'character')->where('is_active', true)->value('id');
     }
 
     private function createMember(string $id, string $email): Member
