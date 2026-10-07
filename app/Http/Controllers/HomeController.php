@@ -24,7 +24,10 @@ class HomeController extends Controller
         $committee = CommitteeMember::orderBy('display_order')->take(4)->get();
         $upcomingEvents = Event::where('status', 'Upcoming')->orderBy('date')->take(3)->get();
         $latestNews = News::orderBy('date', 'desc')->take(3)->get();
-        $galleryHighlights = GalleryItem::take(6)->get();
+        $galleryHighlights = GalleryItem::where('image_url', 'not like', '/images/gallery-%')
+            ->orderByDesc('date')
+            ->take(6)
+            ->get();
 
         return view('home', compact('stats', 'committee', 'upcomingEvents', 'latestNews', 'galleryHighlights'));
     }

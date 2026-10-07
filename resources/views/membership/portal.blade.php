@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4">
+<div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1"><i class="fa-solid fa-right-to-bracket me-2"></i> Member Student Portal</h2>
         <p class="small text-light opacity-90 mb-0">Access your digital membership card, student notices, and updates</p>

@@ -9,7 +9,9 @@ class GalleryController extends Controller
 {
     public function index()
     {
-        $gallery = GalleryItem::orderBy('date', 'desc')->get();
+        $gallery = GalleryItem::where('image_url', 'not like', '/images/gallery-%')
+            ->orderByDesc('date')
+            ->get();
         return view('gallery.index', compact('gallery'));
     }
 }

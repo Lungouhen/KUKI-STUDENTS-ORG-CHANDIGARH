@@ -14,9 +14,6 @@
     @if(request()->routeIs('gallery.index'))
         <link href="{{ asset('vendor/magnific-popup/magnific-popup.css') }}" rel="stylesheet">
     @endif
-    @if(request()->routeIs('home'))
-        <link href="{{ asset('vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
-    @endif
     <!-- Custom Styles -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @if(file_exists(public_path('build/manifest.json')))
@@ -102,23 +99,11 @@
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/waypoints/jquery.waypoints.min.js') }}"></script>
         <script src="{{ asset('vendor/counterup/jquery.counterup.min.js') }}"></script>
-        <script src="{{ asset('vendor/swiper/swiper-bundle.min.js') }}"></script>
         <script>
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (!reduceMotion) {
                 jQuery('.counter').counterUp({ delay: 10, time: 1500, offset: 70, beginAt: 0 });
             }
-            document.querySelectorAll('.swiper').forEach((element) => {
-                new Swiper(element, {
-                    loop: true,
-                    pagination: { el: element.querySelector('.swiper-pagination'), clickable: true },
-                    navigation: {
-                        nextEl: element.querySelector('.swiper-button-next'),
-                        prevEl: element.querySelector('.swiper-button-prev')
-                    },
-                    autoplay: reduceMotion ? false : { delay: 2500, disableOnInteraction: false }
-                });
-            });
         </script>
     @elseif(request()->routeIs('gallery.index'))
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>

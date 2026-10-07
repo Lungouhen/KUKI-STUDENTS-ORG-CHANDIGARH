@@ -5,25 +5,52 @@
 @section('content')
 
 <!-- Hero Section -->
-<div class="hero-section text-center text-white position-relative py-5">
-    <div class="container px-4 z-1 py-4">
-        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3 shadow">
-            <i class="fa-solid fa-graduation-cap me-1"></i> Official Student Portal • Chandigarh UT
-        </span>
-        <h1 class="display-4 fw-black mb-3">KUKI STUDENTS' ORGANISATION CHANDIGARH</h1>
-        <p class="lead mb-4 mx-auto style-max-width" style="max-width: 800px;">
-            Uniting, Empowering, and Guiding Kuki Students Across Educational Institutions in Chandigarh, Mohali & Panchkula.
-        </p>
-        <div class="d-flex flex-wrap justify-content-center gap-3">
-            <a href="{{ route('membership.register') }}" class="btn btn-accent btn-lg shadow-lg">
-                <i class="fa-solid fa-user-plus me-2"></i> Become a Member
-            </a>
-            <a href="{{ route('membership.verifyForm') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
-                <i class="fa-solid fa-qrcode me-2"></i> Verify ID Card
-            </a>
-            <a href="{{ route('events.index') }}" class="btn btn-teal text-white rounded-pill btn-lg px-4" style="background:#0d9488;">
-                <i class="fa-solid fa-calendar-check me-2"></i> View Events
-            </a>
+<div class="hero-section position-relative py-5">
+    <div class="container position-relative py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7 hero-copy">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
+                    <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i>                     KUKI STUDENTS' ORGANISATION CHANDIGARH · Student community
+                </span>
+                <h1 class="display-4 fw-black mb-3">Kuki students, stronger together.</h1>
+                <p class="lead mb-4">
+                    Uniting, empowering, and guiding Kuki students across educational institutions in Chandigarh, Mohali, and Panchkula.
+                </p>
+                <div class="d-flex flex-wrap gap-3 hero-actions">
+                    <a href="{{ route('membership.register') }}" class="btn btn-accent btn-lg shadow-lg">
+                        <i class="fa-solid fa-user-plus me-2" aria-hidden="true"></i> Become a Member
+                    </a>
+                    <a href="{{ route('membership.verifyForm') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="fa-solid fa-qrcode me-2" aria-hidden="true"></i> Verify ID Card
+                    </a>
+                    <a href="{{ route('events.index') }}" class="btn btn-teal text-white rounded-pill btn-lg px-4">
+                        <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i> View Events
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                @php($featuredPhoto = $galleryHighlights->first())
+                <figure class="home-hero-visual mb-0">
+                    @if($featuredPhoto)
+                        <img src="{{ asset($featuredPhoto->image_url) }}" alt="{{ $featuredPhoto->caption ?: $featuredPhoto->title }}" fetchpriority="high" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                        <div class="home-hero-art" hidden aria-hidden="true">
+                            <span class="home-hero-art-mark">KSO</span>
+                            <i class="fa-solid fa-people-group"></i>
+                            <span class="home-hero-art-caption">Students supporting students</span>
+                        </div>
+                        <figcaption>
+                            <span class="small text-uppercase fw-bold">From our community</span>
+                            <strong>{{ $featuredPhoto->title }}</strong>
+                        </figcaption>
+                    @else
+                        <div class="home-hero-art" aria-hidden="true">
+                            <span class="home-hero-art-mark">KSO</span>
+                            <i class="fa-solid fa-people-group"></i>
+                            <span class="home-hero-art-caption">Students supporting students</span>
+                        </div>
+                    @endif
+                </figure>
+            </div>
         </div>
     </div>
 </div>
@@ -70,44 +97,34 @@
     </div>
 </div>
 
-<!-- Swiper Slider Demo -->
-<div class="container my-5">
-    <h3 class="fw-black text-center mb-4">Moments & Highlights <span class="text-primary">Swiper JS</span></h3>
-    <div class="swiper" style="padding-bottom: 40px;">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/003566/ffffff?text=KSO+Event'">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold">Cultural Extravaganza</h5>
-                        <p class="small text-muted mb-0">Chavang Kut 2025 — Preserving heritage.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/0d9488/ffffff?text=Student+Life'">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold">Student Life</h5>
-                        <p class="small text-muted mb-0">Hostel & Accommodation Desk.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{{ asset('images/gallery-1.jpg') }}" class="card-img-top" alt="Event" style="height: 260px; object-fit: cover;" onerror="this.src='https://placehold.co/600x350/d97706/ffffff?text=Emergency+Relief'">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold">Emergency Relief</h5>
-                        <p class="small text-muted mb-0">24/7 Support Cell for students.</p>
-                    </div>
-                </div>
-            </div>
+@if($galleryHighlights->count() > 2)
+<section class="container my-5 public-gallery-preview" aria-labelledby="community-gallery-heading">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+            <span class="section-eyebrow">Life at KSO</span>
+            <h2 id="community-gallery-heading" class="fw-bold text-primary mb-1">Moments from our community</h2>
+            <p class="text-muted mb-0">Shared by students and organizers in Chandigarh.</p>
         </div>
-        <div class="swiper-pagination"></div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
+        <a href="{{ route('gallery.index') }}" class="btn btn-outline-primary rounded-pill px-4">
+            Visit the gallery <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i>
+        </a>
     </div>
-</div>
+    <div class="row g-4">
+        @foreach($galleryHighlights->slice(2, 3) as $photo)
+            <div class="col-sm-6 col-lg-4">
+                <figure class="community-photo-card mb-0">
+                    <img src="{{ asset($photo->image_url) }}" alt="{{ $photo->caption ?: $photo->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-people-group"></i><span>Community moments</span></div>
+                    <figcaption>
+                        <span>{{ $photo->category }}</span>
+                        <strong>{{ $photo->title }}</strong>
+                    </figcaption>
+                </figure>
+            </div>
+        @endforeach
+    </div>
+</section>
+@endif
 
 <!-- About Brief -->
 <div class="container my-5">
@@ -144,13 +161,21 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="position-relative p-3 bg-white rounded-4 shadow border">
-                <img src="{{ asset('images/gallery-1.jpg') }}" class="img-fluid rounded-3 w-100" alt="KSO Event" style="height: 340px; object-fit: cover;">
-                <div class="position-absolute bottom-0 start-0 m-4 p-3 bg-dark bg-opacity-75 text-white rounded-3 backdrop-blur" style="max-width: 80%;">
-                    <div class="fw-bold">Chavang Kut & Cultural Extravaganza</div>
-                    <div class="small text-warning">Preserving Rich Heritage & Folk Art</div>
+            @php($communityPhoto = $galleryHighlights->get(1))
+            @if($communityPhoto)
+                <figure class="community-feature-photo mb-0">
+                    <img src="{{ asset($communityPhoto->image_url) }}" alt="{{ $communityPhoto->caption ?: $communityPhoto->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-people-group"></i><span>Community moments</span></div>
+                    <figcaption>{{ $communityPhoto->title }}</figcaption>
+                </figure>
+            @else
+                <div class="community-feature-card">
+                    <span class="section-eyebrow">Here for one another</span>
+                    <i class="fa-solid fa-hands-holding-circle" aria-hidden="true"></i>
+                    <h3>Support that feels like community.</h3>
+                    <p>From guidance and welfare support to cultural connection, students can find a place to belong.</p>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -200,7 +225,7 @@
                 @foreach($upcomingEvents as $e)
                     <div class="col-12">
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-row hover-lift bg-white">
-                            <img src="{{ asset($e->image ?? '/images/event-freshers.jpg') }}" class="d-none d-sm-block" style="width: 140px; object-fit: cover;" onerror="this.src='/images/event-freshers.jpg'">
+                            <x-event-image :event="$e" variant="compact" class="d-none d-sm-flex" />
                             <div class="p-3 flex-grow-1">
                                 <span class="badge bg-primary-lt text-primary extra-small fw-bold mb-1">{{ $e->category }}</span>
                                 <h6 class="fw-bold text-dark mb-1">{{ $e->title }}</h6>

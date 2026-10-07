@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4" x-data="{ memberType: 'Individual' }">
+<div class="public-page-banner bg-primary text-white py-4 mb-4" x-data="{ memberType: 'Individual' }">
     <div class="container text-center">
         <h2 class="fw-black mb-1">KSO Chandigarh Membership Registration</h2>
         <p class="small text-light opacity-90 mb-0">Register online to get your official verified Digital Membership ID Card</p>

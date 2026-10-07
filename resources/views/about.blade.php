@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-5 mb-5">
+<div class="public-page-banner bg-primary text-white py-5 mb-5">
     <div class="container text-center">
         <h1 class="fw-black display-5 mb-2">About KSO Chandigarh</h1>
         <p class="lead opacity-90 mx-auto" style="max-width: 700px;">

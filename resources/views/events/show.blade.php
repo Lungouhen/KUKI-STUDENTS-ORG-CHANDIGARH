@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4">
+<div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">{{ $event->category }}</span>
         <h2 class="fw-black mb-1">{{ $event->title }}</h2>
@@ -16,7 +16,7 @@
     <div class="row g-5">
         <div class="col-lg-7">
             <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border">
-                <img src="{{ asset($event->image ?? '/images/event-freshers.jpg') }}" class="img-fluid rounded-3 mb-4 w-100" style="max-height: 350px; object-fit: cover;" onerror="this.src='/images/event-freshers.jpg'">
+                <x-event-image :event="$event" variant="detail" class="rounded-3 mb-4" />
                 
                 <h4 class="fw-bold text-primary mb-3">Event Details</h4>
                 <p class="text-secondary leading-relaxed">{{ $event->description }}</p>

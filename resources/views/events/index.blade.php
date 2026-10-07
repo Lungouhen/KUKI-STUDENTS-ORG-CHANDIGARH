@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-primary text-white py-4 mb-4">
+<div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1">Events & Official Announcements</h2>
         <p class="small text-light opacity-90 mb-0">Stay connected with upcoming cultural meets, sports, and press releases</p>
@@ -33,7 +33,7 @@
         @forelse($events as $e)
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 bg-white hover-lift">
-                    <img src="{{ asset($e->image ?? '/images/event-freshers.jpg') }}" class="card-img-top" style="height: 180px; object-fit: cover;" onerror="this.src='/images/event-freshers.jpg'">
+                    <x-event-image :event="$e" />
                     <div class="card-body p-3 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="badge bg-primary-lt text-primary extra-small fw-bold">{{ $e->category }}</span>

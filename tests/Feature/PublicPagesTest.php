@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\GalleryItem;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -32,7 +33,29 @@ class PublicPagesTest extends TestCase
     public function test_gallery_page_is_accessible(): void
     {
         $response = $this->get('/gallery');
-        $response->assertStatus(200);
+        $response->assertStatus(200)->assertSee('Community photos are on the way');
+    }
+
+    public function test_public_gallery_uses_uploaded_photos_not_seeded_mock_images(): void
+    {
+        GalleryItem::create([
+            'title' => 'Community orientation',
+            'category' => 'Student Life',
+            'image_url' => '/images/gallery-1.jpg',
+            'date' => '2025-09-18',
+        ]);
+        GalleryItem::create([
+            'title' => 'Welcome week',
+            'category' => 'Student Life',
+            'image_url' => '/storage/uploads/gallery/welcome-week.jpg',
+            'date' => '2025-09-19',
+        ]);
+
+        $this->get('/gallery')
+            ->assertOk()
+            ->assertSee('Welcome week')
+            ->assertDontSee('Community orientation')
+            ->assertSee('/storage/uploads/gallery/welcome-week.jpg');
     }
 
     public function test_donations_page_is_accessible(): void

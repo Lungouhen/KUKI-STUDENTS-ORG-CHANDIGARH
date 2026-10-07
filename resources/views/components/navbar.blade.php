@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-modern sticky-top">
+<nav class="navbar navbar-expand-xl navbar-modern sticky-top">
     <div class="container-fluid px-lg-5">
         <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
             <img src="{{ asset('images/kso-logo.jpg') }}" alt="KSO Logo" class="me-2 rounded-circle border border-warning" onerror="this.src='/images/default-avatar-m.png'">
@@ -8,8 +8,8 @@
             </div>
         </a>
         
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -47,7 +47,7 @@
                 </li>
             </ul>
 
-            <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 navbar-nav.ms-auto">
+            <div class="navbar-actions d-flex align-items-center gap-2 mt-3 mt-xl-0">
                 <a href="{{ route('donations.index') }}" class="btn btn-accent btn-sm rounded-pill px-3 shadow-sm"><i class="fa-solid fa-heart me-1"></i> Donate</a>
                 <a href="{{ route('admin.login') }}" class="nav-link-admin"><i class="fa-solid fa-user-shield me-1"></i> CMS Admin</a>
             </div>
