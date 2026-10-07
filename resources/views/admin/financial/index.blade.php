@@ -18,9 +18,9 @@
     </header>
 
     <div class="row g-3 mb-4 finance-summary-grid">
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-6 col-sm-6 col-xl-3">
             <article class="finance-summary-card finance-summary-card--balance h-100">
-                <span class="finance-summary-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span>
+                <span class="finance-summary-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>
                 <div>
                     <span class="finance-card-label">{{ $term ? 'Net Term Balance' : 'Net Balance' }}</span>
                     <strong>₹{{ number_format($netBalance, 2) }}</strong>
@@ -28,9 +28,9 @@
                 </div>
             </article>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-6 col-sm-6 col-xl-3">
             <article class="finance-summary-card h-100">
-                <span class="finance-summary-icon finance-summary-icon--income"><i class="fa-solid fa-arrow-down-left" aria-hidden="true"></i></span>
+                <span class="finance-summary-icon finance-summary-icon--income"><i class="fa-solid fa-hand-holding-dollar" aria-hidden="true"></i></span>
                 <div>
                     <span class="finance-card-label">{{ $term ? 'Term Income' : 'All-time Income' }}</span>
                     <strong class="text-success">₹{{ number_format($totalIncome, 2) }}</strong>
@@ -38,9 +38,9 @@
                 </div>
             </article>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-6 col-sm-6 col-xl-3">
             <article class="finance-summary-card h-100">
-                <span class="finance-summary-icon finance-summary-icon--expense"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+                <span class="finance-summary-icon finance-summary-icon--expense"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i></span>
                 <div>
                     <span class="finance-card-label">{{ $term ? 'Term Expenses' : 'All-time Expenses' }}</span>
                     <strong class="text-danger">₹{{ number_format($totalExpense, 2) }}</strong>
@@ -48,7 +48,7 @@
                 </div>
             </article>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-6 col-sm-6 col-xl-3">
             <article class="finance-summary-card h-100">
                 <span class="finance-summary-icon finance-summary-icon--accounts"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></span>
                 <div>
@@ -70,11 +70,11 @@
         </div>
         @if($activeAccounts->isNotEmpty())
             <div class="row g-3">
-                @foreach($activeAccounts->take(4) as $account)
+                @foreach($activeAccounts as $account)
                     <div class="col-12 col-sm-6 col-xl-3">
                         <article class="finance-account-card h-100">
                             <div class="d-flex justify-content-between align-items-start gap-2">
-                                <span class="finance-account-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                                <span class="finance-account-icon"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></span>
                                 <span class="finance-account-code">{{ $account->account_code }}</span>
                             </div>
                             <h3>{{ $account->account_name }}</h3>

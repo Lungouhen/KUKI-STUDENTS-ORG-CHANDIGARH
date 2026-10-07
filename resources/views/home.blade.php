@@ -35,7 +35,7 @@
                         <img src="{{ asset($featuredPhoto->image_url) }}" alt="{{ $featuredPhoto->caption ?: $featuredPhoto->title }}" fetchpriority="high" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
                         <div class="home-hero-art" hidden aria-hidden="true">
                             <span class="home-hero-art-mark">KSO</span>
-                            <i class="fa-solid fa-people-group"></i>
+                            <i class="fa-solid fa-users"></i>
                             <span class="home-hero-art-caption">Students supporting students</span>
                         </div>
                         <figcaption>
@@ -45,7 +45,7 @@
                     @else
                         <div class="home-hero-art" aria-hidden="true">
                             <span class="home-hero-art-mark">KSO</span>
-                            <i class="fa-solid fa-people-group"></i>
+                            <i class="fa-solid fa-users"></i>
                             <span class="home-hero-art-caption">Students supporting students</span>
                         </div>
                     @endif
@@ -114,7 +114,7 @@
             <div class="col-sm-6 col-lg-4">
                 <figure class="community-photo-card mb-0">
                     <img src="{{ asset($photo->image_url) }}" alt="{{ $photo->caption ?: $photo->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
-                    <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-people-group"></i><span>Community moments</span></div>
+                    <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-users"></i><span>Community moments</span></div>
                     <figcaption>
                         <span>{{ $photo->category }}</span>
                         <strong>{{ $photo->title }}</strong>
@@ -171,7 +171,7 @@
             @else
                 <div class="community-feature-card">
                     <span class="section-eyebrow">Here for one another</span>
-                    <i class="fa-solid fa-hands-holding-circle" aria-hidden="true"></i>
+                    <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
                     <h3>Support that feels like community.</h3>
                     <p>From guidance and welfare support to cultural connection, students can find a place to belong.</p>
                 </div>

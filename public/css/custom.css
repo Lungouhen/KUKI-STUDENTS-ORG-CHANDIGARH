@@ -2555,6 +2555,12 @@ body:not(.admin-app) .navbar-modern {
         align-items: flex-start;
         flex-direction: column;
     }
+
+    .finance-summary-card {
+        flex-direction: column;
+        gap: 0.55rem;
+        padding: 0.85rem;
+    }
 }
 
 /* Finance workspace, scoped to the admin shell */
