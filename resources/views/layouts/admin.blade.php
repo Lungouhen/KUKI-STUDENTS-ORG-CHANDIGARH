@@ -44,7 +44,7 @@
     },
     // Dynamic initialization of folder states based on current route
     contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
-    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
     settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
@@ -148,6 +148,11 @@
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
                         <ul id="members-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="membersOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.membershipForms.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.membershipForms*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-file-invoice"></i> Membership Forms
+                                </a>
+                            </li>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.members.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.members*') && !request()->has('status') ? 'active' : '' }}">
                                     <i class="fa-solid fa-users"></i> All Members

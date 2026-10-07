@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,6 +135,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
 
     // Members Management
+    Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
+    Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
+    Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
     Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');

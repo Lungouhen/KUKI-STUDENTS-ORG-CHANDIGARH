@@ -23,6 +23,7 @@ An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki St
 - **Digital Membership ID Card**: Generates an official, printable KSO Student ID Card featuring student photo, unique Membership ID (e.g. `KSO-CHD-2026-0001`), official seal, validity date, and dynamic verification QR code.
 - **Public ID Verification Tool**: Online ID lookup tool for public and institutional verification.
 - **Student Member Portal**: Login with Membership ID or Email to access digital ID card, application status, and student resources.
+- **Offline Membership Forms**: Admins can share the public registration link or build a section-based blank form, print it, save it as PDF from the browser print dialog, or download a standalone HTML copy for offline printing. Paper applications must be entered and reviewed through the existing admin member workflow; the form tool does not create or approve member records.
 
 ### 3. 🛡️ CMS & Admin Management Panel
 - **Admin Dashboard**: Overview metrics (Total Members, Pending Approvals, Total Events, Total Donations).
@@ -106,6 +107,7 @@ The committed audit scripts perform static checks only; they are not substitutes
 | `/admin/login` | GET/POST | CMS Admin Authentication |
 | `/admin/dashboard` | GET | CMS Admin Dashboard |
 | `/admin/members` | GET | Membership Management & Approval |
+| `/admin/membership-forms` | GET | Admin form builder, online link sharing, print preview, and offline HTML download |
 | `/admin/members/export/csv` | GET | Export Member Directory to CSV |
 | `/admin/financial` | GET/POST | Financial Ledger & Transaction Vouchers |
 | `/admin/pages` | GET/POST | Dynamic Page Builder |
