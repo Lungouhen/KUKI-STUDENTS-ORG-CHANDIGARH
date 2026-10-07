@@ -112,7 +112,8 @@ class MemberController extends Controller
     public function show($id)
     {
         $member = Member::findOrFail($id);
-        return view('admin.members.show', compact('member'));
+        $documents = $member->documents()->latest()->limit(10)->get();
+        return view('admin.members.show', compact('member', 'documents'));
     }
 
     public function edit($id)

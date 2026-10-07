@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormCo
 use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
 use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
 use App\Http\Controllers\Admin\MemberDocumentController as AdminMemberDocumentController;
+use App\Http\Controllers\Admin\MemberDocumentTemplateController as AdminMemberDocumentTemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,7 @@ Route::prefix('members')->group(function () {
 });
 Route::get('/documents/verify/{certificateNumber}', [MemberDocumentController::class, 'verify'])
     ->middleware('throttle:10,1')
+    ->where('certificateNumber', '[A-Za-z0-9-]{1,80}')
     ->name('documents.verify');
 
 // Events & News
@@ -141,9 +143,21 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Members Management
     Route::get('/member-documents', [AdminMemberDocumentController::class, 'index'])->name('memberDocuments.index');
+    Route::post('/member-documents/{id}/preview', [AdminMemberDocumentController::class, 'previewPending'])->name('memberDocuments.previewPending');
+    Route::get('/member-documents/{id}/preview-issued', [AdminMemberDocumentController::class, 'previewIssued'])->name('memberDocuments.previewIssued');
     Route::post('/member-documents/{id}/issue', [AdminMemberDocumentController::class, 'issue'])->name('memberDocuments.issue');
     Route::post('/member-documents/{id}/reject', [AdminMemberDocumentController::class, 'reject'])->name('memberDocuments.reject');
     Route::post('/member-documents/{id}/revoke', [AdminMemberDocumentController::class, 'revoke'])->name('memberDocuments.revoke');
+    Route::post('/member-documents/direct/preview', [AdminMemberDocumentController::class, 'previewDirect'])->name('memberDocuments.previewDirect');
+    Route::post('/member-documents/direct/issue', [AdminMemberDocumentController::class, 'generateDirect'])->name('memberDocuments.generateDirect');
+    Route::post('/member-documents/bulk/preview', [AdminMemberDocumentController::class, 'previewBulk'])->name('memberDocuments.previewBulk');
+    Route::post('/member-documents/bulk/issue', [AdminMemberDocumentController::class, 'generateBulk'])->name('memberDocuments.generateBulk');
+    Route::get('/member-documents/batches/{id}', [AdminMemberDocumentController::class, 'showBatch'])->name('memberDocuments.batches.show');
+    Route::post('/member-documents/batches/{id}/retry', [AdminMemberDocumentController::class, 'retryBatch'])->name('memberDocuments.batches.retry');
+    Route::get('/member-documents/batches/{id}/print', [AdminMemberDocumentController::class, 'printBatch'])->name('memberDocuments.batches.print');
+    Route::get('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'index'])->name('memberDocumentTemplates.index');
+    Route::post('/member-document-templates/preview', [AdminMemberDocumentTemplateController::class, 'preview'])->name('memberDocumentTemplates.preview');
+    Route::post('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'store'])->name('memberDocumentTemplates.store');
     Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');

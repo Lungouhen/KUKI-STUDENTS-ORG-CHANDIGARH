@@ -24,12 +24,20 @@ class MemberDocument extends Model
         'issued_at',
         'revoked_at',
         'resolution_note',
+        'template_id',
+        'template_version',
+        'content_snapshot',
+        'batch_id',
+        'notification_status',
+        'notification_sent_at',
     ];
 
     protected $casts = [
         'member_snapshot' => 'array',
         'issued_at' => 'datetime',
         'revoked_at' => 'datetime',
+        'content_snapshot' => 'array',
+        'notification_sent_at' => 'datetime',
     ];
 
     public function member()
@@ -40,6 +48,16 @@ class MemberDocument extends Model
     public function issuedBy()
     {
         return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    public function template()
+    {
+        return $this->belongsTo(MemberDocumentTemplate::class, 'template_id');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(MemberDocumentBatch::class, 'batch_id');
     }
 
     public function typeLabel(): string

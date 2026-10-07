@@ -58,6 +58,27 @@
                     </form>
                 </div>
             @endif
+
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold mb-0">Certificates & documents</h5>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.memberDocuments.index', ['member_id' => $member->id]) }}">Open register</a>
+                </div>
+                @forelse($documents as $document)
+                    <div class="d-flex flex-wrap justify-content-between align-items-center border-top py-2 gap-2">
+                        <div>
+                            <strong>{{ $document->typeLabel() }}</strong>
+                            <span class="badge {{ $document->status === 'issued' ? 'bg-success' : ($document->status === 'revoked' ? 'bg-secondary' : 'bg-warning text-dark') }}">{{ ucfirst($document->status) }}</span>
+                            <div class="small text-muted">{{ $document->certificate_number ?? 'No certificate number' }} · {{ $document->template_version ? 'Template v'.$document->template_version : 'Legacy template' }}</div>
+                        </div>
+                        @if(in_array($document->status, ['issued', 'revoked'], true))
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.memberDocuments.previewIssued', $document->id) }}">Private preview</a>
+                        @endif
+                    </div>
+                @empty
+                    <p class="small text-muted mb-0">No certificate requests on file.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>

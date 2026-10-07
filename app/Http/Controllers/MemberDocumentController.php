@@ -86,13 +86,14 @@ class MemberDocumentController extends Controller
 
     public function verify(string $certificateNumber)
     {
-        $document = MemberDocument::with('member')
+        $document = MemberDocument::query()
             ->where('certificate_number', $certificateNumber)
             ->whereIn('status', ['issued', 'revoked'])
-            ->firstOrFail();
+            ->first();
 
         return response()
             ->view('membership.documents.verify', compact('document'))
+            ->setStatusCode($document ? 200 : 404)
             ->header('Cache-Control', 'no-store')
             ->header('X-Frame-Options', 'DENY')
             ->header('X-Content-Type-Options', 'nosniff');
