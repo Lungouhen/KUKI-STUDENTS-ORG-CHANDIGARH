@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\AuditLog;
 use App\Models\Candidate;
 use App\Models\Election;
+use App\Models\Member;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,6 +17,7 @@ class ElectionVoteAuditTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Candidate $candidate;
 
     protected function setUp(): void
@@ -27,6 +29,23 @@ class ElectionVoteAuditTest extends TestCase
             'email' => 'election-admin@example.org',
             'password' => Hash::make('secure test password'),
             'is_admin' => true,
+        ]);
+
+        Member::create([
+            'id' => 'KSO-CHD-2026-0010',
+            'full_name' => 'Election Candidate',
+            'gender' => 'Female',
+            'phone' => '+91 90000 00000',
+            'email' => 'election-candidate@example.org',
+            'blood_group' => 'A+',
+            'institution' => 'Test College',
+            'course' => 'BCom',
+            'year_of_study' => '1st Year',
+            'permanent_address' => 'Manipur',
+            'current_address' => 'Chandigarh',
+            'emergency_contact' => 'Parent',
+            'emergency_phone' => '+91 90000 00001',
+            'status' => 'Approved',
         ]);
 
         $term = Term::create([

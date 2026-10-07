@@ -106,7 +106,7 @@ return new class extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropForeign('transactions_term_id_foreign');
+            $table->dropForeign(['term_id']);
             $table->dropIndex('transactions_term_date_index');
             $table->dropIndex('transactions_target_account_date_index');
             $table->dropIndex('transactions_account_date_index');
@@ -115,16 +115,16 @@ return new class extends Migration
         });
 
         Schema::table('candidates', function (Blueprint $table) {
-            $table->dropForeign('candidates_member_id_foreign');
+            $table->dropForeign(['member_id']);
             $table->dropIndex('candidates_member_id_index');
         });
 
         Schema::table('member_fee_payments', function (Blueprint $table) {
-            $table->dropForeign('member_fee_payments_member_id_foreign');
+            $table->dropForeign(['member_id']);
         });
 
         Schema::table('election_votes', function (Blueprint $table) {
-            $table->dropForeign('election_votes_member_id_foreign');
+            $table->dropForeign(['member_id']);
             $table->dropIndex('election_votes_member_id_index');
         });
 
