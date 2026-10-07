@@ -26,9 +26,17 @@
 
     @stack('styles')
 </head>
-<body :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
+<body class="admin-app" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
     sidebarOpen: true,
+    sidebarMobileOpen: false,
     darkMode: localStorage.getItem('theme') === 'dark',
+    toggleSidebar() {
+        if (window.matchMedia('(max-width: 767.98px)').matches) {
+            this.sidebarMobileOpen = !this.sidebarMobileOpen;
+        } else {
+            this.sidebarOpen = !this.sidebarOpen;
+        }
+    },
     toggleTheme() {
         this.darkMode = !this.darkMode;
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
@@ -46,16 +54,18 @@
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="admin-sidebar" :class="sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar'" style="transition: width 0.3s;">
-            <div class="admin-sidebar-header">
-                <div x-show="sidebarOpen" class="brand-title"><i class="fa-solid fa-user-shield me-2"></i> KSO ADMIN CMS</div>
-                <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-outline-warning" type="button" aria-controls="admin-sidebar-navigation" :aria-expanded="sidebarOpen" :aria-label="sidebarOpen ? 'Collapse admin sidebar' : 'Expand admin sidebar'">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+        <aside class="admin-sidebar" :class="[sidebarOpen ? 'w-sidebar' : 'w-icon-sidebar', sidebarMobileOpen ? 'sidebar-mobile-open' : '']">
+            <div class="admin-profile">
+                <div class="admin-profile-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::substr(auth()->user()->name, 0, 1) }}</div>
+                <div class="admin-profile-copy" x-show="sidebarOpen">
+                    <span class="admin-profile-eyebrow">KSO CHANDIGARH</span>
+                    <strong>{{ auth()->user()->name }}</strong>
+                    <span>Administrator</span>
+                </div>
             </div>
             
-            <div id="admin-sidebar-navigation" class="sidebar-nav py-3 overflow-auto" style="max-height: 90vh;">
-                <ul class="nav flex-column gap-2 p-0">
+            <nav id="admin-sidebar-navigation" class="sidebar-nav overflow-auto" aria-label="Admin navigation">
+                <ul class="nav flex-column p-0">
                     <!-- Home Dashboard (Direct) -->
                     <li class="admin-nav-item">
                         <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -265,27 +275,33 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-        </div>
+            </nav>
+        </aside>
 
         <!-- Main Content -->
-        <div class="flex-grow-1 overflow-hidden">
+        <div class="admin-workspace flex-grow-1">
             <!-- Top Bar -->
-            <div class="admin-topbar p-3 d-flex justify-content-between align-items-center">
-                <div class="fw-bold">
-                    @yield('title', 'Admin Panel')
+            <header class="admin-topbar d-flex justify-content-between align-items-center">
+                <div class="admin-topbar-heading d-flex align-items-center gap-3">
+                    <button @click="toggleSidebar()" class="admin-menu-toggle" type="button" aria-controls="admin-sidebar-navigation" :aria-expanded="window.matchMedia('(max-width: 767.98px)').matches ? sidebarMobileOpen : sidebarOpen" :aria-label="window.matchMedia('(max-width: 767.98px)').matches ? (sidebarMobileOpen ? 'Close admin navigation' : 'Open admin navigation') : (sidebarOpen ? 'Collapse admin navigation' : 'Expand admin navigation')">
+                        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <div>
+                        <span class="admin-breadcrumb">KSO ADMIN / WORKSPACE</span>
+                        <h1 class="admin-page-title">@yield('title', 'Admin Panel')</h1>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" style="width: 32px; height: 32px;">
+                <div class="admin-topbar-actions d-flex align-items-center gap-2 gap-md-3">
+                    <button @click="toggleTheme()" class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center admin-theme-toggle" :class="darkMode ? 'btn-warning' : 'btn-outline-dark'" aria-label="Toggle dark mode" style="width: 38px; height: 38px;">
                         <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
                     </button>
-                    <a href="{{ route('home') }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">View Site</a>
+                    <a href="{{ route('home') }}" target="_blank" rel="noopener" class="btn btn-sm admin-site-link"><i class="fa-solid fa-arrow-up-right-from-square me-1" aria-hidden="true"></i><span>View site</span></a>
                     <form action="{{ route('admin.logout') }}" method="POST">
                         @csrf
-                        <button class="btn btn-sm btn-danger rounded-pill">Logout</button>
+                        <button class="btn btn-sm admin-logout"><i class="fa-solid fa-arrow-right-from-bracket me-1" aria-hidden="true"></i><span>Logout</span></button>
                     </form>
                 </div>
-            </div>
+            </header>
 
             <main id="main-content" class="admin-main-container p-4" tabindex="-1">
         @if(session('success'))
@@ -318,6 +334,7 @@
             </main>
     </div>
     </div>
+    <button class="admin-sidebar-backdrop" type="button" x-show="sidebarMobileOpen" x-transition.opacity @click="sidebarMobileOpen = false" aria-label="Close admin navigation"></button>
 
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
