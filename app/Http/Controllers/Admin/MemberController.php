@@ -182,6 +182,11 @@ class MemberController extends Controller
     public function destroy($id)
     {
         $member = Member::findOrFail($id);
+
+        if ($member->feePayments()->exists() || $member->electionVotes()->exists() || $member->candidacies()->exists()) {
+            return back()->with('error', 'This member has financial or election records and cannot be deleted. Deactivate the member instead.');
+        }
+
         $member->delete();
         AuditLog::log('ADMIN_DELETE_MEMBER', "Member ID: {$id}");
         return back()->with('success', "Member {$id} deleted successfully.");

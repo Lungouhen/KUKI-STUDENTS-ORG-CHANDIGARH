@@ -174,11 +174,11 @@ class FinancialController extends Controller
         }
 
         if (isset($filters['from'])) {
-            $query->whereDate('transaction_date', '>=', $filters['from']);
+            $query->where('transaction_date', '>=', $filters['from']);
         }
 
         if (isset($filters['to'])) {
-            $query->whereDate('transaction_date', '<=', $filters['to']);
+            $query->where('transaction_date', '<=', $filters['to']);
         }
 
         return $query;
