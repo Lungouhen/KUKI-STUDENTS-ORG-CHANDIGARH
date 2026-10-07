@@ -32,6 +32,8 @@ use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
+use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
+use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +62,7 @@ Route::prefix('members')->group(function () {
     Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
     Route::post('/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
     Route::get('/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
+    Route::get('/portal/resources/{id}/download', [MembershipController::class, 'downloadResource'])->name('membership.downloadResource');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
 });
 
@@ -184,6 +187,15 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Partners
     Route::get('/partners/export/csv', [PartnerController::class, 'exportCsv'])->name('partners.exportCsv');
     Route::resource('partners', PartnerController::class);
+
+    // Accommodations (Hostel & PG directory)
+    Route::resource('accommodations', AdminAccommodationController::class)->except(['show']);
+
+    // Student resources library
+    Route::get('/resources', [AdminStudentResourceController::class, 'index'])->name('resources.index');
+    Route::post('/resources', [AdminStudentResourceController::class, 'store'])->name('resources.store');
+    Route::post('/resources/{id}/toggle', [AdminStudentResourceController::class, 'toggle'])->name('resources.toggle');
+    Route::delete('/resources/{id}', [AdminStudentResourceController::class, 'destroy'])->name('resources.destroy');
 
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

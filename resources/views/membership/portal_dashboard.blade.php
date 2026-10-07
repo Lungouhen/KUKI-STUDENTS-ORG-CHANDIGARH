@@ -606,78 +606,48 @@
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-hotel text-primary me-2"></i> KSO Verified Hostels & PG Accommodations</h5>
                 <span class="badge bg-teal text-white px-3 py-1 rounded-pill extra-small" style="background:#0d9488;"><i class="fa-solid fa-house-circle-check me-1"></i> Checked & Recommended</span>
             </div>
-            
+
             <p class="extra-small text-muted mb-4">We are committed to helping newly arriving students find secure, affordable, and welcoming accommodation near their colleges in Chandigarh, Mohali, and Panchkula.</p>
-            
-            <div class="row g-4">
-                <!-- Listing 1 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-success text-white">Co-Living PG</span>
-                            <span class="accommodation-rent">₹5,500/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 15-B, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 5 mins to PU</small>
-                            </div>
-                            <h6 class="fw-bold text-dark mb-2">Tricity Student Co-Living Hostels</h6>
-                            <p class="extra-small text-muted mb-3">High-speed Wi-Fi, 3 healthy home-style meals, AC/Geyser, study desk setup, 24/7 power backup and dedicated laundry.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543210" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Listing 2 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-danger text-white">Girls PG</span>
-                            <span class="accommodation-rent">₹6,000/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 36-C, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 2 mins to MCM</small>
-                            </div>
-                            <h6 class="fw-bold text-dark mb-2">Elite Girls Student Hostel</h6>
-                            <p class="extra-small text-muted mb-3">Fully secure biometric entries, warden-controlled property, clean dining hall, library lounge, double sharing spacious rooms.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543211" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
-                        </div>
-                    </div>
+            @if($accommodations->isEmpty())
+                <div class="text-center py-5">
+                    <div class="display-4 text-muted mb-3"><i class="fa-solid fa-house-circle-exclamation"></i></div>
+                    <h6 class="fw-bold text-dark">No verified listings right now</h6>
+                    <p class="text-muted extra-small mx-auto mb-0" style="max-width: 440px;">The accommodation desk verifies every hostel and PG before listing it here. New verified listings will appear as soon as they are approved.</p>
                 </div>
-
-                <!-- Listing 3 -->
-                <div class="col-md-4">
-                    <div class="accommodation-card h-100">
-                        <div class="accommodation-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=500&auto=format&fit=crop&q=60" alt="Room Picture">
-                            <span class="accommodation-tag badge bg-primary text-white">Furnished Flatshare</span>
-                            <span class="accommodation-rent">₹4,800/mo</span>
-                        </div>
-                        <div class="p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-primary fw-bold extra-small">Sector 11-A, Chandigarh</small>
-                                <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> 4 mins to PGGC</small>
+            @else
+                <div class="row g-4">
+                    @foreach($accommodations as $listing)
+                        <div class="col-md-4">
+                            <div class="accommodation-card h-100">
+                                <div class="accommodation-img-wrapper">
+                                    <img src="{{ asset($listing->photo ?? '/images/default-avatar-m.png') }}" alt="{{ $listing->name }}" onerror="this.src='/images/kso-logo.jpg'">
+                                    <span class="accommodation-tag badge bg-success text-white">{{ $listing->type }}</span>
+                                    <span class="accommodation-rent">₹{{ number_format($listing->rent_monthly) }}/mo</span>
+                                </div>
+                                <div class="p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-primary fw-bold extra-small">{{ $listing->location }}</small>
+                                        @if($listing->landmark)
+                                            <small class="text-muted extra-small"><i class="fa-solid fa-walking me-1"></i> {{ $listing->landmark }}</small>
+                                        @endif
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">{{ $listing->name }}</h6>
+                                    @if($listing->description)
+                                        <p class="extra-small text-muted mb-3">{{ $listing->description }}</p>
+                                    @endif
+                                    <div class="d-flex gap-2">
+                                        <a href="tel:{{ preg_replace('/[^+\d]/', '', $listing->contact_phone) }}" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
+                                    </div>
+                                </div>
                             </div>
-                            <h6 class="fw-bold text-dark mb-2">Sector 11 Flatshare for Boys</h6>
-                            <p class="extra-small text-muted mb-3">Self-cooking kitchen equipped with gas and fridge, spacious attached bathroom, high-speed fiber internet connection.</p>
-                            <div class="d-flex gap-2">
-                                <a href="tel:+919876543212" class="btn btn-sm btn-primary rounded-pill flex-grow-1 fw-bold"><i class="fa-solid fa-phone me-1"></i> Contact Owner</a>
-                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
+
 
     <!-- ─── TAB 4: ACADEMIC & CAREER RESOURCES DESK ─── -->
     <div x-show="activeTab === 'academic'" x-transition x-cloak>
@@ -686,70 +656,39 @@
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-book-open text-primary me-2"></i> KSO Student Academic Resources & Question Bank</h5>
                 <span class="badge bg-primary-lt text-primary px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-graduation-cap me-1"></i> Free Download Portal</span>
             </div>
-            
+
             <p class="extra-small text-muted mb-4">Access official university guidelines, scholarship instructions, syllabi, admission prospectuses, and previous years question papers compiled by our cultural and academic desks.</p>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> Institutional Guides & Schedules</h6>
-                    
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-primary-lt text-primary">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">Panjab University Exam Calendar (2025-2026)</div>
-                                <small class="text-muted extra-small">PDF File • 1.2 MB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
 
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-success-lt text-success">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">KSO Scholarship & Financial Aid Resource Guide</div>
-                                <small class="text-muted extra-small">PDF File • 820 KB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
+            @if($resources->isEmpty())
+                <div class="text-center py-5">
+                    <div class="display-4 text-muted mb-3"><i class="fa-regular fa-folder-open"></i></div>
+                    <h6 class="fw-bold text-dark">The resource library is being stocked</h6>
+                    <p class="text-muted extra-small mx-auto mb-0" style="max-width: 440px;">Guides, prospectuses, and question banks uploaded by the academic desk will appear here for download.</p>
                 </div>
+            @else
+                <div class="row">
+                    @foreach($resources as $category => $items)
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> {{ $category }}</h6>
 
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-primary text-uppercase extra-small tracking-wider mb-3"><i class="fa-solid fa-circle-chevron-down me-1"></i> Admission Prospectuses & Banks</h6>
-                    
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-warning-lt text-warning">
-                                <i class="fa-regular fa-file-pdf"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">DAV College Sector 10 Admission Prospectus</div>
-                                <small class="text-muted extra-small">PDF File • 2.4 MB</small>
-                            </div>
+                            @foreach($items as $resource)
+                                <div class="resource-list-item shadow-sm">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="resource-icon-box bg-primary-lt text-primary">
+                                            <i class="fa-regular {{ str_ends_with($resource->file_path, '.zip') ? 'fa-file-zipper' : 'fa-file-pdf' }}"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark extra-small">{{ $resource->title }}</div>
+                                            <small class="text-muted extra-small">{{ strtoupper(pathinfo($resource->file_path, PATHINFO_EXTENSION)) }} File • {{ $resource->humanFileSize() }} • {{ $resource->download_count }} downloads</small>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('membership.downloadResource', $resource->id) }}" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" aria-label="Download {{ $resource->title }}"><i class="fa-solid fa-download"></i></a>
+                                </div>
+                            @endforeach
                         </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
-
-                    <div class="resource-list-item shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="resource-icon-box bg-danger-lt text-danger">
-                                <i class="fa-regular fa-file-zipper"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark extra-small">Previous Year Humanities Question Papers (PU)</div>
-                                <small class="text-muted extra-small">ZIP Archive • 14.5 MB</small>
-                            </div>
-                        </div>
-                        <a href="#" onclick="alert('Resource download starting...')" class="btn btn-sm btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-solid fa-download"></i></a>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 

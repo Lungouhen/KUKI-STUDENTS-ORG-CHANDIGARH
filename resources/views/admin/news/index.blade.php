@@ -25,7 +25,7 @@
                         <tbody>
                             @foreach($news as $n)
                                 <tr>
-                                    <td class="fw-bold text-dark">{{ $n->title }}</td>
+                                    <td class="fw-bold text-dark">{{ $n->title }} @if($n->is_member_post)<span class="badge bg-info-lt text-info ms-1">Member Post</span>@endif</td>
                                     <td><span class="badge bg-danger">{{ $n->category }}</span></td>
                                     <td>{{ $n->date ? $n->date->format('Y-m-d') : '' }}</td>
                                     <td>{{ $n->author }}</td>

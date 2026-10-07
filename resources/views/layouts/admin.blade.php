@@ -44,7 +44,7 @@
     },
     // Dynamic initialization of folder states based on current route
     contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
-    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
     settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
@@ -166,6 +166,16 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.members.fees') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.members.fees') ? 'active' : '' }}">
                                     <i class="fa-solid fa-money-bill"></i> Membership Fees
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.accommodations.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.accommodations*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-hotel"></i> Hostels & PGs
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.resources.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.resources*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-book-open"></i> Resource Library
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">

@@ -160,6 +160,16 @@ class MembershipController extends Controller
             ->get();
         $votedElectionIds = $member->electionVotes()->pluck('election_id')->all();
 
+        // Verified accommodation listings and downloadable resources
+        $accommodations = \App\Models\Accommodation::where('is_active', true)
+            ->orderByDesc('created_at')
+            ->get();
+        $resources = \App\Models\StudentResource::where('is_active', true)
+            ->orderBy('category')
+            ->orderBy('title')
+            ->get()
+            ->groupBy('category');
+
         return view('membership.portal_dashboard', compact(
             'member',
             'medicalClaims',
@@ -170,8 +180,32 @@ class MembershipController extends Controller
             'currentPeriod',
             'currentFeePaid',
             'openElections',
-            'votedElectionIds'
+            'votedElectionIds',
+            'accommodations',
+            'resources'
         ));
+    }
+
+    public function downloadResource(Request $request, $id)
+    {
+        $memberId = session('member_id');
+        if (!$memberId || !Member::find($memberId)) {
+            return redirect()->route('membership.portal');
+        }
+
+        $resource = \App\Models\StudentResource::where('is_active', true)->findOrFail($id);
+
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
+        if (!$disk->exists($resource->file_path)) {
+            return back()->with('error', 'This resource file is currently unavailable.');
+        }
+
+        $resource->increment('download_count');
+
+        $extension = pathinfo($resource->file_path, PATHINFO_EXTENSION);
+        $filename = \Illuminate\Support\Str::slug($resource->title) . ($extension ? '.' . $extension : '');
+
+        return $disk->download($resource->file_path, $filename);
     }
 
     public function storeStudentPost(Request $request)
@@ -198,6 +232,7 @@ class MembershipController extends Controller
             'author' => $member->full_name,
             'date' => now()->toDateString(),
             'is_important' => false,
+            'is_member_post' => true,
         ]);
 
         return back()->with('success', 'Your update has been shared with the student feed! 🚀');
