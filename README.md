@@ -47,9 +47,9 @@ An enterprise-grade, full-stack **Laravel 12** web application for the **Kuki St
 ## 🚀 QUICK START & DEPLOYMENT
 
 ### Prerequisites
-- PHP >= 8.2
+- PHP >= 8.3 (the included Nginx configuration uses PHP 8.5-FPM)
 - Composer
-- Node.js and npm (to build frontend assets)
+- Node.js >= 22.12.0 and npm (to build frontend assets)
 - SQLite / MySQL
 
 ### Local Setup Instructions
