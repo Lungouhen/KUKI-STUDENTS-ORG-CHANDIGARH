@@ -7,7 +7,6 @@
 @php
     $sidebarAds = \App\Models\Advertisement::getActiveByPlacement('Portal_Sidebar');
     $feedAds = \App\Models\Advertisement::getActiveByPlacement('Feed_Banner');
-    $hasVoted = session('voted_election_mock', false) || session('voted_election_1', false);
 @endphp
 
 <div class="bg-primary text-white py-4 mb-4" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;">
@@ -163,7 +162,46 @@
                                 <div class="fw-bold text-dark">{{ $member->membership_category }}</div>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="extra-small text-muted mb-1 text-uppercase fw-bold">Fee {{ $currentPeriod }}</div>
+                                <span class="badge {{ $currentFeePaid ? 'bg-success' : 'bg-warning text-dark' }}">{{ $currentFeePaid ? 'Paid' : 'Due' }}</span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Membership Fee History -->
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-black text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-receipt text-primary me-2"></i> Membership Fee History</h5>
+                    @if($feePayments->isEmpty())
+                        <p class="text-muted small mb-0">No fee payments recorded yet. Pay your membership fee at the KSO office to activate full benefits for {{ $currentPeriod }}.</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr class="extra-small text-muted text-uppercase">
+                                        <th>Period</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Receipt No.</th>
+                                        <th>Paid On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($feePayments as $payment)
+                                        <tr class="small">
+                                            <td class="fw-bold">{{ $payment->period }}</td>
+                                            <td class="text-success fw-bold">₹{{ number_format($payment->amount, 2) }}</td>
+                                            <td>{{ $payment->payment_method }}</td>
+                                            <td><code class="extra-small">{{ $payment->voucher_no ?? $payment->reference_no ?? '—' }}</code></td>
+                                            <td>{{ $payment->paid_on?->format('d M Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Campus Social Feed -->
@@ -480,88 +518,86 @@
 
     <!-- ─── TAB 2: INTERACTIVE ELECTRONIC VOTING BOOTH ─── -->
     <div x-show="activeTab === 'election'" x-transition x-cloak>
-        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-vote-yea text-primary me-2"></i> KSO Executive Council Election (Term 2025-2026)</h5>
-                <span class="badge bg-success text-white px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-circle me-1 animate-pulse"></i> Booth Open</span>
-            </div>
+        @forelse($openElections as $election)
+            @php
+                $alreadyVoted = in_array($election->id, $votedElectionIds);
+                $totalVotes = $election->candidates->sum('votes_received');
+            @endphp
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-vote-yea text-primary me-2"></i> KSO Executive Council Election — {{ $election->position }}{{ $election->term ? ' (' . $election->term->name . ')' : '' }}</h5>
+                    <span class="badge bg-success text-white px-3 py-1 rounded-pill extra-small"><i class="fa-solid fa-circle me-1 animate-pulse"></i> Booth Open</span>
+                </div>
 
-            @if($hasVoted)
-                <!-- Locked Result Screen after voting -->
-                <div class="text-center py-5">
-                    <div class="display-3 text-success mb-3"><i class="fa-solid fa-circle-check"></i></div>
-                    <h4 class="fw-bold text-dark">Thank you! Your vote has been securely recorded</h4>
-                    <p class="text-muted small mx-auto" style="max-width: 500px;">Participation is the key to student democracy. Your single secret ballot has been cast and double-voting prevention is locked for your student account ID.</p>
-                    
-                    <div class="mt-4 p-4 bg-light rounded-4 text-start mx-auto" style="max-width: 450px;">
-                        <h6 class="fw-bold text-primary mb-3 text-uppercase extra-small tracking-wider text-center"><i class="fa-solid fa-square-poll-vertical me-1"></i> Live Voting Poll Statistics</h6>
-                        
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
-                                <span>Haopu Kipgen (DAV-10)</span>
-                                <span>54% (214 Votes)</span>
-                            </div>
-                            <div class="progress" style="height: 10px; border-radius: 50rem;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 54%;" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
+                @if($alreadyVoted)
+                    <!-- Locked Result Screen after voting -->
+                    <div class="text-center py-5">
+                        <div class="display-3 text-success mb-3"><i class="fa-solid fa-circle-check"></i></div>
+                        <h4 class="fw-bold text-dark">Thank you! Your vote has been securely recorded</h4>
+                        <p class="text-muted small mx-auto" style="max-width: 500px;">Participation is the key to student democracy. Your single secret ballot has been cast and double-voting prevention is locked for your student account ID.</p>
 
-                        <div class="mb-0">
-                            <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
-                                <span>Lhingnei Hangsing (MCM-36)</span>
-                                <span>46% (182 Votes)</span>
-                            </div>
-                            <div class="progress" style="height: 10px; border-radius: 50rem;">
-                                <div class="progress-bar bg-teal" role="progressbar" style="width: 46%; background-color:#0d9488;" aria-valuenow="46" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
+                        <div class="mt-4 p-4 bg-light rounded-4 text-start mx-auto" style="max-width: 450px;">
+                            <h6 class="fw-bold text-primary mb-3 text-uppercase extra-small tracking-wider text-center"><i class="fa-solid fa-square-poll-vertical me-1"></i> Live Voting Poll Statistics</h6>
+
+                            @foreach($election->candidates as $candidate)
+                                @php $share = $totalVotes > 0 ? round($candidate->votes_received / $totalVotes * 100) : 0; @endphp
+                                <div class="{{ $loop->last ? 'mb-0' : 'mb-3' }}">
+                                    <div class="d-flex justify-content-between extra-small fw-bold text-dark mb-1">
+                                        <span>{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</span>
+                                        <span>{{ $share }}% ({{ $candidate->votes_received }} {{ \Illuminate\Support\Str::plural('Vote', $candidate->votes_received) }})</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px; border-radius: 50rem;">
+                                        <div class="progress-bar {{ $loop->even ? 'bg-teal' : 'bg-primary' }}" role="progressbar" style="width: {{ $share }}%;{{ $loop->even ? ' background-color:#0d9488;' : '' }}" aria-valuenow="{{ $share }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-                </div>
-            @else
-                <!-- Active Interactive Balloting Booth -->
-                <div x-data="{ selectedCandidate: null }">
-                    <p class="extra-small text-muted mb-4">Please read candidate profile manifestos below and select the candidate you wish to vote for. You can only vote for **one** candidate for the position of **President**.</p>
-                    
-                    <form action="{{ route('membership.castVote') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="candidate_id" :value="selectedCandidate">
-                        
-                        <div class="row g-4 justify-content-center mb-4">
-                            <!-- Candidate A -->
-                            <div class="col-md-5">
-                                <div @click="selectedCandidate = 101" :class="selectedCandidate === 101 ? 'selected' : ''" class="candidate-voter-card">
-                                    <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
-                                    <img src="/images/default-avatar-m.png" class="candidate-voter-photo" onerror="this.src='/images/default-avatar-m.png'">
-                                    <h5 class="fw-bold text-dark mb-1">Haopu Kipgen</h5>
-                                    <span class="badge bg-primary rounded-pill px-2 py-1 extra-small mb-2">Presidential Candidate</span>
-                                    <p class="extra-small text-muted mb-3"><i class="fa-solid fa-university me-1"></i> DAV College Sector 10</p>
-                                    <p class="extra-small text-secondary text-start" style="line-height: 1.5;"><strong>Manifesto:</strong> "To advocate for student hostel priority quotas, establish a direct grievance liaison with college administrations, and expand our emergency welfare and scholarship desk to reach every North-East student scholar in Tricity."</p>
-                                </div>
+                @elseif($election->candidates->isEmpty())
+                    <p class="text-muted small mb-0 py-4 text-center">Candidates for this election have not been announced yet. Please check back soon.</p>
+                @else
+                    <!-- Active Interactive Balloting Booth -->
+                    <div x-data="{ selectedCandidate: null }">
+                        <p class="extra-small text-muted mb-4">Please read candidate profiles below and select the candidate you wish to vote for. You can only vote for <strong>one</strong> candidate for the position of <strong>{{ $election->position }}</strong>.</p>
+
+                        <form action="{{ route('membership.castVote') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="candidate_id" :value="selectedCandidate">
+
+                            <div class="row g-4 justify-content-center mb-4">
+                                @foreach($election->candidates as $candidate)
+                                    <div class="col-md-5">
+                                        <div @click="selectedCandidate = {{ $candidate->id }}" :class="selectedCandidate === {{ $candidate->id }} ? 'selected' : ''" class="candidate-voter-card">
+                                            <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
+                                            <img src="{{ asset($candidate->member->photo ?? '/images/default-avatar-m.png') }}" class="candidate-voter-photo" alt="Candidate photo" onerror="this.src='/images/default-avatar-m.png'">
+                                            <h5 class="fw-bold text-dark mb-1">{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</h5>
+                                            <span class="badge bg-primary rounded-pill px-2 py-1 extra-small mb-2">{{ $election->position }} Candidate</span>
+                                            @if($candidate->member)
+                                                <p class="extra-small text-muted mb-0"><i class="fa-solid fa-university me-1"></i> {{ $candidate->member->institution }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
 
-                            <!-- Candidate B -->
-                            <div class="col-md-5">
-                                <div @click="selectedCandidate = 102" :class="selectedCandidate === 102 ? 'selected' : ''" class="candidate-voter-card">
-                                    <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
-                                    <img src="/images/default-avatar-f.png" class="candidate-voter-photo" onerror="this.src='/images/default-avatar-f.png'">
-                                    <h5 class="fw-bold text-dark mb-1">Lhingnei Hangsing</h5>
-                                    <span class="badge bg-teal rounded-pill px-2 py-1 extra-small mb-2" style="background:#0d9488;">Presidential Candidate</span>
-                                    <p class="extra-small text-muted mb-3"><i class="fa-solid fa-university me-1"></i> MCM DAV College Sector 36</p>
-                                    <p class="extra-small text-secondary text-start" style="line-height: 1.5;"><strong>Manifesto:</strong> "Focusing on women's safety helplines, establishing regular cultural folk arts workshops, providing high-quality career mentorship for final year students studying across Tricity colleges, and building robust legal support partnerships."</p>
-                                </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow" :disabled="!selectedCandidate">
+                                    <i class="fa-solid fa-vote-yea me-1"></i> Cast Secret Ballot Vote
+                                </button>
                             </div>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow" :disabled="!selectedCandidate">
-                                <i class="fa-solid fa-vote-yea me-1"></i> Cast Secret Ballot Vote
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            @endif
-        </div>
+                        </form>
+                    </div>
+                @endif
+            </div>
+        @empty
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4 text-center py-5">
+                <div class="display-4 text-muted mb-3"><i class="fa-solid fa-box-archive"></i></div>
+                <h5 class="fw-bold text-dark">No elections are open right now</h5>
+                <p class="text-muted small mx-auto mb-0" style="max-width: 480px;">The electronic voting booth opens here when the Executive Council announces an election. Watch the student feed for the official schedule.</p>
+            </div>
+        @endforelse
     </div>
+
 
     <!-- ─── TAB 3: HOSTEL & PG FINDER DIRECTORY ─── -->
     <div x-show="activeTab === 'accommodation'" x-transition x-cloak>

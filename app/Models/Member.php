@@ -77,4 +77,14 @@ class Member extends Model
 
         return "{$validYear}-06-30";
     }
+
+    public function feePayments()
+    {
+        return $this->hasMany(MemberFeePayment::class, 'member_id', 'id');
+    }
+
+    public function electionVotes()
+    {
+        return $this->hasMany(ElectionVote::class, 'member_id', 'id');
+    }
 }

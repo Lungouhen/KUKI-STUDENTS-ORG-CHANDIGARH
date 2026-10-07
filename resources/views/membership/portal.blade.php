@@ -18,14 +18,19 @@
                 <div class="text-center mb-4">
                     <img src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle mb-2 border border-warning" width="60" onerror="this.src='/images/default-avatar-m.png'">
                     <h4 class="fw-bold text-primary mb-1">Member Login</h4>
-                    <p class="text-muted extra-small">Enter your Membership ID or registered email</p>
+                    <p class="text-muted extra-small">Enter your Membership ID or registered email and your date of birth</p>
                 </div>
 
                 <form action="{{ route('membership.portalLogin') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label fw-bold">Membership ID or Email</label>
-                        <input type="text" name="identifier" class="form-control" placeholder="e.g. KSO-CHD-2026-0001 or name@gmail.com" required>
+                        <input type="text" name="identifier" class="form-control" placeholder="e.g. KSO-CHD-2026-0001 or name@gmail.com" value="{{ old('identifier') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Date of Birth</label>
+                        <input type="date" name="dob" class="form-control @error('dob') is-invalid @enderror" required>
+                        @error('dob')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Login to Portal <i class="fa-solid fa-arrow-right ms-1"></i></button>
                 </form>

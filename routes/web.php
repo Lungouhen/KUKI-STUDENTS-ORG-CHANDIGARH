@@ -54,7 +54,7 @@ Route::prefix('members')->group(function () {
     Route::post('/verify', [MembershipController::class, 'verify'])->name('membership.verify');
     Route::get('/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
     Route::get('/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
-    Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->name('membership.portalLogin');
+    Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->middleware('throttle:10,1')->name('membership.portalLogin');
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
     Route::post('/portal/post', [MembershipController::class, 'storeStudentPost'])->name('membership.storeStudentPost');
     Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
@@ -140,6 +140,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
     Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
+    Route::post('/members/{id}/fees', [AdminMemberController::class, 'recordFeePayment'])->name('members.recordFee');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
     Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
     Route::post('/members', [AdminMemberController::class, 'store'])->name('members.store');

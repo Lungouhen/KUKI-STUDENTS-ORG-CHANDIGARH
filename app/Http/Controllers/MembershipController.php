@@ -107,17 +107,25 @@ class MembershipController extends Controller
 
     public function portalLogin(Request $request)
     {
-        $identifier = trim($request->input('identifier'));
+        $validated = $request->validate([
+            'identifier' => 'required|string|max:255',
+            'dob' => 'required|date',
+        ]);
+
+        $identifier = trim($validated['identifier']);
         $member = Member::where('id', $identifier)
             ->orWhere('email', $identifier)
             ->first();
 
-        if (!$member) {
-            return back()->with('error', 'No member account found matching details.');
+        if (!$member || !$member->dob || !$member->dob->isSameDay($validated['dob'])) {
+            return back()
+                ->withInput($request->only('identifier'))
+                ->with('error', 'No member account found matching those details. Check your ID/email and date of birth.');
         }
 
+        $request->session()->regenerate();
         session(['member_id' => $member->id]);
-        return redirect()->route('membership.portal');
+        return redirect()->route('membership.portalDashboard');
     }
 
     public function portalDashboard()
@@ -134,15 +142,36 @@ class MembershipController extends Controller
         }
 
         $medicalClaims = \App\Models\MedicalReliefClaim::where('member_id', $memberId)->get();
-        
+
         // Fetch all news/notices & student updates as a social feed
         $posts = \App\Models\News::orderBy('created_at', 'desc')->get();
-        
-        // Mock data for dashboard overview requirements
-        $totalFeesPaid = 250;
-        $paymentsCount = 1;
 
-        return view('membership.portal_dashboard', compact('member', 'medicalClaims', 'totalFeesPaid', 'paymentsCount', 'posts'));
+        // Real membership fee history for this member
+        $feePayments = $member->feePayments()->orderByDesc('paid_on')->get();
+        $totalFeesPaid = (float) $feePayments->sum('amount');
+        $paymentsCount = $feePayments->count();
+        $currentPeriod = \App\Models\MemberFeePayment::periodFor();
+        $currentFeePaid = $feePayments->contains(fn ($payment) => $payment->period === $currentPeriod);
+
+        // Live elections: ballots open only while an election is Ongoing
+        $openElections = \App\Models\Election::with(['candidates.member'])
+            ->where('status', 'Ongoing')
+            ->orderBy('election_date')
+            ->get();
+        $votedElectionIds = $member->electionVotes()->pluck('election_id')->all();
+
+        return view('membership.portal_dashboard', compact(
+            'member',
+            'medicalClaims',
+            'totalFeesPaid',
+            'paymentsCount',
+            'posts',
+            'feePayments',
+            'currentPeriod',
+            'currentFeePaid',
+            'openElections',
+            'votedElectionIds'
+        ));
     }
 
     public function storeStudentPost(Request $request)
@@ -181,32 +210,46 @@ class MembershipController extends Controller
             return redirect()->route('membership.portal');
         }
 
+        $member = Member::find($memberId);
+        if (!$member) {
+            session()->forget('member_id');
+            return redirect()->route('membership.portal');
+        }
+
         $validated = $request->validate([
-            'candidate_id' => 'required|integer',
+            'candidate_id' => 'required|integer|exists:candidates,id',
         ]);
 
         try {
-            // Check if elections schema exists in db and increment votes_received
-            if (\Illuminate\Support\Facades\Schema::hasTable('candidates')) {
-                $candidate = \Illuminate\Support\Facades\DB::table('candidates')
-                    ->where('id', $validated['candidate_id'])
-                    ->first();
-                    
-                if ($candidate) {
-                    \Illuminate\Support\Facades\DB::table('candidates')
-                        ->where('id', $validated['candidate_id'])
-                        ->increment('votes_received');
-                    
-                    session(['voted_election_' . $candidate->election_id => true]);
-                    return back()->with('success', 'Thank you! Your vote for the KSO Executive Body has been recorded successfully. 🗳️');
+            \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $member) {
+                $candidate = \App\Models\Candidate::whereKey($validated['candidate_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $election = \App\Models\Election::whereKey($candidate->election_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($election->status !== 'Ongoing') {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'candidate_id' => 'This election is not currently open for voting.',
+                    ]);
                 }
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::info("Voting table skipped: " . $e->getMessage());
+
+                // One secret ballot per member per election (also DB-unique).
+                \App\Models\ElectionVote::create([
+                    'election_id' => $election->id,
+                    'member_id' => $member->id,
+                ]);
+
+                $candidate->increment('votes_received');
+            });
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->with('error', collect($e->errors())->flatten()->first());
+        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            return back()->with('error', 'You have already cast your ballot in this election.');
         }
 
-        // Resilient fallback for pre-seeded election voting
-        session(['voted_election_mock' => true]);
         return back()->with('success', 'Thank you! Your vote for the KSO Executive Body has been recorded successfully. 🗳️');
     }
 
@@ -244,10 +287,11 @@ class MembershipController extends Controller
         return back()->with('success', 'Your medical relief claim has been submitted to the KSO Executive Body.');
     }
 
-    public function portalLogout()
+    public function portalLogout(Request $request)
     {
-        session()->forget('member_id');
-        return redirect()->route('membership.portalLogin');
+        $request->session()->forget('member_id');
+        $request->session()->regenerate();
+        return redirect()->route('membership.portal');
     }
 
     public function idCard($id)
