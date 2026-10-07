@@ -96,9 +96,14 @@
                 <h2 class="h5 fw-bold text-primary mb-1">Transaction report</h2>
                 <p class="text-muted small mb-0">Filter the ledger by date, account, and transaction type. Active-term totals above are separate.</p>
             </div>
-            <a href="{{ route('admin.financial.export', $filters) }}" class="btn btn-outline-success btn-sm">
-                <i class="fa-solid fa-file-csv me-1"></i> Export filtered CSV
-            </a>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('admin.financial.print', $filters) }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-print me-1" aria-hidden="true"></i> Print / Save as PDF
+                </a>
+                <a href="{{ route('admin.financial.export', $filters) }}" class="btn btn-outline-success btn-sm">
+                    <i class="fa-solid fa-file-csv me-1" aria-hidden="true"></i> Export filtered CSV
+                </a>
+            </div>
         </div>
         <form action="{{ route('admin.financial.index') }}" method="GET" class="row g-2 align-items-end">
             <div class="col-12 col-sm-6 col-lg-3">

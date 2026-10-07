@@ -95,6 +95,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     
     // Financial Management Module
     Route::get('/financial', [AdminFinancialController::class, 'index'])->name('financial.index');
+    Route::get('/financial/print', [AdminFinancialController::class, 'print'])->name('financial.print');
     Route::get('/financial/export', [AdminFinancialController::class, 'export'])->name('financial.export');
     Route::post('/financial/transaction', [AdminFinancialController::class, 'storeTransaction'])->name('financial.storeTransaction');
     Route::post('/financial/account', [AdminFinancialController::class, 'createAccount'])->name('financial.createAccount');

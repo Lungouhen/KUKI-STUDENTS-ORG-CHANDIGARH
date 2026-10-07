@@ -105,6 +105,46 @@ class FinancialController extends Controller
         ]);
     }
 
+    public function print(Request $request): StreamedResponse
+    {
+        $filters = $this->reportFilters($request);
+        $query = $this->filteredTransactions($filters);
+        $reportSummary = (clone $query)
+            ->selectRaw('type, COUNT(*) as transaction_count, SUM(amount) as total_amount')
+            ->groupBy('type')
+            ->get()
+            ->keyBy('type');
+        $account = isset($filters['account_id'])
+            ? FinancialAccount::find($filters['account_id'])
+            : null;
+
+        return response()->stream(function () use ($filters, $query, $reportSummary, $account) {
+            echo view('admin.financial.print-header', [
+                'filters' => $filters,
+                'reportSummary' => $reportSummary,
+                'account' => $account,
+                'generatedAt' => now(),
+                'transactionCount' => (clone $query)->count(),
+            ])->render();
+
+            $query->with(['account', 'targetAccount'])
+                ->orderBy('transaction_date')
+                ->orderBy('id')
+                ->chunk(500, function ($transactions) {
+                    foreach ($transactions as $transaction) {
+                        echo view('admin.financial.print-row', ['transaction' => $transaction])->render();
+                    }
+                });
+
+            echo view('admin.financial.print-footer')->render();
+        }, 200, [
+            'Content-Type' => 'text/html; charset=UTF-8',
+            'Content-Disposition' => 'inline; filename="financial-report-' . now()->format('Y-m-d') . '.html"',
+            'Cache-Control' => 'private, no-store',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
     private function reportFilters(Request $request): array
     {
         $validated = $request->validate([

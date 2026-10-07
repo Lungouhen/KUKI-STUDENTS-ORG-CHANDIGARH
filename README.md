@@ -28,7 +28,7 @@ An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki St
 ### 3. 🛡️ CMS & Admin Management Panel
 - **Admin Dashboard**: Overview metrics (Total Members, Pending Approvals, Total Events, Total Donations).
 - **Membership Management**: 1-click **Approve**, **Reject**, **Delete**, **View/Print ID Card**, and **CSV Export**.
-- **Financial Ledger & Accounts**: Double-entry transaction vouchers, account balances, and income vs expense reports.
+- **Financial Ledger & Accounts**: Transaction vouchers, account balances, and income vs expense reports; admins can export the filtered server-generated CSV or open a server-rendered print report and save it as PDF from the browser.
 - **Content Management**:
   - Events CMS (Create, Edit, Delete events)
   - Announcements & News CMS
@@ -110,6 +110,8 @@ The committed audit scripts perform static checks only; they are not substitutes
 | `/admin/membership-forms` | GET | Admin form builder, online link sharing, print preview, and offline HTML download |
 | `/admin/members/export/csv` | GET | Export Member Directory to CSV |
 | `/admin/financial` | GET/POST | Financial Ledger & Transaction Vouchers |
+| `/admin/financial/print` | GET | Print/Save as PDF of a filtered server-rendered financial report |
+| `/admin/financial/export` | GET | Stream a filtered CSV financial report |
 | `/admin/pages` | GET/POST | Dynamic Page Builder |
 | `/admin/medical` | GET/POST | Emergency Medical Claims Desk |
 | `/admin/audit` | GET | System Audit Logs |

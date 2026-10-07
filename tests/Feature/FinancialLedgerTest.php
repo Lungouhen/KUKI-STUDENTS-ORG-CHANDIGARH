@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class FinancialLedgerTest extends TestCase
@@ -221,6 +222,50 @@ class FinancialLedgerTest extends TestCase
         $this->assertStringNotContainsString('900.00', $csv);
     }
 
+    public function test_server_rendered_print_report_uses_filters_and_escapes_transaction_text(): void
+    {
+        $matching = $this->createTransaction('Expense', '20.00', '2026-05-10');
+        $matching->update([
+            'narration' => '<script>alert("unsafe")</script>',
+            'payer_payee_name' => '<b>Student</b>',
+        ]);
+        $this->createTransaction('Income', '900.00', '2025-05-01');
+
+        $response = $this->actingAs($this->admin)->get(route('admin.financial.print', [
+            'type' => 'Expense',
+            'from' => '2026-05-01',
+            'to' => '2026-05-31',
+        ]));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/html; charset=UTF-8');
+        $response->assertHeader('cache-control', 'private, no-store');
+        $response->assertHeader('x-content-type-options', 'nosniff');
+
+        $html = $response->streamedContent();
+        $this->assertStringContainsString($matching->voucher_no, $html);
+        $this->assertStringContainsString('Cash Account', $html);
+        $this->assertStringContainsString('&lt;script&gt;alert(&quot;unsafe&quot;)&lt;/script&gt;', $html);
+        $this->assertStringContainsString('&lt;b&gt;Student&lt;/b&gt;', $html);
+        $this->assertStringNotContainsString('<script>alert("unsafe")</script>', $html);
+        $this->assertStringNotContainsString('900.00', $html);
+        $this->assertStringContainsString('window.print()', $html);
+    }
+
+    public function test_print_report_includes_transfer_destination_and_requires_admin_access(): void
+    {
+        $transfer = $this->createTransaction('Transfer', '40.00', '2026-05-10');
+        $transfer->update(['target_account_id' => $this->destination->id]);
+
+        $html = $this->actingAs($this->admin)
+            ->get(route('admin.financial.print', ['account_id' => $this->destination->id]))
+            ->streamedContent();
+
+        $this->assertStringContainsString('Cash Account', $html);
+        $this->assertStringContainsString('Bank Account', $html);
+        $this->assertStringContainsString($transfer->voucher_no, $html);
+    }
+
     public function test_transaction_report_rejects_invalid_filters_and_requires_admin_access(): void
     {
         $this->actingAs($this->admin)
@@ -230,7 +275,15 @@ class FinancialLedgerTest extends TestCase
             ]))
             ->assertSessionHasErrors('to');
 
+        Auth::logout();
+
         $this->get(route('admin.financial.export'))
+            ->assertRedirect(route('admin.login'));
+
+        $this->get(route('admin.financial.print', [
+            'from' => '2026-06-01',
+            'to' => '2026-05-01',
+        ]))
             ->assertRedirect(route('admin.login'));
     }
 
