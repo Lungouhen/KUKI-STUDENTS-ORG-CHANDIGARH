@@ -114,7 +114,9 @@ class SettingController extends Controller
 
     public function testSmtp(SmtpConfiguration $smtpConfiguration)
     {
-        if (! $smtpConfiguration->applySavedSettings()) {
+        $hasDatabaseSettings = $smtpConfiguration->applySavedSettings();
+        $hasEnvironmentSettings = config('mail.default') === 'smtp' && filled(config('mail.mailers.smtp.host'));
+        if (! $hasDatabaseSettings && ! $hasEnvironmentSettings) {
             return back()->with('error', 'Save an SMTP host before sending a test email.');
         }
 

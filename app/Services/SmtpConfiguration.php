@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class SmtpConfiguration
 {
@@ -12,11 +12,15 @@ class SmtpConfiguration
     {
         $fallback = config('mail.settings_fallback', config('mail'));
 
-        if (! Schema::hasTable('settings')) {
+        try {
+            if (! Schema::hasTable('settings')) {
+                return false;
+            }
+
+            $host = Setting::get('mail_host');
+        } catch (Throwable) {
             return false;
         }
-
-        $host = Setting::get('mail_host');
         if (! filled($host)) {
             config([
                 'mail.default' => $fallback['default'],
