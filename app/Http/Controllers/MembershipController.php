@@ -141,8 +141,6 @@ class MembershipController extends Controller
             return redirect()->route('membership.portal');
         }
 
-        $medicalClaims = \App\Models\MedicalReliefClaim::where('member_id', $memberId)->get();
-
         // Fetch all news/notices & student updates as a social feed
         $posts = \App\Models\News::orderBy('created_at', 'desc')->get();
 
@@ -172,7 +170,6 @@ class MembershipController extends Controller
 
         return view('membership.portal_dashboard', compact(
             'member',
-            'medicalClaims',
             'totalFeesPaid',
             'paymentsCount',
             'posts',
@@ -286,40 +283,6 @@ class MembershipController extends Controller
         }
 
         return back()->with('success', 'Thank you! Your vote for the KSO Executive Body has been recorded successfully. 🗳️');
-    }
-
-    public function submitMedicalClaim(Request $request)
-    {
-        $memberId = session('member_id');
-        if (!$memberId) {
-            return redirect()->route('membership.portal');
-        }
-
-        $validated = $request->validate([
-            'patient_name' => 'required|string',
-            'hospital_name' => 'required|string',
-            'nature_of_illness' => 'required|string',
-            'amount_requested' => 'required|numeric|min:1',
-            'medical_document' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:5120',
-        ]);
-
-        $docPath = null;
-        if ($request->hasFile('medical_document')) {
-            $path = $request->file('medical_document')->store('uploads/medical', 'public');
-            $docPath = '/storage/' . $path;
-        }
-
-        \App\Models\MedicalReliefClaim::create([
-            'member_id' => $memberId,
-            'patient_name' => $validated['patient_name'],
-            'hospital_name' => $validated['hospital_name'],
-            'nature_of_illness' => $validated['nature_of_illness'],
-            'amount_requested' => $validated['amount_requested'],
-            'status' => 'Pending',
-            'medical_document' => $docPath,
-        ]);
-
-        return back()->with('success', 'Your medical relief claim has been submitted to the KSO Executive Body.');
     }
 
     public function portalLogout(Request $request)

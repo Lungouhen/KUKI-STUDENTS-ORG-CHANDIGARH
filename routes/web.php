@@ -24,7 +24,6 @@ use App\Http\Controllers\Admin\FinancialController as AdminFinancialController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
-use App\Http\Controllers\Admin\MedicalReliefController as AdminMedicalReliefController;
 use App\Http\Controllers\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ProjectController;
@@ -60,7 +59,6 @@ Route::prefix('members')->group(function () {
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
     Route::post('/portal/post', [MembershipController::class, 'storeStudentPost'])->name('membership.storeStudentPost');
     Route::post('/portal/vote', [MembershipController::class, 'castVote'])->name('membership.castVote');
-    Route::post('/portal/medical-claim', [MembershipController::class, 'submitMedicalClaim'])->name('membership.submitMedicalClaim');
     Route::get('/portal/logout', [MembershipController::class, 'portalLogout'])->name('membership.portalLogout');
     Route::get('/portal/resources/{id}/download', [MembershipController::class, 'downloadResource'])->name('membership.downloadResource');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
@@ -125,10 +123,6 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/testimonials/{id}/edit', [AdminTestimonialController::class, 'edit'])->name('testimonials.edit');
     Route::put('/testimonials/{id}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
     Route::delete('/testimonials/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
-
-    // Medical Emergency Relief Desk
-    Route::get('/medical', [AdminMedicalReliefController::class, 'index'])->name('medical.index');
-    Route::post('/medical/{id}/status', [AdminMedicalReliefController::class, 'updateStatus'])->name('medical.updateStatus');
 
     // Content Management
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');

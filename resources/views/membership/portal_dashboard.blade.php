@@ -484,34 +484,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Medical Relief Claim Desk -->
-                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
-                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-notes-medical text-danger me-2"></i> Medical Relief Claim Desk</h5>
-                    
-                    @if($medicalClaims->count() > 0)
-                        <div class="mb-4">
-                            <h6 class="fw-bold extra-small text-muted text-uppercase mb-2">My Recent Claims</h6>
-                            @foreach($medicalClaims as $claim)
-                                <div class="d-flex justify-content-between align-items-center p-2 border-bottom extra-small">
-                                    <div>
-                                        <div class="fw-bold">{{ $claim->hospital_name }}</div>
-                                        <div class="text-muted">Requested: ₹{{ number_format($claim->amount_requested) }}</div>
-                                    </div>
-                                    <span class="badge {{ $claim->status === 'Approved' ? 'bg-success' : ($claim->status === 'Rejected' ? 'bg-danger' : 'bg-warning text-dark') }}">
-                                        {{ strtoupper($claim->status) }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <p class="extra-small text-muted mb-3">If you are facing a medical emergency at PGIMER, GMCH-32, or any other hospital, you can submit a relief request here. KSO Chandigarh may provide partial financial assistance based on fund availability.</p>
-                    
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#medicalClaimModal">
-                        <i class="fa-solid fa-plus-circle me-1"></i> New Relief Request
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -692,48 +664,6 @@
         </div>
     </div>
 
-</div>
-
-<!-- Medical Relief Claim Modal -->
-<div class="modal fade" id="medicalClaimModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content rounded-4 border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold text-danger">New Medical Relief Request</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('membership.submitMedicalClaim') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Patient Name</label>
-                        <input type="text" name="patient_name" class="form-control" required placeholder="Full Name of Patient">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Hospital Name</label>
-                        <input type="text" name="hospital_name" class="form-control" required placeholder="e.g. PGIMER Sector 12">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Nature of Illness / Emergency</label>
-                        <textarea name="nature_of_illness" class="form-control" rows="2" required placeholder="Describe the medical situation..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Amount Requested (₹)</label>
-                        <input type="number" name="amount_requested" class="form-control" required min="1" placeholder="Estimated assistance needed">
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label extra-small fw-bold">Support Document (Prescription/Bill)</label>
-                        <input type="file" name="medical_document" class="form-control">
-                        <div class="form-text extra-small">Max size 5MB (JPG, PNG, PDF)</div>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow">Submit Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 @endsection
