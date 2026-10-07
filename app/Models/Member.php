@@ -45,7 +45,7 @@ class Member extends Model
         'dob' => 'date',
         'applied_date' => 'date',
         'approval_date' => 'date',
-        'valid_until' => 'date',
+        'valid_until' => 'date:Y-m-d',
     ];
 
     /**

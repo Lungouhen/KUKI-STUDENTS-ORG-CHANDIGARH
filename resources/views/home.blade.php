@@ -10,7 +10,7 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-7 hero-copy">
                 <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
-                    <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i>                     KUKI STUDENTS' ORGANISATION CHANDIGARH · Student community
+                    <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i> {{ "KUKI STUDENTS' ORGANISATION CHANDIGARH" }} · Student community
                 </span>
                 <h1 class="display-4 fw-black mb-3">Kuki students, stronger together.</h1>
                 <p class="lead mb-4">

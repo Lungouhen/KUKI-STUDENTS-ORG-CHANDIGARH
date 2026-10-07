@@ -62,7 +62,7 @@ class PageController extends Controller
 
         AuditLog::log('CREATE_PAGE', [
             'title' => $validated['title'],
-            'template' => $validated['template'],
+            'template' => $validated['template'] ?? 'standard',
         ]);
 
         return redirect()->route('admin.pages.index')->with('success', 'Page created successfully.');

@@ -31,7 +31,7 @@ class MembershipController extends Controller
             'current_address' => 'required|string',
             'emergency_contact' => 'required|string',
             'emergency_phone' => 'required|string',
-            'membership_category' => 'required|string',
+            'membership_category' => 'nullable|string',
             'family_count' => 'nullable|integer',
             'photoFile' => 'nullable|image|max:5120',
         ]);
@@ -62,7 +62,7 @@ class MembershipController extends Controller
             'current_address' => $validated['current_address'],
             'emergency_contact' => $validated['emergency_contact'],
             'emergency_phone' => $validated['emergency_phone'],
-            'membership_category' => $validated['membership_category'],
+            'membership_category' => $validated['membership_category'] ?? 'Individual',
             'family_count' => $validated['family_count'] ?? 0,
             'photo' => $photoPath,
             'status' => 'Pending',

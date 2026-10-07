@@ -10,8 +10,18 @@ class PageController extends Controller
 {
     public function show($slug)
     {
-        $page = Page::where('slug', $slug)->where('is_published', true)->firstOrFail();
-        $page->increment('view_count');
+        $query = Page::where('slug', $slug);
+
+        $isAdmin = auth()->check() && auth()->user()->is_admin;
+        if (! $isAdmin) {
+            $query->where('is_published', true);
+        }
+
+        $page = $query->firstOrFail();
+
+        if ($page->is_published) {
+            $page->increment('view_count');
+        }
 
         return view('pages.show', compact('page'));
     }

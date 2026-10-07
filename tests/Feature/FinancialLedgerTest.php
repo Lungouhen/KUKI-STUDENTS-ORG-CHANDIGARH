@@ -239,7 +239,7 @@ class FinancialLedgerTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'text/html; charset=UTF-8');
-        $response->assertHeader('cache-control', 'private, no-store');
+        $response->assertHeader('cache-control', 'no-store, private');
         $response->assertHeader('x-content-type-options', 'nosniff');
 
         $html = $response->streamedContent();
