@@ -94,6 +94,10 @@ class SettingController extends Controller
                     'updated_keys' => array_keys($validated),
                 ]);
             });
+
+            if (array_intersect(array_keys($validated), ['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption'])) {
+                app(SmtpConfiguration::class)->applySavedSettings();
+            }
         }
 
         return back()->with('success', 'Website settings saved.');

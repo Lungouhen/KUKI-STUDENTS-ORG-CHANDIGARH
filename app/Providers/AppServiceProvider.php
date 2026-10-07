@@ -9,6 +9,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        config(['mail.settings_fallback' => config('mail')]);
         app(SmtpConfiguration::class)->applySavedSettings();
     }
 }

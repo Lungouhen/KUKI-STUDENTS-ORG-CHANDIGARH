@@ -43,6 +43,20 @@ class SmtpIntegrationTest extends TestCase
         $this->assertSame('private-test-password', config('mail.mailers.smtp.password'));
     }
 
+    public function test_saving_smtp_settings_updates_the_runtime_mailer(): void
+    {
+        $this->actingAs($this->admin())
+            ->post(route('admin.settings.update'), [
+                'mail_host' => 'updated-smtp.example.org',
+                'mail_port' => '587',
+                'mail_encryption' => 'tls',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('updated-smtp.example.org', config('mail.mailers.smtp.host'));
+        $this->assertSame(587, config('mail.mailers.smtp.port'));
+    }
+
     public function test_admin_can_send_a_test_email_only_to_their_own_address(): void
     {
         Mail::fake();
@@ -67,5 +81,20 @@ class SmtpIntegrationTest extends TestCase
             ->post(route('admin.settings.smtp.test'))
             ->assertRedirect()
             ->assertSessionHas('error');
+    }
+
+    public function test_smtp_delivery_failure_shows_a_generic_error(): void
+    {
+        Setting::set('mail_host', 'smtp.example.org');
+        Mail::shouldReceive('to')
+            ->once()
+            ->with('smtp-admin@example.org')
+            ->andThrow(new \RuntimeException('private transport diagnostic'));
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.settings.smtp.test'))
+            ->assertRedirect()
+            ->assertSessionHas('error', 'Test email could not be sent. Check the saved SMTP settings and application logs.')
+            ->assertDontSee('private transport diagnostic');
     }
 }

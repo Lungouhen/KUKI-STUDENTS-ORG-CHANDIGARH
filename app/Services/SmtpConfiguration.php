@@ -10,29 +10,44 @@ class SmtpConfiguration
 {
     public function applySavedSettings(): bool
     {
+        $fallback = config('mail.settings_fallback', config('mail'));
+
         if (! Schema::hasTable('settings')) {
             return false;
         }
 
         $host = Setting::get('mail_host');
         if (! filled($host)) {
+            config([
+                'mail.default' => $fallback['default'],
+                'mail.mailers.smtp' => $fallback['mailers']['smtp'],
+            ]);
+            $mailManager = app('mail.manager');
+            if (method_exists($mailManager, 'purge')) {
+                $mailManager->purge('smtp');
+            }
+
             return false;
         }
 
+        $encryption = Setting::get('mail_encryption');
         config([
             'mail.default' => 'smtp',
             'mail.mailers.smtp.host' => $host,
-            'mail.mailers.smtp.port' => (int) (Setting::get('mail_port') ?: config('mail.mailers.smtp.port')),
-            'mail.mailers.smtp.encryption' => match (Setting::get('mail_encryption')) {
-                'tls', 'ssl' => Setting::get('mail_encryption'),
+            'mail.mailers.smtp.port' => (int) (Setting::get('mail_port') ?: $fallback['mailers']['smtp']['port']),
+            'mail.mailers.smtp.encryption' => match ($encryption) {
+                'tls', 'ssl' => $encryption,
                 'none' => null,
-                default => config('mail.mailers.smtp.encryption'),
+                default => $fallback['mailers']['smtp']['encryption'],
             },
-            'mail.mailers.smtp.username' => Setting::get('mail_username') ?: config('mail.mailers.smtp.username'),
-            'mail.mailers.smtp.password' => Setting::get('mail_password') ?: config('mail.mailers.smtp.password'),
+            'mail.mailers.smtp.username' => Setting::get('mail_username') ?: $fallback['mailers']['smtp']['username'],
+            'mail.mailers.smtp.password' => Setting::get('mail_password') ?: $fallback['mailers']['smtp']['password'],
         ]);
 
-        app('mail.manager')->purge('smtp');
+        $mailManager = app('mail.manager');
+        if (method_exists($mailManager, 'purge')) {
+            $mailManager->purge('smtp');
+        }
 
         return true;
     }
