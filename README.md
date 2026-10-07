@@ -2,7 +2,7 @@
 
 ![KSO Chandigarh Logo](public/images/kso-logo.jpg)
 
-An enterprise-grade, full-stack **Laravel 11** web application for the **Kuki Students' Organisation (KSO) Chandigarh**, serving student scholars across Panjab University, MCM DAV, DAV 10, PEC, PGGC 11, SD College, and GMCH 32.
+An enterprise-grade, full-stack **Laravel 12** web application for the **Kuki Students' Organisation (KSO) Chandigarh**, serving student scholars across Panjab University, MCM DAV, DAV 10, PEC, PGGC 11, SD College, and GMCH 32.
 
 ---
 

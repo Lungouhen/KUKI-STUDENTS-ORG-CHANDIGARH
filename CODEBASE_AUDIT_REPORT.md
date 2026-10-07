@@ -8,7 +8,7 @@ This document presents an exhaustive, end-to-end audit report for the **Kuki Stu
 
 | Metric / Dimension | Specification / Metric | Status |
 |--------------------|------------------------|--------|
-| **Framework** | Laravel 11.x (PHP ^8.2) | ✅ Compliant |
+| **Framework** | Laravel 12.x (PHP ^8.2) | ✅ Compliant |
 | **Database** | SQLite (`database/database.sqlite`) / MySQL | ✅ Compliant |
 | **Asset Bundler** | Vite 5.x (`vite.config.js`) | ✅ Compiled |
 | **Blade Views & Components** | 50 Blade templates | ✅ 100% Validated |
