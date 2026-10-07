@@ -183,8 +183,8 @@ class MemberController extends Controller
     {
         $member = Member::findOrFail($id);
 
-        if ($member->feePayments()->exists() || $member->electionVotes()->exists() || $member->candidacies()->exists()) {
-            return back()->with('error', 'This member has financial or election records and cannot be deleted. Deactivate the member instead.');
+        if ($member->feePayments()->exists() || $member->electionVotes()->exists() || $member->candidacies()->exists() || $member->documents()->exists()) {
+            return back()->with('error', 'This member has financial, election, or official document records and cannot be deleted. Deactivate the member instead.');
         }
 
         $member->delete();

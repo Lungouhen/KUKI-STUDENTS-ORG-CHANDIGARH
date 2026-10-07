@@ -162,6 +162,8 @@ class MembershipController extends Controller
         $accommodations = \App\Models\Accommodation::where('is_active', true)
             ->orderByDesc('created_at')
             ->get();
+        $documents = $member->documents()->latest()->paginate(15, ['*'], 'documents_page')->withQueryString();
+        $documentTypes = config('member_documents.types');
         $resources = \App\Models\StudentResource::where('is_active', true)
             ->orderBy('category')
             ->orderBy('title')
@@ -179,6 +181,8 @@ class MembershipController extends Controller
             'openElections',
             'votedElectionIds',
             'accommodations',
+            'documents',
+            'documentTypes',
             'resources'
         ));
     }

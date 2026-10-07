@@ -22,7 +22,8 @@ An enterprise-grade, full-stack **Laravel 12** web application for the **Kuki St
 - **Online Student Registration**: Collects full student details, Chandigarh college/department, course, year, permanent Manipur address, current PG/Hostel address, emergency contact, and photo upload.
 - **Digital Membership ID Card**: Generates an official, printable KSO Student ID Card featuring student photo, unique Membership ID (e.g. `KSO-CHD-2026-0001`), official seal, validity date, and dynamic verification QR code.
 - **Public ID Verification Tool**: Online ID lookup tool for public and institutional verification.
-- **Student Member Portal**: Login with Membership ID or Email to access digital ID card, application status, and student resources.
+- **Student Member Portal**: Login with Membership ID or Email to access digital ID card, application status, student resources, and request official certificates.
+- **Certificate Generation & Distribution**: Members can request character, bonafide, membership, participation, volunteer-service, appreciation, achievement, completion, and other certificates. Admins review and issue or reject requests; issued certificates are printable/saveable as PDF from the member portal and verifiable by certificate number. Revoked certificates remain verifiable as revoked.
 - **Offline Membership Forms**: Admins can share the public registration link or build a section-based blank form, print it, save it as PDF from the browser print dialog, or download a standalone HTML copy for offline printing. Paper applications must be entered and reviewed through the existing admin member workflow; the form tool does not create or approve member records.
 
 ### 3. 🛡️ CMS & Admin Management Panel
@@ -98,8 +99,12 @@ The committed audit scripts perform static checks only; they are not substitutes
 | `/about` | GET | About Us & Executive Body |
 | `/membership/register` | GET/POST | Online Student Membership Application |
 | `/membership/verify` | GET/POST | Public Student ID Verification Tool |
-| `/membership/portal` | GET/POST | Student Portal Login & Dashboard |
-| `/membership/id-card/{id}` | GET | Official Digital ID Card View & Print |
+| `/members/portal` | GET/POST | Student Portal Login & Dashboard |
+| `/members/portal/documents` | POST | Request an official member certificate |
+| `/members/portal/documents/{id}` | GET | View and print an issued certificate (member only) |
+| `/documents/verify/{certificateNumber}` | GET | Public certificate status verification |
+| `/admin/member-documents` | GET | Review, issue, reject, or revoke member documents |
+| `/members/id-card/{id}` | GET | Official Digital ID Card View & Print |
 | `/events` | GET | Events & News Calendar |
 | `/gallery` | GET | Photo Gallery |
 | `/donations` | GET/POST | Donation Portal & Records |

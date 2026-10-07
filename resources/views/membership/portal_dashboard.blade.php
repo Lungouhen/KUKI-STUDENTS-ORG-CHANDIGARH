@@ -32,6 +32,9 @@
         <button @click="activeTab = 'academic'" :class="activeTab === 'academic' ? 'active' : ''" class="portal-tab-btn">
             <i class="fa-solid fa-book-open-reader"></i> Academic Desk 📚
         </button>
+        <button @click="activeTab = 'documents'" :class="activeTab === 'documents' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-award"></i> Certificates & Documents
+        </button>
     </div>
 
     <!-- ─── TAB 1: OVERVIEW & ID CARD PANORAMA ─── -->
@@ -660,6 +663,92 @@
                         </div>
                     @endforeach
                 </div>
+            @endif
+        </div>
+    </div>
+
+    <div x-show="activeTab === 'documents'" x-transition x-cloak>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                <div>
+                    <h5 class="fw-black text-dark mb-1"><i class="fa-solid fa-award text-primary me-2"></i> Certificates & Official Documents</h5>
+                    <p class="small text-muted mb-0">Request a certificate from KSO Chandigarh. Approved certificates are generated here for printing or saving as PDF.</p>
+                </div>
+                <span class="badge bg-primary rounded-pill">{{ $documents->total() }} total</span>
+            </div>
+
+            @if($member->status === 'Approved' && $member->is_active)
+                <form action="{{ route('membership.documents.request') }}" method="POST" class="row g-3 align-items-end mb-4 p-3 bg-light rounded-3">
+                    @csrf
+                    <div class="col-md-4">
+                        <label for="document-type" class="form-label fw-bold">Document type</label>
+                        <select id="document-type" name="document_type" class="form-select" required>
+                            <option value="">Choose a certificate</option>
+                            @foreach($documentTypes as $key => $type)
+                                <option value="{{ $key }}" @selected(old('document_type') === $key)>{{ $type['label'] }}</option>
+                            @endforeach
+                        </select>
+                        @error('document_type') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="document-purpose" class="form-label fw-bold">Purpose of request</label>
+                        <input id="document-purpose" name="purpose" class="form-control" maxlength="500" value="{{ old('purpose') }}" placeholder="Briefly explain where or why it is needed" required>
+                        @error('purpose') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane me-1"></i> Request</button>
+                    </div>
+                </form>
+            @else
+                <div class="alert alert-info">Document requests are available to active, approved members.</div>
+            @endif
+
+            @if($documents->isEmpty())
+                <div class="text-center py-4 text-muted">
+                    <i class="fa-regular fa-folder-open fs-2"></i>
+                    <p class="mb-0 mt-2">No document requests yet.</p>
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead><tr><th>Document</th><th>Requested</th><th>Status</th><th>Certificate</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach($documents as $document)
+                            <tr>
+                                <td>
+                                    <strong>{{ $document->typeLabel() }}</strong>
+                                    <div class="small text-muted">{{ $document->purpose }}</div>
+                                    @if($document->status === 'rejected' && $document->resolution_note)
+                                        <div class="small text-danger mt-1">Response: {{ $document->resolution_note }}</div>
+                                    @endif
+                                    @if($document->status === 'revoked' && $document->resolution_note)
+                                        <div class="small text-danger mt-1">Revoked: {{ $document->resolution_note }}</div>
+                                    @endif
+                                </td>
+                                <td>{{ $document->created_at->format('Y-m-d') }}</td>
+                                <td>
+                                    <span class="badge {{ ['issued' => 'bg-success', 'rejected' => 'bg-danger', 'revoked' => 'bg-secondary'][$document->status] ?? 'bg-warning text-dark' }}">
+                                        {{ ucfirst($document->status) }}
+                                    </span>
+                                </td>
+                                <td>{{ $document->certificate_number ?? '—' }}</td>
+                                <td class="text-end">
+                                    @if($document->status === 'issued')
+                                        <a href="{{ route('membership.documents.show', $document->id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fa-solid fa-print me-1"></i> View / Print
+                                        </a>
+                                    @elseif($document->status === 'revoked')
+                                        <span class="small text-danger">No longer valid</span>
+                                    @else
+                                        <span class="small text-muted">Awaiting review</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                {{ $documents->links() }}
             @endif
         </div>
     </div>

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MemberDocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\DonationController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
 use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
 use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
+use App\Http\Controllers\Admin\MemberDocumentController as AdminMemberDocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,8 @@ Route::prefix('members')->group(function () {
     Route::get('/verify', [MembershipController::class, 'verifyForm'])->name('membership.verifyForm');
     Route::post('/verify', [MembershipController::class, 'verify'])->name('membership.verify');
     Route::get('/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
+    Route::get('/portal/documents/{id}', [MemberDocumentController::class, 'show'])->name('membership.documents.show');
+    Route::post('/portal/documents', [MemberDocumentController::class, 'storeRequest'])->middleware('throttle:5,1')->name('membership.documents.request');
     Route::get('/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
     Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->middleware('throttle:10,1')->name('membership.portalLogin');
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
@@ -63,6 +67,9 @@ Route::prefix('members')->group(function () {
     Route::get('/portal/resources/{id}/download', [MembershipController::class, 'downloadResource'])->name('membership.downloadResource');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
 });
+Route::get('/documents/verify/{certificateNumber}', [MemberDocumentController::class, 'verify'])
+    ->middleware('throttle:10,1')
+    ->name('documents.verify');
 
 // Events & News
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
@@ -133,6 +140,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
 
     // Members Management
+    Route::get('/member-documents', [AdminMemberDocumentController::class, 'index'])->name('memberDocuments.index');
+    Route::post('/member-documents/{id}/issue', [AdminMemberDocumentController::class, 'issue'])->name('memberDocuments.issue');
+    Route::post('/member-documents/{id}/reject', [AdminMemberDocumentController::class, 'reject'])->name('memberDocuments.reject');
+    Route::post('/member-documents/{id}/revoke', [AdminMemberDocumentController::class, 'revoke'])->name('memberDocuments.revoke');
     Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');

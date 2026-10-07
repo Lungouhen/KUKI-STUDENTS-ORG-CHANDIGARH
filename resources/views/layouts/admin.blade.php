@@ -44,7 +44,7 @@
     },
     // Dynamic initialization of folder states based on current route
     contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
-    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.memberDocuments*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
     settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
@@ -151,6 +151,11 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.membershipForms.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.membershipForms*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-file-invoice"></i> Membership Forms
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.memberDocuments.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.memberDocuments*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-award"></i> Certificates & Documents
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
