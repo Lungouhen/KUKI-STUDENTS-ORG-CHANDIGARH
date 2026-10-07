@@ -154,7 +154,7 @@ class MembershipController extends Controller
         $currentFeePaid = $feePayments->contains(fn ($payment) => $payment->period === $currentPeriod);
 
         // Live elections: ballots open only while an election is Ongoing
-        $openElections = \App\Models\Election::with(['candidates.member'])
+        $openElections = \App\Models\Election::with(['term', 'candidates.member'])
             ->where('status', 'Ongoing')
             ->orderBy('election_date')
             ->get();
