@@ -716,7 +716,7 @@
                         @foreach($documents as $document)
                             <tr>
                                 <td>
-                                    <strong>{{ $document->typeLabel() }}</strong>
+                                    <strong>{{ $document->content_snapshot['title'] ?? $document->typeLabel() }}</strong>
                                     <div class="small text-muted">{{ $document->purpose }}</div>
                                     @if($document->status === 'rejected' && $document->resolution_note)
                                         <div class="small text-danger mt-1">Response: {{ $document->resolution_note }}</div>

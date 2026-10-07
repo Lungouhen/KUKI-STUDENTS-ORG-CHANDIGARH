@@ -14,6 +14,7 @@ use App\Services\MemberDocumentTemplateRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Database\QueryException;
 use Illuminate\Validation\Rule;
 use Throwable;
 
@@ -138,7 +139,7 @@ class MemberDocumentController extends Controller
         $eligibleIds = $members->filter(fn (Member $member) => $member->status === 'Approved' && $member->is_active)->pluck('id')->all();
         $excludedCount = count($requestedIds) - count($eligibleIds);
         $template = MemberDocumentTemplate::findOrFail($validated['template_id']);
-        $sampleMember = $members->first();
+        $sampleMember = $members->firstWhere('id', $eligibleIds[0] ?? null) ?? $members->first();
         $renderer->validate($template);
         $preview = $renderer->preview(
             $template,
@@ -266,27 +267,36 @@ class MemberDocumentController extends Controller
         $batch = MemberDocumentBatch::where('idempotency_key', $validated['idempotency_key'])->first();
         if (! $batch) {
             $template = MemberDocumentTemplate::findOrFail($validated['template_id']);
-            $batch = DB::transaction(function () use ($validated, $memberIds, $template) {
-                return MemberDocumentBatch::create([
-                    'idempotency_key' => $validated['idempotency_key'],
-                    'document_type' => $template->document_type,
-                    'template_id' => $template->id,
-                    'template_version' => $template->version,
-                    'created_by' => auth()->id(),
-                    'status' => 'processing',
-                    'shared_details' => trim($validated['document_details']),
-                    'criteria' => ['recipient_ids' => $memberIds],
-                    'recipient_count' => count($memberIds),
-                    'started_at' => now(),
-                ]);
-            });
+            try {
+                $batch = DB::transaction(function () use ($validated, $memberIds, $template) {
+                    return MemberDocumentBatch::create([
+                        'idempotency_key' => $validated['idempotency_key'],
+                        'document_type' => $template->document_type,
+                        'template_id' => $template->id,
+                        'template_version' => $template->version,
+                        'created_by' => auth()->id(),
+                        'status' => 'processing',
+                        'shared_details' => trim($validated['document_details']),
+                        'criteria' => ['recipient_ids' => $memberIds],
+                        'recipient_count' => count($memberIds),
+                        'started_at' => now(),
+                    ]);
+                });
+            } catch (QueryException $exception) {
+                $batch = MemberDocumentBatch::where('idempotency_key', $validated['idempotency_key'])->first();
+                if (! $batch) {
+                    throw $exception;
+                }
+            }
 
-            AuditLog::log('MEMBER_DOCUMENT_BATCH_CREATED', [
-                'batch_id' => $batch->id,
-                'template_version' => $batch->template_version,
-                'recipient_count' => $batch->recipient_count,
-            ]);
-            $this->processBatch($batch, $issuer);
+            if ($batch->wasRecentlyCreated) {
+                AuditLog::log('MEMBER_DOCUMENT_BATCH_CREATED', [
+                    'batch_id' => $batch->id,
+                    'template_version' => $batch->template_version,
+                    'recipient_count' => $batch->recipient_count,
+                ]);
+                $this->processBatch($batch, $issuer);
+            }
         }
 
         return redirect()->route('admin.memberDocuments.batches.show', $batch->id);

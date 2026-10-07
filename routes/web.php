@@ -143,11 +143,6 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Members Management
     Route::get('/member-documents', [AdminMemberDocumentController::class, 'index'])->name('memberDocuments.index');
-    Route::post('/member-documents/{id}/preview', [AdminMemberDocumentController::class, 'previewPending'])->name('memberDocuments.previewPending');
-    Route::get('/member-documents/{id}/preview-issued', [AdminMemberDocumentController::class, 'previewIssued'])->name('memberDocuments.previewIssued');
-    Route::post('/member-documents/{id}/issue', [AdminMemberDocumentController::class, 'issue'])->name('memberDocuments.issue');
-    Route::post('/member-documents/{id}/reject', [AdminMemberDocumentController::class, 'reject'])->name('memberDocuments.reject');
-    Route::post('/member-documents/{id}/revoke', [AdminMemberDocumentController::class, 'revoke'])->name('memberDocuments.revoke');
     Route::post('/member-documents/direct/preview', [AdminMemberDocumentController::class, 'previewDirect'])->name('memberDocuments.previewDirect');
     Route::post('/member-documents/direct/issue', [AdminMemberDocumentController::class, 'generateDirect'])->name('memberDocuments.generateDirect');
     Route::post('/member-documents/bulk/preview', [AdminMemberDocumentController::class, 'previewBulk'])->name('memberDocuments.previewBulk');
@@ -158,6 +153,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'index'])->name('memberDocumentTemplates.index');
     Route::post('/member-document-templates/preview', [AdminMemberDocumentTemplateController::class, 'preview'])->name('memberDocumentTemplates.preview');
     Route::post('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'store'])->name('memberDocumentTemplates.store');
+    Route::post('/member-documents/{id}/preview', [AdminMemberDocumentController::class, 'previewPending'])->name('memberDocuments.previewPending');
+    Route::get('/member-documents/{id}/preview-issued', [AdminMemberDocumentController::class, 'previewIssued'])->name('memberDocuments.previewIssued');
+    Route::post('/member-documents/{id}/issue', [AdminMemberDocumentController::class, 'issue'])->name('memberDocuments.issue');
+    Route::post('/member-documents/{id}/reject', [AdminMemberDocumentController::class, 'reject'])->name('memberDocuments.reject');
+    Route::post('/member-documents/{id}/revoke', [AdminMemberDocumentController::class, 'revoke'])->name('memberDocuments.revoke');
     Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');

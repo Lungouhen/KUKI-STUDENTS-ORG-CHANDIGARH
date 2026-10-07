@@ -104,6 +104,15 @@ The committed audit scripts perform static checks only; they are not substitutes
 | `/members/portal/documents/{id}` | GET | View and print an issued certificate (member only) |
 | `/documents/verify/{certificateNumber}` | GET | Public certificate status verification |
 | `/admin/member-documents` | GET | Review, issue, reject, or revoke member documents |
+| `/admin/member-document-templates` | GET | Preview and publish immutable certificate template versions |
+
+### Certificate templates and batches
+
+Administrators can create a new template version for each supported document type using plain-text statements and the documented placeholders (`{{member_name}}`, `{{member_id}}`, `{{institution}}`, `{{course}}`, `{{certificate_details}}`, `{{issued_date}}`, `{{issuer}}`, `{{certificate_number}}`, and `{{verification_url}}`). HTML is rejected and rendered values are escaped. Each issued document snapshots the template output and member fields, so later template/profile changes do not rewrite it.
+
+The document register supports exact certificate/member lookup, name/type/status/date/batch filters, individual preview-before-issue, and bulk generation from member IDs or an institution/course cohort. Batches are limited to 500 members, process in chunks of 25, keep per-member issued/skipped/failed outcomes, and use a unique idempotency key; admins can retry failed outcomes without duplicating issued documents. Bulk certificates have an admin-only print view. Members receive an availability email with a portal sign-in link (no certificate attachment); delivery state is recorded per document.
+
+Issued certificates remain privately available through the member portal as printable HTML / browser Save as PDF. A human-readable certificate number and QR code link to the throttled, no-store verification register, which reports valid/revoked/not-found and masks the member ID. Verification is register-backed and is not a digital signature.
 | `/members/id-card/{id}` | GET | Official Digital ID Card View & Print |
 | `/events` | GET | Events & News Calendar |
 | `/gallery` | GET | Photo Gallery |

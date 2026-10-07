@@ -34,6 +34,7 @@ class MemberDocumentTemplateController extends Controller
             'style' => ['required', 'string', 'in:'.implode(',', MemberDocumentTemplateRenderer::STYLES)],
         ]);
         $renderer->validate($validated['title'], $validated['statement']);
+        $request->session()->put('member_document_template_preview', $this->previewHash($validated));
 
         $template = new MemberDocumentTemplate($validated);
         $sample = new Member([
@@ -66,6 +67,10 @@ class MemberDocumentTemplateController extends Controller
             'style' => ['required', 'string', 'in:'.implode(',', MemberDocumentTemplateRenderer::STYLES)],
         ]);
         $renderer->validate($validated['title'], $validated['statement']);
+        $previewHash = $request->session()->pull('member_document_template_preview');
+        if (! is_string($previewHash) || ! hash_equals($previewHash, $this->previewHash($validated))) {
+            return back()->withInput()->withErrors(['statement' => 'Preview this exact template before saving its version.']);
+        }
 
         $template = DB::transaction(function () use ($validated) {
             MemberDocumentTemplate::where('document_type', $validated['document_type'])
@@ -94,5 +99,10 @@ class MemberDocumentTemplateController extends Controller
 
         return redirect()->route('admin.memberDocumentTemplates.index')
             ->with('success', "{$template->document_type} template version {$template->version} is now active.");
+    }
+
+    private function previewHash(array $values): string
+    {
+        return hash_hmac('sha256', json_encode($values, JSON_THROW_ON_ERROR), (string) config('app.key'));
     }
 }

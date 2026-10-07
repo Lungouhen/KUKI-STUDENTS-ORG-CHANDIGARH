@@ -7,6 +7,7 @@ use App\Models\MemberDocument;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class MemberDocumentTest extends TestCase
@@ -20,6 +21,7 @@ class MemberDocumentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mail::fake();
 
         $this->member = $this->createMember('KSO-CHD-2026-4001', 'document-member@example.org');
         $this->admin = User::create([
@@ -90,6 +92,7 @@ class MemberDocumentTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post(route('admin.memberDocuments.issue', $document->id), [
+                'template_id' => $this->templateId(),
                 'document_details' => '<script>alert("not executable")</script> service activity',
             ])
             ->assertRedirect()
@@ -122,6 +125,7 @@ class MemberDocumentTest extends TestCase
         $document = $this->pendingDocument();
         $this->actingAs($this->admin)
             ->post(route('admin.memberDocuments.issue', $document->id), [
+                'template_id' => $this->templateId(),
                 'document_details' => 'Member participation in student welfare activities',
             ])
             ->assertSessionHas('success');
@@ -169,6 +173,7 @@ class MemberDocumentTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post(route('admin.memberDocuments.issue', $document->id), [
+                'template_id' => $this->templateId(),
                 'document_details' => 'Some approved details',
             ])
             ->assertSessionHas('error');
@@ -194,6 +199,11 @@ class MemberDocumentTest extends TestCase
             'document_type' => 'character',
             'purpose' => 'General official use',
         ], $overrides));
+    }
+
+    private function templateId(): int
+    {
+        return \App\Models\MemberDocumentTemplate::where('document_type', 'character')->where('is_active', true)->value('id');
     }
 
     private function createMember(string $id, string $email): Member
