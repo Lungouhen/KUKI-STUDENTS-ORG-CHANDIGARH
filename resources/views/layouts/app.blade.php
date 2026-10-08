@@ -3,7 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Kuki Students\' Organisation Chandigarh')</title>
+    @php
+        $seoSiteName = \App\Models\Setting::get('siteName') ?: 'Kuki Students\' Organisation Chandigarh';
+        $seoDefaultTitle = \App\Models\Setting::get('seoTitle') ?: $seoSiteName;
+        $seoDefaultDescription = \App\Models\Setting::get('seoDescription') ?: \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+        $seoDefaultImagePath = \App\Models\Setting::get('seoSocialImage');
+        $seoDefaultImage = $seoDefaultImagePath ? asset($seoDefaultImagePath) : '';
+        $seoIndexingEnabled = filter_var(\App\Models\Setting::get('seoIndexingEnabled', true), FILTER_VALIDATE_BOOLEAN);
+        $seoPublicRoute = request()->routeIs('home', 'about', 'page.show', 'page.faqs', 'events.index', 'events.show', 'gallery.index', 'donations.index', 'contact.index');
+        $seoCanonicalPath = trim(request()->path(), '/');
+        $seoCanonicalUrl = rtrim(config('app.url'), '/').($seoCanonicalPath === '' ? '' : '/'.$seoCanonicalPath);
+    @endphp
+    <title>@yield('title', $seoDefaultTitle)</title>
+    <meta name="description" content="@yield('meta_description', $seoDefaultDescription)">
+    <meta name="robots" content="@yield('robots', $seoIndexingEnabled && $seoPublicRoute ? 'index,follow' : 'noindex,nofollow')">
+    @if($seoPublicRoute)
+        <link rel="canonical" href="{{ $seoCanonicalUrl }}">
+    @endif
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="{{ $seoSiteName }}">
+    <meta property="og:title" content="@yield('title', $seoDefaultTitle)">
+    <meta property="og:description" content="@yield('meta_description', $seoDefaultDescription)">
+    @if($seoPublicRoute)
+        <meta property="og:url" content="{{ $seoCanonicalUrl }}">
+    @endif
+    @php($seoImage = $__env->yieldContent('og_image', $seoDefaultImage))
+    @if(filled($seoImage))
+        <meta property="og:image" content="{{ $seoImage }}">
+        <meta name="twitter:card" content="summary_large_image">
+    @else
+        <meta name="twitter:card" content="summary">
+    @endif
+    <meta name="twitter:title" content="@yield('title', $seoDefaultTitle)">
+    <meta name="twitter:description" content="@yield('meta_description', $seoDefaultDescription)">
     
     <!-- Local Bootstrap 5 CSS -->
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">

@@ -137,7 +137,7 @@
     membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.memberDocuments*') || request()->routeIs('admin.memberDocumentTemplates*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
-    settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
+    settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') || request()->routeIs('admin.cache*') || request()->routeIs('admin.seo*') ? 'true' : 'false' }},
     electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
 }" :data-bs-theme="darkMode ? 'dark' : 'light'" @keydown.escape.window="sidebarMobileOpen = false">
 
@@ -366,6 +366,16 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.settings.integrations') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.settings.integrations') ? 'active' : '' }}">
                                     <i class="fa-solid fa-plug"></i> Integrations
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.seo.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.seo*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-magnifying-glass-chart"></i> SEO Pro
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.cache.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.cache*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-server"></i> Cache Manager
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">

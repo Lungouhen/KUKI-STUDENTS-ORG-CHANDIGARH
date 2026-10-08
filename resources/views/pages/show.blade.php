@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', $page->meta_title ?? $page->title)
+@section('title', $page->meta_title ?: $page->title)
+@section('meta_description', $page->meta_description ?: ($page->excerpt ?: (\App\Models\Setting::get('seoDescription') ?: \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community'))))
+@section('robots', $page->is_published && \App\Models\Setting::get('seoIndexingEnabled', true) ? 'index,follow' : 'noindex,nofollow')
+@section('og_type', 'article')
+@section('og_image', $page->featured_image ? asset($page->featured_image) : (\App\Models\Setting::get('seoSocialImage') ? asset(\App\Models\Setting::get('seoSocialImage')) : ''))
 
 @section('content')
 
