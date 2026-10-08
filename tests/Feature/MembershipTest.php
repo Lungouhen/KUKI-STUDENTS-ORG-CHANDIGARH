@@ -2,13 +2,25 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Member;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class MembershipTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_registration_form_is_accessible_and_family_fields_share_their_alpine_scope(): void
+    {
+        $this->get(route('membership.register'))
+            ->assertOk()
+            ->assertSee('css/pages/membership-register.css')
+            ->assertSee('js/pages/membership-register.js')
+            ->assertSee('membership-registration-page" x-data=', false)
+            ->assertSee('x-show="memberType === \'Family\'"', false)
+            ->assertSee('for="membership-full-name"', false)
+            ->assertSee('id="membership-photo-status"', false);
+    }
 
     public function test_can_register_new_member(): void
     {
@@ -32,7 +44,7 @@ class MembershipTest extends TestCase
         $this->assertDatabaseHas('members', [
             'full_name' => 'Test Student Haokip',
             'email' => 'teststudent@gmail.com',
-            'status' => 'Pending'
+            'status' => 'Pending',
         ]);
     }
 
@@ -56,7 +68,7 @@ class MembershipTest extends TestCase
         ]);
 
         $response = $this->post('/members/verify', [
-            'member_id' => 'KSO-CHD-2026-9999'
+            'member_id' => 'KSO-CHD-2026-9999',
         ]);
 
         $response->assertStatus(200);

@@ -46,6 +46,9 @@
     @if(request()->routeIs('page.show'))
         <link href="{{ asset('css/pages/cms-page.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('membership.register'))
+        <link href="{{ asset('css/pages/membership-register.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -144,6 +147,8 @@
         <script src="{{ asset('js/pages/event-detail.js') }}" defer></script>
     @elseif(request()->routeIs('events.ticketPass'))
         <script src="{{ asset('js/pages/event-pass.js') }}" defer></script>
+    @elseif(request()->routeIs('membership.register'))
+        <script src="{{ asset('js/pages/membership-register.js') }}" defer></script>
     @endif
 
     <script>

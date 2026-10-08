@@ -1,0 +1,57 @@
+.membership-registration-page [x-cloak] {
+    display: none !important;
+}
+
+.membership-registration-page .public-page-banner {
+    background:
+        radial-gradient(circle at 82% 15%, rgba(255, 191, 0, 0.2), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.membership-registration-page .card {
+    border-radius: 1.25rem !important;
+}
+
+.membership-registration-page .card-header {
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.membership-registration-page .form-control,
+.membership-registration-page .form-select {
+    min-height: 3rem;
+    border-color: #cbd5e1;
+}
+
+.membership-registration-page textarea.form-control {
+    min-height: 6rem;
+}
+
+.membership-registration-page .form-control:focus,
+.membership-registration-page .form-select:focus {
+    border-color: #0b6fa4;
+    box-shadow: 0 0 0 0.22rem rgba(11, 111, 164, 0.16);
+}
+
+.membership-registration-page .form-label {
+    line-height: 1.45;
+}
+
+.membership-registration-page h1 {
+    text-wrap: balance;
+}
+
+@media (max-width: 575.98px) {
+    .membership-registration-page .container.my-4 {
+        margin-block: 1.5rem !important;
+    }
+
+    .membership-registration-page .card-header,
+    .membership-registration-page .card-body {
+        padding: 1.25rem !important;
+    }
+
+    .membership-registration-page .card-header {
+        align-items: flex-start !important;
+    }
+}
