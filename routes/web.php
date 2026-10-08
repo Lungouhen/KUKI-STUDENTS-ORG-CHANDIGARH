@@ -10,6 +10,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SeoController as PublicSeoController;
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -37,6 +38,8 @@ use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResource
 use App\Http\Controllers\Admin\MemberDocumentController as AdminMemberDocumentController;
 use App\Http\Controllers\Admin\MemberDocumentTemplateController as AdminMemberDocumentTemplateController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\Admin\CacheManagerController as AdminCacheManagerController;
+use App\Http\Controllers\Admin\SeoController as AdminSeoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +52,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
+Route::get('/robots.txt', [PublicSeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [PublicSeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/ads/{id}/click', [HomeController::class, 'clickAd'])->name('ads.click');
 
 // Membership/Members Routes
@@ -255,4 +260,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::post('/settings/smtp/test', [AdminSettingController::class, 'testSmtp'])->middleware('throttle:3,1')->name('settings.smtp.test');
     Route::get('/settings/smtp', [AdminSettingController::class, 'smtp'])->name('settings.smtp');
     Route::get('/settings/gateways', [AdminSettingController::class, 'gateways'])->name('settings.gateways');
+    Route::get('/cache', [AdminCacheManagerController::class, 'index'])->name('cache.index');
+    Route::post('/cache/{type}/clear', [AdminCacheManagerController::class, 'clear'])
+        ->whereIn('type', ['application', 'config', 'routes', 'views', 'all'])
+        ->name('cache.clear');
+    Route::get('/seo', [AdminSeoController::class, 'index'])->name('seo.index');
+    Route::post('/seo', [AdminSeoController::class, 'update'])->name('seo.update');
 });
