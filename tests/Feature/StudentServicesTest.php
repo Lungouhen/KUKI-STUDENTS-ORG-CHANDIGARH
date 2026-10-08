@@ -18,6 +18,7 @@ class StudentServicesTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Member $member;
 
     protected function setUp(): void
@@ -48,6 +49,27 @@ class StudentServicesTest extends TestCase
             'emergency_phone' => '+91 92222 11111',
             'status' => 'Approved',
         ]);
+    }
+
+    public function test_admin_resource_library_has_accessible_table_and_upload_form(): void
+    {
+        StudentResource::create([
+            'title' => 'Exam Preparation Guide',
+            'category' => 'Question Banks',
+            'file_path' => 'uploads/resources/exam-guide.pdf',
+            'file_size' => 2048,
+            'download_count' => 3,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.resources.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-resources.css')
+            ->assertSee('js/pages/admin-resources.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('for="resourceTitle"', false)
+            ->assertSee('aria-label="Hide Exam Preparation Guide from the member portal"', false);
     }
 
     private function loginAsMember(): void
