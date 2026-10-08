@@ -10,7 +10,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'siteName' => 'Kuki Students\' Organisation Chandigarh',
+            'siteName' => 'KUKI STUDENTS\' ORGANISATION CHANDIGARH',
             'abbreviation' => 'KSO CHANDIGARH',
             'tagline' => 'Empowering Students • Preserving Culture • Serving Community',
             'primaryColor' => '#003566',

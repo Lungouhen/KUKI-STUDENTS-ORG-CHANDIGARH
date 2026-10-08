@@ -1,5 +1,5 @@
 @php
-    $brandSiteName = \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh");
+    $brandSiteName = \App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH");
     $brandTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
 @endphp
 

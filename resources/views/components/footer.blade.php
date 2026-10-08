@@ -1,5 +1,5 @@
 @php
-    $footerSiteName = \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh");
+    $footerSiteName = \App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH");
     $footerTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
 @endphp
 

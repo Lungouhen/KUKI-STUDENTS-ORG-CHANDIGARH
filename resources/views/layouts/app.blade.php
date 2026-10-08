@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
-        $siteName = \App\Models\Setting::get('siteName') ?: "Kuki Students' Organisation Chandigarh";
+        $siteName = \App\Models\Setting::get('siteName') ?: "KUKI STUDENTS' ORGANISATION CHANDIGARH";
         $siteAbbreviation = \App\Models\Setting::get('abbreviation') ?: 'KSO CHANDIGARH';
         $siteTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
         $sitePrimaryColor = \App\Models\Setting::get('primaryColor', '#003566');

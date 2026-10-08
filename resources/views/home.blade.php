@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', (\App\Models\Setting::get('seoTitle') ?: (\App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh") . ' | Official Website')))
+@section('title', (\App\Models\Setting::get('seoTitle') ?: (\App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH") . ' | Official Website')))
 
 @section('content')
 
@@ -13,7 +13,7 @@
                 <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
                     <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i> {{ strtoupper(\App\Models\Setting::get('abbreviation', 'KSO CHANDIGARH')) }} · Student community
                 </span>
-                <h1 class="display-4 fw-black mb-3">{{ \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh") }}, stronger together.</h1>
+                <h1 class="display-4 fw-black mb-3">{{ \App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH") }}, stronger together.</h1>
                 <p class="lead mb-4">
                     {{ \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community') }}
                 </p>

@@ -16,7 +16,7 @@ class SettingController extends Controller
     public function index()
     {
         $settings = [
-            'siteName' => Setting::get('siteName', 'Kuki Students\' Organisation Chandigarh'),
+            'siteName' => Setting::get('siteName', 'KUKI STUDENTS\' ORGANISATION CHANDIGARH'),
             'abbreviation' => Setting::get('abbreviation', 'KSO CHANDIGARH'),
             'tagline' => Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community'),
             'email' => Setting::get('email', 'ksochandigarh@gmail.com'),
