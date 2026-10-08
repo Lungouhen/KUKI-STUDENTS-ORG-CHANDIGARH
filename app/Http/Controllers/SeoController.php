@@ -11,8 +11,7 @@ class SeoController extends Controller
     public function robots()
     {
         $indexingEnabled = filter_var(Setting::get('seoIndexingEnabled', true), FILTER_VALIDATE_BOOLEAN);
-        $content = "User-agent: *\n";
-        $content .= $indexingEnabled ? "Allow: /\n" : "Disallow: /\n";
+        $content = "User-agent: *\nAllow: /\n";
 
         if ($indexingEnabled) {
             $content .= 'Sitemap: '.rtrim(config('app.url'), '/').route('sitemap', [], false)."\n";

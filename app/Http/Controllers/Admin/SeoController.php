@@ -31,34 +31,39 @@ class SeoController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'seoTitle' => 'nullable|string|max:255',
-            'seoDescription' => 'nullable|string|max:500',
+            'seoTitle' => 'sometimes|nullable|string|max:255',
+            'seoDescription' => 'sometimes|nullable|string|max:500',
             'seoSocialImage' => [
+                'sometimes',
                 'nullable',
                 'string',
                 Rule::exists('media_assets', 'path')
                     ->where(fn ($query) => $query->where('mime_type', 'like', 'image/%')),
             ],
-            'seoIndexingEnabled' => 'required|boolean',
+            'seoIndexingEnabled' => 'sometimes|boolean',
         ]);
 
         foreach (['seoTitle', 'seoDescription', 'seoSocialImage'] as $key) {
-            if (blank($validated[$key] ?? null)) {
+            if (array_key_exists($key, $validated) && blank($validated[$key])) {
                 $validated[$key] = null;
             }
         }
 
-        $validated['seoIndexingEnabled'] = (bool) $validated['seoIndexingEnabled'];
+        if (array_key_exists('seoIndexingEnabled', $validated)) {
+            $validated['seoIndexingEnabled'] = (bool) $validated['seoIndexingEnabled'];
+        }
 
-        DB::transaction(function () use ($validated) {
-            foreach ($validated as $key => $value) {
-                Setting::set($key, $value);
-            }
+        if ($validated !== []) {
+            DB::transaction(function () use ($validated) {
+                foreach ($validated as $key => $value) {
+                    Setting::set($key, $value);
+                }
 
-            AuditLog::log('UPDATE_SEO_SETTINGS', [
-                'updated_keys' => array_keys($validated),
-            ]);
-        });
+                AuditLog::log('UPDATE_SEO_SETTINGS', [
+                    'updated_keys' => array_keys($validated),
+                ]);
+            });
+        }
 
         return redirect()->route('admin.seo.index')->with('success', 'SEO settings saved.');
     }

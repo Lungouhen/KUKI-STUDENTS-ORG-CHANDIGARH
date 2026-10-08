@@ -41,7 +41,7 @@
                         <input id="seo-indexing-enabled" type="checkbox" name="seoIndexingEnabled" value="1" class="form-check-input" @checked(old('seoIndexingEnabled', $settings['seoIndexingEnabled']))>
                         <label for="seo-indexing-enabled" class="form-check-label fw-bold">Allow search engine indexing</label>
                     </div>
-                    <div class="form-text">Disabling indexing adds noindex metadata and blocks crawling in robots.txt.</div>
+                    <div class="form-text">When disabled, pages use noindex metadata and the sitemap is omitted; crawling remains allowed so search engines can see the noindex directive.</div>
                     @error('seoIndexingEnabled') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                 </div>
                 <div class="col-12 d-flex flex-wrap gap-2 justify-content-between align-items-center">

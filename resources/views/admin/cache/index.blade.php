@@ -52,7 +52,7 @@
             @foreach([
                 'application' => ['Application cache', 'Remove cached application data from the configured cache store.', 'fa-database'],
                 'config' => ['Configuration cache', 'Reload configuration from the application config files.', 'fa-sliders'],
-                'routes' => ['Route cache', 'Rebuild route definitions from the current application routes.', 'fa-route'],
+                'routes' => ['Route cache', 'Remove cached route definitions; Laravel will use the current route files.', 'fa-route'],
                 'views' => ['Compiled views', 'Remove compiled Blade templates; they are recreated as needed.', 'fa-file-code'],
                 'all' => ['All optimized caches', 'Run Laravel’s optimize:clear command for framework caches.', 'fa-broom'],
             ] as $type => [$label, $description, $icon])
