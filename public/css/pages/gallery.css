@@ -1,0 +1,60 @@
+.gallery-page .public-page-banner {
+    background:
+        radial-gradient(circle at 80% 14%, rgba(255, 191, 0, 0.18), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.gallery-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem;
+}
+
+.gallery-filters .btn {
+    min-height: 2.75rem;
+    padding-inline: 1.15rem;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.gallery-filters .btn.active,
+.gallery-filters .btn[aria-pressed="true"] {
+    color: #fff;
+    background-color: #003566;
+    border-color: #003566;
+}
+
+.gallery-page .masonry-grid {
+    min-height: 12rem;
+}
+
+.gallery-page .masonry-item[hidden] {
+    display: none !important;
+}
+
+.gallery-page .gallery-photo-card {
+    margin-bottom: 1.25rem;
+}
+
+.gallery-page .gallery-photo-card img {
+    display: block;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.gallery-filters .btn:focus-visible,
+.gallery-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .gallery-filters {
+        justify-content: flex-start;
+    }
+
+    .gallery-filters .btn {
+        flex: 1 1 auto;
+    }
+}

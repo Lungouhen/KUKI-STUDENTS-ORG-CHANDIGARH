@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Event;
 use App\Models\GalleryItem;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,14 +35,39 @@ class PublicPagesTest extends TestCase
 
     public function test_events_page_is_accessible(): void
     {
-        $response = $this->get('/events');
-        $response->assertStatus(200);
+        $this->get('/events')
+            ->assertStatus(200)
+            ->assertSee('css/pages/events.css')
+            ->assertSee('js/pages/events.js');
+    }
+
+    public function test_event_calendar_data_escapes_untrusted_titles_as_json(): void
+    {
+        Event::create([
+            'title' => '</script><script>alert(1)</script>',
+            'category' => 'Cultural',
+            'date' => now()->addWeek()->toDateString(),
+            'time' => '10:00 AM',
+            'venue' => 'Campus',
+            'description' => 'Community event',
+            'status' => 'Upcoming',
+            'publication_status' => 'published',
+        ]);
+
+        $this->get('/events')
+            ->assertOk()
+            ->assertSee('id="calendar-events-data"', false)
+            ->assertSee('\\u003C\\/script\\u003E', false)
+            ->assertDontSee('</script><script>alert(1)</script>', false);
     }
 
     public function test_gallery_page_is_accessible(): void
     {
         $response = $this->get('/gallery');
-        $response->assertStatus(200)->assertSee('Community photos are on the way');
+        $response->assertStatus(200)
+            ->assertSee('Community photos are on the way')
+            ->assertSee('css/pages/gallery.css')
+            ->assertSee('js/pages/gallery.js');
     }
 
     public function test_public_gallery_uses_uploaded_photos_not_seeded_mock_images(): void
@@ -65,16 +92,63 @@ class PublicPagesTest extends TestCase
             ->assertSee('/storage/uploads/gallery/welcome-week.jpg');
     }
 
+    public function test_gallery_category_filters_are_keyboard_accessible(): void
+    {
+        GalleryItem::create([
+            'title' => 'Student Orientation',
+            'category' => 'Student Life',
+            'image_url' => '/storage/uploads/gallery/orientation.jpg',
+            'date' => '2025-09-18',
+        ]);
+
+        $this->get('/gallery')
+            ->assertSee('role="group" aria-label="Filter gallery by category"', false)
+            ->assertSee('data-gallery-filter="student-life"', false)
+            ->assertSee('aria-pressed="true"', false);
+    }
+
     public function test_donations_page_is_accessible(): void
     {
         $response = $this->get('/donations');
         $response->assertStatus(200);
+        $response->assertSee('css/pages/donations.css')
+            ->assertSee('js/pages/donations.js')
+            ->assertSee('aria-label="Suggested donation amounts"', false);
+    }
+
+    public function test_donation_validation_errors_are_rendered_for_accessible_fields(): void
+    {
+        $this->from('/donations')
+            ->post('/donations', [])
+            ->assertSessionHasErrors(['amount', 'donor_name', 'payment_ref']);
+
+        $this->get('/donations')
+            ->assertSee('id="donor-name-error"', false)
+            ->assertSee('aria-describedby="donor-name-error"', false)
+            ->assertSee('id="payment-ref-error"', false);
     }
 
     public function test_contact_page_is_accessible(): void
     {
+        Setting::set('mapEmbedUrl', 'https://maps.example.test/kso');
+
         $response = $this->get('/contact');
         $response->assertStatus(200);
+        $response->assertSee('css/pages/contact.css')
+            ->assertSee('js/pages/contact.js')
+            ->assertSee('for="contact-name"', false)
+            ->assertSee('title="Map showing the KSO Chandigarh office location"', false);
+    }
+
+    public function test_contact_validation_errors_are_rendered_with_their_fields(): void
+    {
+        $this->from('/contact')
+            ->post('/contact', [])
+            ->assertSessionHasErrors(['name', 'phone', 'subject', 'message']);
+
+        $this->get('/contact')
+            ->assertSee('id="contact-name-error"', false)
+            ->assertSee('aria-describedby="contact-name-error"', false);
     }
 
     public function test_shared_navigation_has_keyboard_accessible_controls(): void

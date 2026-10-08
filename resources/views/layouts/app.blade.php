@@ -22,6 +22,18 @@
     @if(request()->routeIs('about'))
         <link href="{{ asset('css/pages/about.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('contact.index'))
+        <link href="{{ asset('css/pages/contact.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('donations.index'))
+        <link href="{{ asset('css/pages/donations.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('gallery.index'))
+        <link href="{{ asset('css/pages/gallery.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('events.index'))
+        <link href="{{ asset('css/pages/events.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -103,23 +115,19 @@
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     @if(request()->routeIs('home'))
         <script src="{{ asset('js/home.js') }}" defer></script>
+    @elseif(request()->routeIs('contact.index'))
+        <script src="{{ asset('js/pages/contact.js') }}" defer></script>
+    @elseif(request()->routeIs('donations.index'))
+        <script src="{{ asset('js/pages/donations.js') }}" defer></script>
     @elseif(request()->routeIs('gallery.index'))
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
         <script src="{{ asset('vendor/magnific-popup/jquery.magnific-popup.min.js') }}"></script>
         <script src="{{ asset('vendor/masonry/masonry.pkgd.min.js') }}"></script>
-        <script>
-            jQuery('.masonry-grid').imagesLoaded(function () {
-                jQuery('.masonry-grid').masonry({
-                    itemSelector: '.masonry-item',
-                    columnWidth: '.masonry-item',
-                    percentPosition: true
-                });
-            });
-            jQuery('.popup-gallery').magnificPopup({ type: 'image', gallery: { enabled: true } });
-        </script>
+        <script src="{{ asset('js/pages/gallery.js') }}" defer></script>
     @elseif(request()->routeIs('events.index'))
         <script src="{{ asset('vendor/fullcalendar/fullcalendar.min.js') }}"></script>
+        <script src="{{ asset('js/pages/events.js') }}" defer></script>
     @endif
 
     <script>

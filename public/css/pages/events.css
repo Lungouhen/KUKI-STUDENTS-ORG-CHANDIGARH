@@ -1,0 +1,60 @@
+.events-page .public-page-banner {
+    background:
+        radial-gradient(circle at 83% 15%, rgba(255, 191, 0, 0.18), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.events-page #fullCalendarGrid {
+    min-height: 28rem;
+}
+
+.events-page #fullCalendarGrid:focus-visible {
+    outline: 3px solid #0b6fa4;
+    outline-offset: 4px;
+}
+
+.events-category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.events-category-filters .btn {
+    min-height: 2.65rem;
+    border-radius: 999px;
+}
+
+.events-category-filters .btn[aria-current="page"] {
+    box-shadow: 0 0 0 0.2rem rgba(0, 53, 102, 0.16);
+}
+
+.events-page .card {
+    border-radius: 1.25rem !important;
+}
+
+@media (max-width: 767.98px) {
+    .events-page #fullCalendarGrid {
+        min-height: 24rem;
+    }
+
+    .events-page .fc .fc-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .events-page .fc .fc-toolbar-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .events-page .fc .fc-button {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .events-category-filters .btn {
+        flex: 1 1 auto;
+    }
+}
