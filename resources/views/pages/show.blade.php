@@ -12,4 +12,12 @@
 
 @include($page->templateView())
 
+@if($page->featured_image)
+    <div class="container my-4">
+        <img class="img-fluid rounded-4" src="{{ asset($page->featured_image) }}" alt="{{ $mediaAltText[$page->featured_image] ?? $page->title }}" loading="lazy">
+    </div>
+@endif
+
+@include('pages.sections', ['sections' => $page->sections ?? [], 'mediaAltText' => $mediaAltText ?? collect()])
+
 @endsection

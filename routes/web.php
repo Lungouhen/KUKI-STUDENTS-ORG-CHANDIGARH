@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationCont
 use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
 use App\Http\Controllers\Admin\MemberDocumentController as AdminMemberDocumentController;
 use App\Http\Controllers\Admin\MemberDocumentTemplateController as AdminMemberDocumentTemplateController;
+use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,7 +115,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
     Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::post('/pages/bulk', [AdminPageController::class, 'bulk'])->name('pages.bulk');
     Route::get('/pages/{id}/preview', [AdminPageController::class, 'preview'])->name('pages.preview');
+    Route::get('/pages/{id}/revisions/{revisionId}/preview', [AdminPageController::class, 'previewRevision'])->name('pages.revisions.preview');
+    Route::get('/pages/{id}/revisions/{revisionId}/compare', [AdminPageController::class, 'compareRevision'])->name('pages.revisions.compare');
+    Route::post('/pages/{id}/revisions/{revisionId}/restore', [AdminPageController::class, 'restoreRevision'])->name('pages.revisions.restore');
     Route::get('/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');
@@ -136,7 +141,14 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Content Management
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');
     Route::post('/content', [ContentController::class, 'store'])->name('content.store');
+    Route::post('/content/bulk', [ContentController::class, 'bulk'])->name('content.bulk');
     Route::delete('/content/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
+
+    // Shared image library
+    Route::get('/media', [AdminMediaController::class, 'index'])->name('media.index');
+    Route::post('/media', [AdminMediaController::class, 'store'])->name('media.store');
+    Route::put('/media/{id}', [AdminMediaController::class, 'update'])->name('media.update');
+    Route::delete('/media/{id}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
 
     // Audit Trail Logs
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GeneralContent extends Model
 {
@@ -16,6 +17,15 @@ class GeneralContent extends Model
         'image',
         'link',
         'is_published',
-        'display_order'
+        'display_order',
     ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
+
+    public function mediaAsset(): BelongsTo
+    {
+        return $this->belongsTo(MediaAsset::class, 'image', 'path');
+    }
 }

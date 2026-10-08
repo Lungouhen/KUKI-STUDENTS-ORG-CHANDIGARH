@@ -17,7 +17,7 @@
             <div class="masonry-item">
                 <figure class="community-photo-card gallery-photo-card mb-0">
                     <a href="{{ asset($g->image_url) }}" class="popup-gallery d-block" title="{{ $g->title }}">
-                        <img src="{{ asset($g->image_url) }}" class="gal-img w-100" alt="{{ $g->caption ?: $g->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                        <img src="{{ asset($g->image_url) }}" class="gal-img w-100" alt="{{ $g->mediaAsset?->alt_text ?: ($g->caption ?: $g->title) }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
                         <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-users"></i><span>Community moments</span></div>
                     </a>
                     <figcaption><span>{{ $g->category }}</span><strong>{{ $g->title }}</strong></figcaption>

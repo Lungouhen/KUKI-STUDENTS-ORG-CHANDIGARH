@@ -32,7 +32,7 @@
                 @php($featuredPhoto = $galleryHighlights->first())
                 <figure class="home-hero-visual mb-0">
                     @if($featuredPhoto)
-                        <img src="{{ asset($featuredPhoto->image_url) }}" alt="{{ $featuredPhoto->caption ?: $featuredPhoto->title }}" fetchpriority="high" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                        <img src="{{ asset($featuredPhoto->image_url) }}" alt="{{ $featuredPhoto->mediaAsset?->alt_text ?: ($featuredPhoto->caption ?: $featuredPhoto->title) }}" fetchpriority="high" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
                         <div class="home-hero-art" hidden aria-hidden="true">
                             <span class="home-hero-art-mark">KSO</span>
                             <i class="fa-solid fa-users"></i>
@@ -113,7 +113,7 @@
         @foreach($galleryHighlights->slice(2, 3) as $photo)
             <div class="col-sm-6 col-lg-4">
                 <figure class="community-photo-card mb-0">
-                    <img src="{{ asset($photo->image_url) }}" alt="{{ $photo->caption ?: $photo->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <img src="{{ asset($photo->image_url) }}" alt="{{ $photo->mediaAsset?->alt_text ?: ($photo->caption ?: $photo->title) }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
                     <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-users"></i><span>Community moments</span></div>
                     <figcaption>
                         <span>{{ $photo->category }}</span>
@@ -164,7 +164,7 @@
             @php($communityPhoto = $galleryHighlights->get(1))
             @if($communityPhoto)
                 <figure class="community-feature-photo mb-0">
-                    <img src="{{ asset($communityPhoto->image_url) }}" alt="{{ $communityPhoto->caption ?: $communityPhoto->title }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <img src="{{ asset($communityPhoto->image_url) }}" alt="{{ $communityPhoto->mediaAsset?->alt_text ?: ($communityPhoto->caption ?: $communityPhoto->title) }}" loading="lazy" onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
                     <div class="community-photo-fallback" hidden aria-hidden="true"><i class="fa-solid fa-people-group"></i><span>Community moments</span></div>
                     <figcaption>{{ $communityPhoto->title }}</figcaption>
                 </figure>

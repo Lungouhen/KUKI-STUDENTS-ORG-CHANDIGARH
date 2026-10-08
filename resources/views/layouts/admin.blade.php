@@ -43,7 +43,7 @@
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
     },
     // Dynamic initialization of folder states based on current route
-    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
+    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.media*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
     membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.memberDocuments*') || request()->routeIs('admin.memberDocumentTemplates*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
@@ -96,6 +96,11 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.gallery.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-photo-film"></i> Gallery Items
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.media.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.media*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-photo-film"></i> Media Library
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">

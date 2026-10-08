@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Page;
 use App\Models\Faq;
+use App\Models\MediaAsset;
 
 class PageController extends Controller
 {
@@ -23,7 +24,15 @@ class PageController extends Controller
             $page->increment('view_count');
         }
 
-        return view('pages.show', compact('page'));
+        $imagePaths = collect($page->sections ?? [])
+            ->pluck('image')
+            ->filter()
+            ->push($page->featured_image)
+            ->unique()
+            ->values();
+        $mediaAltText = MediaAsset::whereIn('path', $imagePaths)->pluck('alt_text', 'path');
+
+        return view('pages.show', compact('page', 'mediaAltText'));
     }
 
     public function faqs()

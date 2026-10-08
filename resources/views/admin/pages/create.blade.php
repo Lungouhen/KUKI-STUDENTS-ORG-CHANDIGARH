@@ -19,8 +19,17 @@
                 <input type="text" name="excerpt" class="form-control" value="{{ old('excerpt') }}" placeholder="Brief summary of the page">
             </div>
             <div class="col-md-12">
-                <label class="form-label fw-bold">Page Content (HTML allowed)</label>
-                <textarea name="content" class="form-control" rows="12" placeholder="Write full HTML or formatted content here..." required>{{ old('content') }}</textarea>
+                <label class="form-label fw-bold">Legacy Page Content (optional HTML)</label>
+                <textarea name="content" class="form-control" rows="8" placeholder="Optional legacy HTML content...">{{ old('content') }}</textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-bold">Featured image</label>
+                <select name="featured_image" class="form-select">
+                    <option value="">No featured image</option>
+                    @foreach($assets as $asset)
+                        <option value="{{ $asset->path }}" @selected(old('featured_image') === $asset->path)>{{ $asset->original_name }} — {{ $asset->alt_text }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-12">
                 <fieldset>
@@ -38,6 +47,7 @@
                     </div>
                 </fieldset>
             </div>
+            @include('admin.pages._sections')
             <div class="col-md-6">
                 <label class="form-label fw-bold">Meta Title (SEO)</label>
                 <input type="text" name="meta_title" class="form-control" value="{{ old('meta_title') }}">
@@ -46,11 +56,17 @@
                 <label class="form-label fw-bold">Meta Description (SEO)</label>
                 <input type="text" name="meta_description" class="form-control" value="{{ old('meta_description') }}">
             </div>
-            <div class="col-12">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="is_published" value="1" id="publishCheck" @checked(old('is_published'))>
-                    <label class="form-check-input-label fw-bold ms-2" for="publishCheck">Publish immediately on public site</label>
-                </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold" for="publication-status">Editorial status</label>
+                <select class="form-select" name="publication_status" id="publication-status">
+                    @foreach(['draft' => 'Draft', 'review' => 'In review', 'published' => 'Published', 'scheduled' => 'Scheduled'] as $value => $label)
+                        <option value="{{ $value }}" @selected(old('publication_status', 'draft') === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold" for="scheduled-publish-at">Publish at (for scheduled pages)</label>
+                <input type="datetime-local" class="form-control" name="scheduled_publish_at" id="scheduled-publish-at" value="{{ old('scheduled_publish_at') }}">
             </div>
             <div class="col-12 mt-4 text-end">
                 <a href="{{ route('admin.pages.index') }}" class="btn btn-secondary rounded-pill me-2">Cancel</a>
