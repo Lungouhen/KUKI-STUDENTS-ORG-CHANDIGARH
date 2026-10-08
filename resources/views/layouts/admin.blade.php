@@ -87,6 +87,9 @@
     @if(request()->routeIs('admin.testimonials.index', 'admin.testimonials.edit'))
         <link href="{{ asset('css/pages/admin-testimonials.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.gallery.index'))
+        <link href="{{ asset('css/pages/admin-gallery.css') }}" rel="stylesheet">
+    @endif
     @if(request()->routeIs('admin.elections.index'))
         <link href="{{ asset('css/pages/admin-elections.css') }}" rel="stylesheet">
     @endif
@@ -543,6 +546,9 @@
     @endif
     @if(request()->routeIs('admin.testimonials.index', 'admin.testimonials.edit'))
         <script src="{{ asset('js/pages/admin-testimonials.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.gallery.index'))
+        <script src="{{ asset('js/pages/admin-gallery.js') }}" defer></script>
     @endif
     @if(request()->routeIs('admin.elections.index'))
         <script src="{{ asset('js/pages/admin-elections.js') }}" defer></script>
