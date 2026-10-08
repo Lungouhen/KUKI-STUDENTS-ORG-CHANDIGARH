@@ -1,0 +1,25 @@
+.admin-accommodations-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-accommodations-page .table-responsive {
+    border-radius: 1rem;
+}
+
+.admin-accommodations-page .table {
+    min-width: 760px;
+}
+
+.admin-accommodations-page button:focus-visible,
+.admin-accommodations-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-accommodations-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}

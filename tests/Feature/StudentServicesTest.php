@@ -103,6 +103,26 @@ class StudentServicesTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'CREATE_ACCOMMODATION']);
     }
 
+    public function test_admin_accommodation_list_has_accessible_table_actions(): void
+    {
+        Accommodation::create([
+            'name' => 'Panjab Campus Hostel',
+            'type' => 'Hostel',
+            'location' => 'Sector 15, Chandigarh',
+            'rent_monthly' => 5500,
+            'contact_phone' => '+91 90000 22222',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodations.css')
+            ->assertSee('js/pages/admin-accommodations.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('aria-label="Edit Panjab Campus Hostel"', false)
+            ->assertSee('aria-label="Delete Panjab Campus Hostel"', false);
+    }
+
     public function test_admin_can_update_and_hide_accommodation(): void
     {
         $listing = Accommodation::create([

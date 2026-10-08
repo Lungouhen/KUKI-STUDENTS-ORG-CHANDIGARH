@@ -4,10 +4,14 @@
 
 @section('content')
 
+<div class="admin-accommodations-page">
+@if(session('success'))
+    <div class="alert alert-success rounded-4 small" role="status" aria-live="polite">{{ session('success') }}</div>
+@endif
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-dark mb-0">Verified Hostels & PG Accommodations</h4>
+    <h1 class="h4 fw-bold text-dark mb-0">Verified Hostels & PG Accommodations</h1>
     <a href="{{ route('admin.accommodations.create') }}" class="btn btn-primary shadow-sm">
-        <i class="fa-solid fa-plus me-1"></i> Add Listing
+        <i class="fa-solid fa-plus me-1" aria-hidden="true"></i> Add Listing
     </a>
 </div>
 
@@ -15,15 +19,16 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
+                <caption class="visually-hidden">Hostel and PG accommodation listings</caption>
                 <thead class="bg-light text-muted extra-small text-uppercase">
                     <tr>
-                        <th class="ps-4">Name</th>
-                        <th>Type</th>
-                        <th>Location</th>
-                        <th>Rent / Month</th>
-                        <th>Contact</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="ps-4">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Rent / Month</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,11 +45,11 @@
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ route('admin.accommodations.edit', $a->id) }}" class="btn btn-sm btn-light border me-1"><i class="fa-solid fa-pen"></i></a>
+                                <a href="{{ route('admin.accommodations.edit', $a->id) }}" class="btn btn-sm btn-light border me-1" aria-label="Edit {{ $a->name }}"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
                                 <form action="{{ route('admin.accommodations.destroy', $a->id) }}" method="POST" class="d-inline" id="delete-accommodation-{{ $a->id }}">
                                     @csrf @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-light border text-danger" onclick="confirmDelete('delete-accommodation-{{ $a->id }}')">
-                                        <i class="fa-solid fa-trash"></i>
+                                    <button type="button" class="btn btn-sm btn-light border text-danger accommodation-delete-button" data-form-id="delete-accommodation-{{ $a->id }}" data-confirm-message="Remove {{ $a->name }} from the accommodation directory?" aria-label="Delete {{ $a->name }}">
+                                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </form>
                             </td>
@@ -61,4 +66,5 @@
     </div>
 </div>
 
+</div>
 @endsection
