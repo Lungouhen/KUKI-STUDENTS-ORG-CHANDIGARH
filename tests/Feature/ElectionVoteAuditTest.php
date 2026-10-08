@@ -69,6 +69,18 @@ class ElectionVoteAuditTest extends TestCase
         ]);
     }
 
+    public function test_admin_election_list_has_accessible_schedule_form_and_scoped_assets(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.elections.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-elections.css')
+            ->assertSee('js/pages/admin-elections.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('for="electionTerm"', false)
+            ->assertSee('Completed');
+    }
+
     public function test_admin_vote_count_change_is_validated_and_audited(): void
     {
         $this->actingAs($this->admin)

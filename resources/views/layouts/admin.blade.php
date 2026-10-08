@@ -63,6 +63,9 @@
     @if(request()->routeIs('admin.audit.index'))
         <link href="{{ asset('css/pages/admin-audit.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.elections.index'))
+        <link href="{{ asset('css/pages/admin-elections.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -489,6 +492,9 @@
     @endif
     @if(request()->routeIs('admin.audit.index'))
         <script src="{{ asset('js/pages/admin-audit.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.elections.index'))
+        <script src="{{ asset('js/pages/admin-elections.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>
