@@ -23,6 +23,17 @@
     overflow-wrap: anywhere;
 }
 
+@media (max-width: 767.98px) {
+    .admin-audit-page .table {
+        min-width: 0;
+    }
+
+    .admin-audit-page .table th,
+    .admin-audit-page .table td {
+        white-space: normal;
+    }
+}
+
 @media (max-width: 575.98px) {
     .admin-audit-page .card-header {
         align-items: stretch !important;

@@ -23,6 +23,17 @@
     outline-offset: 3px;
 }
 
+@media (max-width: 767.98px) {
+    .admin-events-page .table {
+        min-width: 0;
+    }
+
+    .admin-events-page .table th,
+    .admin-events-page .table td {
+        white-space: normal;
+    }
+}
+
 @media (max-width: 575.98px) {
     .admin-events-page .card-body,
     .admin-events-page .card-header {

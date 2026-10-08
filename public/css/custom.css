@@ -1367,6 +1367,49 @@ a.btn.rounded-pill:hover {
     background: var(--bg-body);
 }
 
+@media (max-width: 767.98px) {
+    .admin-main-container {
+        height: auto !important;
+        min-height: calc(100vh - 72px);
+        padding: 1rem !important;
+    }
+
+    .admin-workspace {
+        min-width: 0;
+    }
+
+    .admin-topbar {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .admin-topbar-heading {
+        min-width: 0;
+    }
+
+    .admin-topbar-actions {
+        gap: 0.5rem;
+    }
+
+    .admin-app .table,
+    .admin-app .table-responsive .table {
+        min-width: 0 !important;
+    }
+
+    .admin-app .table th,
+    .admin-app .table td,
+    .admin-app .table-responsive .table th,
+    .admin-app .table-responsive .table td {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-app .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 /* Custom Scrollbar for Sidebar Nav */
 .sidebar-nav::-webkit-scrollbar {
     width: 4px;

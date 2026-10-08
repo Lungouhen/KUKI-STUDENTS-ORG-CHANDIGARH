@@ -20,6 +20,15 @@
 }
 
 @media (max-width: 767.98px) {
+    .admin-faqs-page .table {
+        min-width: 0;
+    }
+
+    .admin-faqs-page .table th,
+    .admin-faqs-page .table td {
+        white-space: normal;
+    }
+
     .admin-faqs-page .card-body {
         padding: 1rem !important;
     }

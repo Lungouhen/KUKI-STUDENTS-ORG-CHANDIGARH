@@ -46,6 +46,15 @@
 }
 
 @media (max-width: 767.98px) {
+    .admin-members-page .table {
+        min-width: 0;
+    }
+
+    .admin-members-page .table th,
+    .admin-members-page .table td {
+        white-space: normal;
+    }
+
     .admin-members-controls,
     .admin-members-filters {
         width: 100%;
