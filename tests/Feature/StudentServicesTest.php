@@ -108,11 +108,31 @@ class StudentServicesTest extends TestCase
         $this->actingAs($this->admin)
             ->get(route('admin.accommodations.create'))
             ->assertOk()
-            ->assertSee('css/pages/admin-accommodation-create.css')
-            ->assertSee('js/pages/admin-accommodation-create.js')
+            ->assertSee('css/pages/admin-accommodation-form.css')
+            ->assertSee('js/pages/admin-accommodation-form.js')
             ->assertSee('for="accommodationName"', false)
             ->assertSee('for="accommodationPhoto"', false)
             ->assertSee('id="accommodationPhotoPreview"', false);
+    }
+
+    public function test_admin_accommodation_edit_form_shows_current_photo_and_shared_assets(): void
+    {
+        $listing = Accommodation::create([
+            'name' => 'Campus View Hostel',
+            'type' => 'Hostel',
+            'location' => 'Sector 14, Chandigarh',
+            'rent_monthly' => 6000,
+            'contact_phone' => '+91 90000 33333',
+            'photo' => '/storage/uploads/accommodations/campus-view.jpg',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.edit', $listing->id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodation-form.css')
+            ->assertSee('js/pages/admin-accommodation-form.js')
+            ->assertSee('alt="Current photo of Campus View Hostel"', false)
+            ->assertSee('for="accommodationName"', false);
     }
 
     public function test_admin_accommodation_list_has_accessible_table_actions(): void

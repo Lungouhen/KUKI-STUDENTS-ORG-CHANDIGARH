@@ -1,5 +1,5 @@
 (() => {
-    const form = document.querySelector('.admin-accommodation-create-page .accommodation-form');
+    const form = document.querySelector('.admin-accommodation-form-page .accommodation-form');
     const photoInput = document.getElementById('accommodationPhoto');
     const preview = document.getElementById('accommodationPhotoPreview');
     const previewImage = document.getElementById('accommodationPhotoPreviewImage');

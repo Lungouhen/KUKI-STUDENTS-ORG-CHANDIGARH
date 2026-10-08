@@ -45,8 +45,8 @@
     @if(request()->routeIs('admin.accommodations.index'))
         <link href="{{ asset('css/pages/admin-accommodations.css') }}" rel="stylesheet">
     @endif
-    @if(request()->routeIs('admin.accommodations.create'))
-        <link href="{{ asset('css/pages/admin-accommodation-create.css') }}" rel="stylesheet">
+    @if(request()->routeIs('admin.accommodations.create', 'admin.accommodations.edit'))
+        <link href="{{ asset('css/pages/admin-accommodation-form.css') }}" rel="stylesheet">
     @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -457,8 +457,8 @@
     @if(request()->routeIs('admin.accommodations.index'))
         <script src="{{ asset('js/pages/admin-accommodations.js') }}" defer></script>
     @endif
-    @if(request()->routeIs('admin.accommodations.create'))
-        <script src="{{ asset('js/pages/admin-accommodation-create.js') }}" defer></script>
+    @if(request()->routeIs('admin.accommodations.create', 'admin.accommodations.edit'))
+        <script src="{{ asset('js/pages/admin-accommodation-form.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>

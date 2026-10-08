@@ -1,0 +1,44 @@
+.admin-accommodation-form-page > .card {
+    max-width: 760px;
+    border-radius: 1rem !important;
+}
+
+.admin-accommodation-form-page .accommodation-form button:focus-visible,
+.admin-accommodation-form-page .accommodation-form a:focus-visible,
+.admin-accommodation-form-page .accommodation-form input:focus-visible,
+.admin-accommodation-form-page .accommodation-form select:focus-visible,
+.admin-accommodation-form-page .accommodation-form textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+.admin-accommodation-form-page .accommodation-photo-preview,
+.admin-accommodation-form-page .accommodation-current-photo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-accommodation-form-page .accommodation-photo-preview[hidden] {
+    display: none;
+}
+
+.admin-accommodation-form-page .accommodation-photo-preview img,
+.admin-accommodation-form-page .accommodation-current-photo img {
+    width: min(100%, 12rem);
+    max-height: 9rem;
+    border-radius: 0.75rem;
+    object-fit: cover;
+}
+
+@media (max-width: 575.98px) {
+    .admin-accommodation-form-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .admin-accommodation-form-page > .card {
+        padding: 1rem !important;
+    }
+}

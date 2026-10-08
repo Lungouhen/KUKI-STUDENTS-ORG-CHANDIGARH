@@ -61,6 +61,11 @@
         <label for="accommodationPhoto" class="form-label extra-small fw-bold">Photo <span class="text-muted">(optional, max 5MB)</span></label>
         <input id="accommodationPhoto" type="file" name="photoFile" class="form-control" accept="image/*" aria-describedby="accommodationPhotoHelp">
         <div id="accommodationPhotoHelp" class="form-text extra-small">Choose an image up to 5 MB.</div>
+        @if($accommodation && $accommodation->photo)
+            <div class="accommodation-current-photo mt-3">
+                <img src="{{ asset($accommodation->photo) }}" alt="Current photo of {{ $accommodation->name }}">
+            </div>
+        @endif
         <div id="accommodationPhotoPreview" class="accommodation-photo-preview mt-3" hidden>
             <img id="accommodationPhotoPreviewImage" alt="Selected accommodation photo preview">
             <p id="accommodationPhotoPreviewStatus" class="small text-muted mb-0" role="status" aria-live="polite"></p>
