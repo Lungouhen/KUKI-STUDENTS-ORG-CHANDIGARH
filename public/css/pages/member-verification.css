@@ -1,0 +1,54 @@
+.member-verification-page .public-page-banner {
+    background:
+        radial-gradient(circle at 82% 15%, rgba(255, 191, 0, 0.18), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.member-verification-page .card {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 1rem 2.5rem rgba(0, 31, 61, 0.08) !important;
+}
+
+.member-verification-page .form-control {
+    min-width: 0;
+    min-height: 3.5rem;
+    border-color: #cbd5e1;
+}
+
+.member-verification-page .form-control:focus {
+    z-index: 3;
+    border-color: #0b6fa4;
+    box-shadow: 0 0 0 0.22rem rgba(11, 111, 164, 0.16);
+}
+
+.member-verification-page .alert {
+    border-left-width: 0.35rem;
+}
+
+.member-verification-page td {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+    .member-verification-page .container.my-5 {
+        margin-block: 2rem !important;
+    }
+
+    .member-verification-page .card {
+        padding: 1.25rem !important;
+    }
+
+    .member-verification-page .input-group {
+        flex-wrap: wrap;
+    }
+
+    .member-verification-page .input-group .form-control,
+    .member-verification-page .input-group .btn {
+        width: 100%;
+        border-radius: 0.5rem !important;
+    }
+
+    .member-verification-page .input-group .btn {
+        margin-top: 0.5rem;
+    }
+}

@@ -71,8 +71,11 @@ class MembershipTest extends TestCase
             'member_id' => 'KSO-CHD-2026-9999',
         ]);
 
-        $response->assertStatus(200);
-        $response->assertSee('Verified Student');
-        $response->assertSee('APPROVED');
+        $response->assertStatus(200)
+            ->assertSee('css/pages/member-verification.css')
+            ->assertSee('js/pages/member-verification.js')
+            ->assertSee('for="verification-member-id"', false)
+            ->assertSee('Verified Student')
+            ->assertSee('APPROVED');
     }
 }
