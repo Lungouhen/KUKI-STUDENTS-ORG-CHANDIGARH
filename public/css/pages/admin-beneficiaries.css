@@ -1,0 +1,28 @@
+.admin-beneficiaries-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-beneficiaries-page .table-responsive {
+    border-radius: 1rem;
+}
+
+.admin-beneficiaries-page .table {
+    min-width: 760px;
+}
+
+.admin-beneficiaries-page .admin-beneficiary-search {
+    width: min(100%, 25rem);
+}
+
+.admin-beneficiaries-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-beneficiaries-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
