@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
-        $seoSiteName = \App\Models\Setting::get('siteName') ?: 'Kuki Students\' Organisation Chandigarh';
+        $siteName = \App\Models\Setting::get('siteName') ?: "Kuki Students' Organisation Chandigarh";
+        $siteAbbreviation = \App\Models\Setting::get('abbreviation') ?: 'KSO CHANDIGARH';
+        $siteTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+        $sitePrimaryColor = \App\Models\Setting::get('primaryColor', '#003566');
+        $siteAccentColor = \App\Models\Setting::get('accentColor', '#0d9488');
+        $seoSiteName = $siteName;
         $seoDefaultTitle = \App\Models\Setting::get('seoTitle') ?: $seoSiteName;
-        $seoDefaultDescription = \App\Models\Setting::get('seoDescription') ?: \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+        $seoDefaultDescription = \App\Models\Setting::get('seoDescription') ?: $siteTagline;
         $seoDefaultImagePath = \App\Models\Setting::get('seoSocialImage');
         $seoDefaultImage = $seoDefaultImagePath ? asset($seoDefaultImagePath) : '';
         $seoIndexingEnabled = filter_var(\App\Models\Setting::get('seoIndexingEnabled', true), FILTER_VALIDATE_BOOLEAN);
@@ -51,6 +56,14 @@
     @endif
     <!-- Custom Styles -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <style>
+        :root {
+            --primary: {{ $sitePrimaryColor }};
+            --primary-dark: {{ $sitePrimaryColor }};
+            --accent: {{ $siteAccentColor }};
+            --accent-dark: {{ $siteAccentColor }};
+        }
+    </style>
     @if(request()->routeIs('about'))
         <link href="{{ asset('css/pages/about.css') }}" rel="stylesheet">
     @endif

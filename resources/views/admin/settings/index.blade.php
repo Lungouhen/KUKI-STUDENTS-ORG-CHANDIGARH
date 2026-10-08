@@ -12,11 +12,15 @@
         <form action="{{ route('admin.settings.update') }}" method="POST">
             @csrf
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label fw-bold">Site Title</label>
                     <input type="text" class="form-control" name="siteName" value="{{ $settings['siteName'] }}">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Brand Abbreviation</label>
+                    <input type="text" class="form-control" name="abbreviation" value="{{ $settings['abbreviation'] }}">
+                </div>
+                <div class="col-md-4">
                     <label class="form-label fw-bold">Tagline</label>
                     <input type="text" class="form-control" name="tagline" value="{{ $settings['tagline'] }}">
                 </div>

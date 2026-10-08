@@ -1,13 +1,18 @@
+@php
+    $footerSiteName = \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh");
+    $footerTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+@endphp
+
 <footer>
     <div class="container">
         <div class="row g-4 mb-4">
             <div class="col-lg-4 col-md-6">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('images/kso-logo.jpg') }}" alt="Logo" class="rounded-circle me-2 border border-warning" width="42" onerror="this.src='/images/default-avatar-m.png'">
-                    <h5 class="fw-bold mb-0 text-white">KSO CHANDIGARH</h5>
+                    <img src="{{ asset('images/kso-logo.jpg') }}" alt="{{ $footerSiteName }} logo" class="rounded-circle me-2 border border-warning" width="42" onerror="this.src='/images/default-avatar-m.png'">
+                    <h5 class="fw-bold mb-0 text-white">{{ $footerSiteName }}</h5>
                 </div>
                 <p class="small text-slate-300">
-                    Apex student non-governmental organization serving and representing Kuki student scholars across educational institutions in Chandigarh UT.
+                    {{ $footerTagline }}
                 </p>
                 <div class="d-flex gap-2">
                     <a href="{{ \App\Models\Setting::get('facebook', '#') }}" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;padding:6px;"><i class="fa-brands fa-facebook-f"></i></a>

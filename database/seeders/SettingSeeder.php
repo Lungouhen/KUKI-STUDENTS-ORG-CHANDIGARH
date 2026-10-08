@@ -13,6 +13,8 @@ class SettingSeeder extends Seeder
             'siteName' => 'Kuki Students\' Organisation Chandigarh',
             'abbreviation' => 'KSO CHANDIGARH',
             'tagline' => 'Empowering Students • Preserving Culture • Serving Community',
+            'primaryColor' => '#003566',
+            'accentColor' => '#0d9488',
             'email' => 'ksochandigarh@gmail.com',
             'phone' => '+91 98765 43210',
             'helpline' => '+91 98765 43211',

@@ -17,6 +17,7 @@ class SettingController extends Controller
     {
         $settings = [
             'siteName' => Setting::get('siteName', 'Kuki Students\' Organisation Chandigarh'),
+            'abbreviation' => Setting::get('abbreviation', 'KSO CHANDIGARH'),
             'tagline' => Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community'),
             'email' => Setting::get('email', 'ksochandigarh@gmail.com'),
             'phone' => Setting::get('phone', '+91 98765 43210'),
@@ -48,6 +49,7 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
             'siteName' => 'sometimes|required|string|max:255',
+            'abbreviation' => 'sometimes|nullable|string|max:50',
             'tagline' => 'sometimes|nullable|string|max:255',
             'email' => 'sometimes|nullable|email|max:255',
             'phone' => 'sometimes|nullable|string|max:30',

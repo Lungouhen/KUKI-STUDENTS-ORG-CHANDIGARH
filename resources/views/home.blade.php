@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kuki Students\' Organisation Chandigarh | Official Website')
+@section('title', (\App\Models\Setting::get('seoTitle') ?: (\App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh") . ' | Official Website')))
 
 @section('content')
 
@@ -11,11 +11,11 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-7 hero-copy">
                 <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
-                    <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i> {{ "KUKI STUDENTS' ORGANISATION CHANDIGARH" }} · Student community
+                    <i class="fa-solid fa-graduation-cap me-1" aria-hidden="true"></i> {{ strtoupper(\App\Models\Setting::get('abbreviation', 'KSO CHANDIGARH')) }} · Student community
                 </span>
-                <h1 class="display-4 fw-black mb-3">Kuki students, stronger together.</h1>
+                <h1 class="display-4 fw-black mb-3">{{ \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh") }}, stronger together.</h1>
                 <p class="lead mb-4">
-                    Uniting, empowering, and guiding Kuki students across educational institutions in Chandigarh, Mohali, and Panchkula.
+                    {{ \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community') }}
                 </p>
                 <div class="d-flex flex-wrap gap-3 hero-actions">
                     <a href="{{ route('membership.register') }}" class="btn btn-accent btn-lg shadow-lg">

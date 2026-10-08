@@ -1,10 +1,15 @@
+@php
+    $brandSiteName = \App\Models\Setting::get('siteName', "Kuki Students' Organisation Chandigarh");
+    $brandTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+@endphp
+
 <nav class="navbar navbar-expand-xl navbar-modern sticky-top">
     <div class="container-fluid px-lg-5">
         <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="{{ asset('images/kso-logo.jpg') }}" alt="KSO Logo" class="me-2 rounded-circle border border-warning" onerror="this.src='/images/default-avatar-m.png'">
+            <img src="{{ asset('images/kso-logo.jpg') }}" alt="{{ $brandSiteName }} logo" class="me-2 rounded-circle border border-warning" onerror="this.src='/images/default-avatar-m.png'">
             <div>
-                <span class="fw-extrabold fs-5 d-block text-dark lh-1">KSO CHANDIGARH</span>
-                <small class="text-muted extra-small fw-semibold">Kuki Students' Organisation</small>
+                <span class="fw-extrabold fs-5 d-block text-dark lh-1">{{ $brandSiteName }}</span>
+                <small class="text-muted extra-small fw-semibold">{{ $brandTagline }}</small>
             </div>
         </a>
         
