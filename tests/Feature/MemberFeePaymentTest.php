@@ -15,7 +15,9 @@ class MemberFeePaymentTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Member $member;
+
     private FinancialAccount $account;
 
     protected function setUp(): void
@@ -144,6 +146,11 @@ class MemberFeePaymentTest extends TestCase
         $response->assertOk();
         $response->assertSee('Paid');
         $response->assertSee($this->member->id);
+        $response->assertSee('css/pages/admin-member-fees.css');
+        $response->assertSee('js/pages/admin-member-fees.js');
+        $response->assertSee('scope="col"', false);
+        $response->assertSee('for="feeFinancialAccount"', false);
+        $response->assertSee('aria-label="Record membership fee payment for Fee Paying Member"', false);
     }
 
     public function test_period_for_matches_july_to_june_membership_year(): void
