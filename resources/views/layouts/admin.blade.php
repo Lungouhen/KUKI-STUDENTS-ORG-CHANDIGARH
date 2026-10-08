@@ -102,6 +102,9 @@
     @if(request()->routeIs('admin.elections.show'))
         <link href="{{ asset('css/pages/admin-election-results.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.*'))
+        <link href="{{ asset('css/pages/admin-column-manager.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -116,7 +119,7 @@
 
     @stack('styles')
 </head>
-<body class="admin-app" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
+<body class="admin-app" data-admin-user-id="{{ auth()->id() }}" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
     sidebarOpen: true,
     sidebarMobileOpen: false,
     darkMode: localStorage.getItem('theme') === 'dark',
@@ -577,6 +580,9 @@
     @endif
     @if(request()->routeIs('admin.elections.show'))
         <script src="{{ asset('js/pages/admin-election-results.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.*'))
+        <script src="{{ asset('js/pages/admin-column-manager.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>
