@@ -1,0 +1,33 @@
+.member-id-card-page .id-card-wrapper {
+    max-width: 100%;
+    transform: none;
+}
+
+.member-id-card-page .id-card-details th.label {
+    font-weight: 700;
+    color: var(--primary) !important;
+    width: 38%;
+}
+
+.member-id-card-page .id-card-details td {
+    overflow-wrap: anywhere;
+}
+
+.member-id-card-page #printMemberIdCard:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 375px) {
+    .member-id-card-page .id-card-wrapper {
+        width: min(350px, calc(100vw - 2rem));
+        height: auto;
+        min-height: 540px;
+    }
+}
+
+@media print {
+    .member-id-card-page #printMemberIdCard {
+        display: none !important;
+    }
+}

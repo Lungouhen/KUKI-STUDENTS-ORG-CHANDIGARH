@@ -40,12 +40,20 @@ class MembershipTest extends TestCase
             'emergency_phone' => '+91 98765 11111',
         ]);
 
-        $response->assertRedirect();
+        $member = Member::where('email', 'teststudent@gmail.com')->firstOrFail();
+
+        $response->assertRedirect(route('membership.idCard', $member->id));
         $this->assertDatabaseHas('members', [
             'full_name' => 'Test Student Haokip',
             'email' => 'teststudent@gmail.com',
             'status' => 'Pending',
         ]);
+        $this->get(route('membership.idCard', $member->id))
+            ->assertOk()
+            ->assertSee('css/pages/member-id-card.css')
+            ->assertSee('js/pages/member-id-card.js')
+            ->assertSee('alt="Member photo for Test Student Haokip"', false)
+            ->assertSee('id="printMemberIdCard"', false);
     }
 
     public function test_can_verify_existing_member_id(): void
