@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Member;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class AdminCmsTest extends TestCase
 {
@@ -35,6 +35,18 @@ class AdminCmsTest extends TestCase
 
         $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($this->admin);
+    }
+
+    public function test_admin_dashboard_loads_scoped_chart_assets_and_accessible_summaries(): void
+    {
+        $this->actingAs($this->admin)
+            ->get('/admin/dashboard')
+            ->assertOk()
+            ->assertSee('css/pages/admin-dashboard.css')
+            ->assertSee('js/pages/admin-dashboard.js')
+            ->assertSee('id="membersChart" role="img"', false)
+            ->assertSee('id="members-chart-description"', false)
+            ->assertSee('id="donations-chart-description"', false);
     }
 
     public function test_admin_login_is_rate_limited(): void
@@ -94,13 +106,13 @@ class AdminCmsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)->post("/admin/members/{$member->id}/status", [
-            'status' => 'Approved'
+            'status' => 'Approved',
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('members', [
             'id' => 'KSO-CHD-2026-0099',
-            'status' => 'Approved'
+            'status' => 'Approved',
         ]);
     }
 }
