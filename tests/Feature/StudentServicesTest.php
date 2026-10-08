@@ -103,6 +103,18 @@ class StudentServicesTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'CREATE_ACCOMMODATION']);
     }
 
+    public function test_admin_accommodation_create_form_has_accessible_fields_and_scoped_assets(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.create'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodation-create.css')
+            ->assertSee('js/pages/admin-accommodation-create.js')
+            ->assertSee('for="accommodationName"', false)
+            ->assertSee('for="accommodationPhoto"', false)
+            ->assertSee('id="accommodationPhotoPreview"', false);
+    }
+
     public function test_admin_accommodation_list_has_accessible_table_actions(): void
     {
         Accommodation::create([
