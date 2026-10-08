@@ -72,4 +72,26 @@ class ProjectTemplatesTest extends TestCase
         ]);
         $this->assertSame('Student Learning Support', Project::firstOrFail()->title);
     }
+
+    public function test_project_validation_reopens_the_form_and_preserves_input(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->from(route('admin.projects.index'))
+            ->post(route('admin.projects.store'), [
+                'term_id' => $this->term->id,
+                'title' => 'Project awaiting correction',
+                'description' => 'Please preserve this description.',
+                'budget' => '-1',
+                'status' => 'Planned',
+            ]);
+
+        $response->assertRedirect(route('admin.projects.index'));
+
+        $page = $this->get(route('admin.projects.index'));
+        $page->assertOk();
+        $page->assertSee('data-reopen-on-error="true"', false);
+        $page->assertSee('Project awaiting correction');
+        $page->assertSee('Please preserve this description.');
+        $page->assertSee('The budget field must be at least 0.', false);
+    }
 }

@@ -5,9 +5,6 @@
 @section('content')
 
 <div class="admin-projects-page">
-@if(session('success'))
-    <div class="alert alert-success rounded-4 small" role="status" aria-live="polite">{{ session('success') }}</div>
-@endif
 @if($errors->any())
     <div class="alert alert-danger rounded-4 small" role="alert" aria-labelledby="projectErrorsHeading">
         <h2 id="projectErrorsHeading" class="h6 fw-bold">Review the project details</h2>
@@ -40,7 +37,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <span class="badge bg-primary-lt text-primary extra-small">{{ $p->term->name ?? 'N/A' }} Term</span>
-                        <span class="badge {{ $p->status === 'Active' ? 'bg-success' : 'bg-secondary' }}">{{ $p->status }}</span>
+                        <span class="badge project-status {{ $p->status === 'Active' ? 'bg-success' : 'bg-secondary' }}">{{ $p->status }}</span>
                     </div>
                     <h2 class="h5 fw-bold text-dark mb-2">{{ $p->title }}</h2>
                     <p class="text-muted extra-small mb-3 line-clamp-3">{{ $p->description ?? 'No description provided.' }}</p>
