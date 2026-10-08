@@ -145,6 +145,13 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Content Management
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');
+    Route::get('/content/sliders', [ContentController::class, 'sliders'])->name('content.sliders');
+    Route::get('/content/certificates', [ContentController::class, 'certificates'])->name('content.certificates');
+    Route::get('/content/achievements', [ContentController::class, 'achievements'])->name('content.achievements');
+    Route::get('/content/policies', [ContentController::class, 'policies'])->name('content.policies');
+    Route::get('/content/notices', [ContentController::class, 'notices'])->name('content.notices');
+    Route::get('/content/campaigns', [ContentController::class, 'campaigns'])->name('content.campaigns');
+    Route::get('/content/careers', [ContentController::class, 'careers'])->name('content.careers');
     Route::post('/content', [ContentController::class, 'store'])->name('content.store');
     Route::post('/content/bulk', [ContentController::class, 'bulk'])->name('content.bulk');
     Route::delete('/content/{id}', [ContentController::class, 'destroy'])->name('content.destroy');

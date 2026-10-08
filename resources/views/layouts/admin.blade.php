@@ -177,7 +177,7 @@
                         </button>
                         <ul id="content-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="contentOpen" x-transition x-cloak>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'slider']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'slider'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.sliders') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.sliders') ? 'active' : '' }}">
                                     <i class="fa-solid fa-images"></i> Slider Banners
                                 </a>
                             </li>
@@ -197,17 +197,17 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'certificate']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'certificate'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.certificates') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.certificates') ? 'active' : '' }}">
                                     <i class="fa-solid fa-medal"></i> Certificates
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'achievement']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'achievement'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.achievements') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.achievements') ? 'active' : '' }}">
                                     <i class="fa-solid fa-trophy"></i> Achievements
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'policy']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'policy'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.policies') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.policies') ? 'active' : '' }}">
                                     <i class="fa-solid fa-building-shield"></i> Policies
                                 </a>
                             </li>
@@ -222,17 +222,17 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.notices') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.notices') ? 'active' : '' }}">
                                     <i class="fa-solid fa-bullhorn"></i> Notices
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'campaign']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'campaign'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.campaigns') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.campaigns') ? 'active' : '' }}">
                                     <i class="fa-solid fa-bullseye"></i> Campaigns
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'active' : '' }}">
+                                <a href="{{ route('admin.content.careers') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.content.careers') ? 'active' : '' }}">
                                     <i class="fa-solid fa-briefcase"></i> Careers
                                 </a>
                             </li>

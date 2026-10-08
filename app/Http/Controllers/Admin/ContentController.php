@@ -29,6 +29,50 @@ class ContentController extends Controller
             $type = 'slider';
         }
 
+        return $this->renderPage($type, $request);
+    }
+
+    public function sliders(Request $request)
+    {
+        return $this->renderPage('slider', $request);
+    }
+
+    public function certificates(Request $request)
+    {
+        return $this->renderPage('certificate', $request);
+    }
+
+    public function achievements(Request $request)
+    {
+        return $this->renderPage('achievement', $request);
+    }
+
+    public function policies(Request $request)
+    {
+        return $this->renderPage('policy', $request);
+    }
+
+    public function notices(Request $request)
+    {
+        return $this->renderPage('notice', $request);
+    }
+
+    public function campaigns(Request $request)
+    {
+        return $this->renderPage('campaign', $request);
+    }
+
+    public function careers(Request $request)
+    {
+        return $this->renderPage('career', $request);
+    }
+
+    private function renderPage(string $type, Request $request)
+    {
+        if (! array_key_exists($type, self::TITLES)) {
+            abort(404);
+        }
+
         $status = $request->query('status', 'all');
         if (! is_string($status) || ! in_array($status, ['all', 'published', 'draft', 'review', 'scheduled'], true)) {
             $status = 'all';
