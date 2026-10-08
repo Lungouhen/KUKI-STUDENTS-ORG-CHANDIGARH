@@ -1,0 +1,122 @@
+.admin-app .membership-forms-module {
+    color: var(--text-main);
+}
+
+.membership-forms-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.membership-forms-heading h1 {
+    margin: 0.2rem 0 0.3rem;
+    color: var(--text-main);
+    font-size: clamp(1.45rem, 2vw, 2rem);
+    font-weight: 800;
+}
+
+.membership-forms-heading p {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.membership-forms-eyebrow,
+.membership-form-step {
+    color: #0d9488;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.membership-forms-mark {
+    display: grid;
+    width: 3.5rem;
+    height: 3.5rem;
+    flex: 0 0 3.5rem;
+    place-items: center;
+    border-radius: 1rem;
+    color: #003566;
+    background: #e8f0fa;
+    font-size: 1.4rem;
+}
+
+.membership-form-action-card,
+.membership-form-workflow {
+    padding: clamp(1.1rem, 2vw, 1.6rem);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.membership-form-action-card h2 {
+    margin: 0.3rem 0 0.5rem;
+    color: var(--text-main);
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.membership-form-action-card > p {
+    color: var(--text-muted);
+}
+
+.membership-module-option {
+    display: flex;
+    min-height: 2.9rem;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.65rem;
+    color: var(--text-main);
+    background: var(--bg-body);
+    cursor: pointer;
+}
+
+.membership-module-option:has(input:checked) {
+    border-color: #0d9488;
+    background: rgba(13, 148, 136, 0.07);
+}
+
+.membership-module-option input {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 1rem;
+    accent-color: #0d9488;
+}
+
+.membership-form-workflow h2 {
+    color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.membership-form-workflow li {
+    margin-top: 0.4rem;
+    color: var(--text-muted);
+}
+
+.membership-forms-module button:focus-visible,
+.membership-forms-module a:focus-visible,
+.membership-forms-module input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .membership-forms-heading {
+        align-items: flex-start;
+    }
+
+    #membership-registration-link {
+        min-width: 0;
+        font-size: 0.8rem;
+    }
+
+    #copy-membership-link {
+        padding-inline: 0.65rem;
+    }
+}

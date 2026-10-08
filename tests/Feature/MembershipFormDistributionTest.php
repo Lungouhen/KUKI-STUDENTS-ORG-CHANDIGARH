@@ -36,7 +36,10 @@ class MembershipFormDistributionTest extends TestCase
             ->assertSee('Share the online application')
             ->assertSee('Build a printable blank form')
             ->assertSee(route('membership.register'), false)
-            ->assertSee('Download offline form');
+            ->assertSee('Download offline form')
+            ->assertSee('css/pages/admin-membership-forms.css')
+            ->assertSee('js/pages/admin-membership-forms.js')
+            ->assertSee('aria-live="assertive"', false);
     }
 
     public function test_print_view_includes_only_selected_form_modules(): void

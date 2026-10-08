@@ -36,6 +36,9 @@
     @if(request()->routeIs('admin.memberDocumentTemplates.index'))
         <link href="{{ asset('css/pages/admin-member-document-templates.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.membershipForms.index'))
+        <link href="{{ asset('css/pages/admin-membership-forms.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -435,6 +438,9 @@
     @endif
     @if(request()->routeIs('admin.memberDocumentTemplates.index'))
         <script src="{{ asset('js/pages/admin-member-document-templates.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.membershipForms.index'))
+        <script src="{{ asset('js/pages/admin-membership-forms.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>
