@@ -1,0 +1,44 @@
+.admin-member-create-page > .card {
+    border-radius: 1rem !important;
+}
+
+.admin-member-create-page > .card > .d-flex {
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-member-create-page .form-control,
+.admin-member-create-page .form-select {
+    min-height: 2.85rem;
+    border-color: #cbd5e1;
+}
+
+.admin-member-create-page textarea.form-control {
+    min-height: 6rem;
+}
+
+.admin-member-create-page .form-control:focus,
+.admin-member-create-page .form-select:focus {
+    border-color: #0b6fa4;
+    box-shadow: 0 0 0 0.2rem rgba(11, 111, 164, 0.16);
+}
+
+.admin-member-create-page button:focus-visible,
+.admin-member-create-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-member-create-page > .card {
+        padding: 1.25rem !important;
+    }
+
+    .admin-member-create-page .row > .col-12.mt-4.text-end {
+        text-align: stretch !important;
+    }
+
+    .admin-member-create-page #admin-member-save {
+        width: 100%;
+    }
+}

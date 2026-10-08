@@ -80,6 +80,18 @@ class AdminCmsTest extends TestCase
             ->assertSee('data-member-delete', false);
     }
 
+    public function test_admin_member_creation_form_has_scoped_assets_and_accessible_fields(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.members.create'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-member-create.css')
+            ->assertSee('js/pages/admin-member-create.js')
+            ->assertSee('for="admin-member-full-name"', false)
+            ->assertSee('aria-describedby="admin-member-photo-help', false)
+            ->assertSee('id="admin-member-form-status"', false);
+    }
+
     public function test_admin_login_is_rate_limited(): void
     {
         for ($attempt = 0; $attempt < 5; $attempt++) {
