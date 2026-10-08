@@ -30,7 +30,7 @@ class GeneralContent extends Model
         'is_published',
         'display_order',
         'publication_status',
-        'scheduled_publish_at',,
+        'scheduled_publish_at',
     ];
 
     protected $casts = [

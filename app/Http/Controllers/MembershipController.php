@@ -142,7 +142,9 @@ class MembershipController extends Controller
         }
 
         // Fetch all news/notices & student updates as a social feed
-        $posts = \App\Models\News::orderBy('created_at', 'desc')->get();
+        $posts = \App\Models\News::where('publication_status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         // Real membership fee history for this member
         $feePayments = $member->feePayments()->orderByDesc('paid_on')->get();
