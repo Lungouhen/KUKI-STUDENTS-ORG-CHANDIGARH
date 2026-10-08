@@ -81,6 +81,18 @@ class ElectionVoteAuditTest extends TestCase
             ->assertSee('Completed');
     }
 
+    public function test_admin_election_results_page_has_accessible_vote_controls(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.elections.show', $this->candidate->election_id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-election-results.css')
+            ->assertSee('js/pages/admin-election-results.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('for="candidateVotes-'.$this->candidate->id.'"', false)
+            ->assertSee('aria-label="Save vote total for Election Candidate"', false);
+    }
+
     public function test_admin_vote_count_change_is_validated_and_audited(): void
     {
         $this->actingAs($this->admin)

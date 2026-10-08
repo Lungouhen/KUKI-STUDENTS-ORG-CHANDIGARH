@@ -1,0 +1,32 @@
+.admin-election-results-page .card,
+.admin-election-results-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-election-results-page .table-responsive {
+    border-radius: 1rem;
+}
+
+.admin-election-results-page .table {
+    min-width: 640px;
+}
+
+.admin-election-results-page button:focus-visible,
+.admin-election-results-page a:focus-visible,
+.admin-election-results-page input:focus-visible,
+.admin-election-results-page select:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-election-results-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .admin-election-results-page .card.p-4 {
+        padding: 1.25rem !important;
+    }
+}
