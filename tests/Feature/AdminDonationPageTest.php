@@ -43,4 +43,32 @@ class AdminDonationPageTest extends TestCase
             ->assertSee('scope="col"', false)
             ->assertSee('aria-label="Open receipt for Student Welfare Donor"', false);
     }
+
+    public function test_admin_receipt_is_printable_and_uses_scoped_assets(): void
+    {
+        $admin = User::create([
+            'name' => 'Receipt Admin',
+            'email' => 'receipt-admin@example.org',
+            'password' => Hash::make('secure test password'),
+            'is_admin' => true,
+        ]);
+        $donation = Donation::create([
+            'donor_name' => 'Receipt Donor',
+            'amount' => 1250,
+            'currency' => 'INR',
+            'cause' => 'Student books',
+            'payment_ref' => 'DON-REF-002',
+            'status' => 'Completed',
+            'date' => '2026-10-02',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.donations.receipt', $donation->id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-donation-receipt.css')
+            ->assertSee('js/pages/admin-donation-receipt.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('id="printDonationReceipt"', false)
+            ->assertSee('alt="KSO Chandigarh emblem"', false);
+    }
 }

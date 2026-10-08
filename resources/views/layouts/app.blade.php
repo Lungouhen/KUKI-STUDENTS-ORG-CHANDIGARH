@@ -28,6 +28,9 @@
     @if(request()->routeIs('donations.index'))
         <link href="{{ asset('css/pages/donations.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.donations.receipt'))
+        <link href="{{ asset('css/pages/admin-donation-receipt.css') }}" rel="stylesheet">
+    @endif
     @if(request()->routeIs('gallery.index'))
         <link href="{{ asset('css/pages/gallery.css') }}" rel="stylesheet">
     @endif
@@ -174,6 +177,8 @@
         <script src="{{ asset('js/pages/member-id-card.js') }}" defer></script>
     @elseif(request()->routeIs('admin.login'))
         <script src="{{ asset('js/pages/admin-login.js') }}" defer></script>
+    @elseif(request()->routeIs('admin.donations.receipt'))
+        <script src="{{ asset('js/pages/admin-donation-receipt.js') }}" defer></script>
     @endif
 
     <script>

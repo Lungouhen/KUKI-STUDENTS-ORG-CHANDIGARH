@@ -4,20 +4,20 @@
 
 @section('content')
 
-<div class="container my-5 text-center">
+<div class="donation-receipt-page container my-5 text-center">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-7">
             <div class="card border-0 shadow-lg rounded-4 p-5 text-start bg-white" id="receiptPrintArea">
                 <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
                     <div class="d-flex align-items-center gap-2">
-                        <img src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle border border-warning" width="50" height="50" onerror="this.src='/images/default-avatar-m.png'">
+                        <img id="donationReceiptLogo" src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle border border-warning" width="50" height="50" alt="KSO Chandigarh emblem">
                         <div>
-                            <h4 class="fw-bold text-primary mb-0">KSO CHANDIGARH</h4>
+                            <h2 class="h4 fw-bold text-primary mb-0">KSO CHANDIGARH</h2>
                             <p class="text-muted extra-small mb-0">Kuki Students' Organisation NGO</p>
                         </div>
                     </div>
                     <div class="text-end">
-                        <span class="badge bg-success fs-6">OFFICIAL RECEIPT</span>
+                        <h1 class="h5"><span class="badge bg-success fs-6">OFFICIAL RECEIPT</span></h1>
                         <div class="extra-small text-muted mt-1">Receipt No: <strong>RCPT-{{ str_pad($donation->id, 5, '0', STR_PAD_LEFT) }}</strong></div>
                         <div class="extra-small text-muted">Date: {{ $donation->date ? $donation->date->format('Y-m-d') : date('Y-m-d') }}</div>
                     </div>
@@ -33,10 +33,11 @@
                 </div>
 
                 <table class="table table-bordered extra-small mb-4">
+                    <caption class="visually-hidden">Donation purpose and amount</caption>
                     <thead class="table-primary">
                         <tr>
-                            <th>Welfare Cause / Purpose</th>
-                            <th class="text-end">Amount (₹)</th>
+                            <th scope="col">Welfare Cause / Purpose</th>
+                            <th scope="col" class="text-end">Amount (₹)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,7 +48,7 @@
                     </tbody>
                 </table>
 
-                <div class="alert alert-warning extra-small mb-4">
+                <div class="alert alert-warning extra-small mb-4" role="note">
                     <strong>NGO Registration Notice:</strong> KSO Chandigarh is a non-governmental student welfare organization. All donations directly fund student medical relief, books, and accommodation support.
                 </div>
 
@@ -63,8 +64,8 @@
             </div>
 
             <div class="mt-4">
-                <button onclick="window.print()" class="btn btn-accent btn-lg rounded-pill px-5 fw-bold shadow">
-                    <i class="fa-solid fa-print me-2"></i> Print Official Receipt
+                <button type="button" id="printDonationReceipt" class="btn btn-accent btn-lg rounded-pill px-5 fw-bold shadow">
+                    <i class="fa-solid fa-print me-2" aria-hidden="true"></i> Print Official Receipt
                 </button>
             </div>
         </div>
