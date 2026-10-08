@@ -1,0 +1,37 @@
+.admin-media-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-media-page .admin-media-search {
+    flex: 1 1 32rem;
+    max-width: 42rem;
+}
+
+.admin-media-page .admin-media-preview {
+    height: 180px;
+    object-fit: cover;
+    background: #f1f3f5;
+}
+
+.admin-media-page button:focus-visible,
+.admin-media-page a:focus-visible,
+.admin-media-page input:focus-visible,
+.admin-media-page select:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-media-page .admin-media-search {
+        flex-wrap: wrap;
+    }
+
+    .admin-media-page .admin-media-search input,
+    .admin-media-page .admin-media-search select {
+        flex: 1 1 100%;
+    }
+
+    .admin-media-page .card-body {
+        padding: 1rem !important;
+    }
+}
