@@ -92,6 +92,38 @@ class AdminCmsTest extends TestCase
             ->assertSee('id="admin-member-form-status"', false);
     }
 
+    public function test_admin_member_edit_form_preserves_member_values_and_shows_current_photo(): void
+    {
+        $member = Member::create([
+            'id' => 'KSO-CHD-2026-0002',
+            'full_name' => 'Edit Student',
+            'gender' => 'Female',
+            'dob' => '2002-04-12',
+            'phone' => '+91 90000 00002',
+            'email' => 'edit-student@example.org',
+            'blood_group' => 'A-',
+            'institution' => 'Panjab University',
+            'course' => 'BSc',
+            'year_of_study' => '2nd Year',
+            'permanent_address' => 'Manipur',
+            'current_address' => 'Chandigarh',
+            'emergency_contact' => 'Parent',
+            'emergency_phone' => '+91 90000 11112',
+            'photo' => '/storage/uploads/members/edit-student.jpg',
+            'status' => 'Pending',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.members.edit', $member->id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-member-edit.css')
+            ->assertSee('js/pages/admin-member-edit.js')
+            ->assertSee('for="admin-member-edit-full-name"', false)
+            ->assertSee('value="Edit Student"', false)
+            ->assertSee('alt="Current photo for Edit Student"', false)
+            ->assertSee('admin-member-edit-photo-status', false);
+    }
+
     public function test_admin_login_is_rate_limited(): void
     {
         for ($attempt = 0; $attempt < 5; $attempt++) {

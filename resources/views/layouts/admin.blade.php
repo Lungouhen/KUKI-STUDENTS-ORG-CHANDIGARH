@@ -21,6 +21,9 @@
     @if(request()->routeIs('admin.members.create'))
         <link href="{{ asset('css/pages/admin-member-create.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.members.edit'))
+        <link href="{{ asset('css/pages/admin-member-edit.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -405,6 +408,9 @@
     @endif
     @if(request()->routeIs('admin.members.create'))
         <script src="{{ asset('js/pages/admin-member-create.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.edit'))
+        <script src="{{ asset('js/pages/admin-member-edit.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>
