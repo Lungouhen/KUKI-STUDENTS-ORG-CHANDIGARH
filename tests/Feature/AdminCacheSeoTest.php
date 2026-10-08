@@ -138,6 +138,25 @@ class AdminCacheSeoTest extends TestCase
             ->assertSee('<meta name="robots" content="index,follow">', false);
     }
 
+    public function test_page_seo_values_are_escaped_in_html_metadata(): void
+    {
+        $page = Page::create([
+            'title' => 'Unsafe SEO content',
+            'slug' => 'unsafe-seo-content',
+            'meta_title' => '"><script>alert(1)</script>',
+            'meta_description' => '"><img src=x onerror=alert(1)>',
+            'content' => 'Page content',
+            'is_published' => true,
+        ]);
+
+        $this->get(route('page.show', $page->slug))
+            ->assertOk()
+            ->assertSee('<title>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</title>', false)
+            ->assertSee('content="&quot;&gt;&lt;img src=x onerror=alert(1)&gt;"', false)
+            ->assertDontSee('<script>alert(1)</script>', false)
+            ->assertDontSee('<img src=x onerror=alert(1)>', false);
+    }
+
     public function test_robots_and_sitemap_respect_indexing_and_include_only_public_cms_pages(): void
     {
         $published = Page::create([

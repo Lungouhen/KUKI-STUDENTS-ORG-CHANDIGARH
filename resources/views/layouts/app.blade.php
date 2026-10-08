@@ -14,16 +14,16 @@
         $seoCanonicalPath = trim(request()->path(), '/');
         $seoCanonicalUrl = rtrim(config('app.url'), '/').($seoCanonicalPath === '' ? '' : '/'.$seoCanonicalPath);
     @endphp
-    <title>@yield('title', $seoDefaultTitle)</title>
-    <meta name="description" content="@yield('meta_description', $seoDefaultDescription)">
-    <meta name="robots" content="@yield('robots', $seoIndexingEnabled && $seoPublicRoute ? 'index,follow' : 'noindex,nofollow')">
+    <title>{{ $__env->yieldContent('title', $seoDefaultTitle) }}</title>
+    <meta name="description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
+    <meta name="robots" content="{{ $__env->yieldContent('robots', $seoIndexingEnabled && $seoPublicRoute ? 'index,follow' : 'noindex,nofollow') }}">
     @if($seoPublicRoute)
         <link rel="canonical" href="{{ $seoCanonicalUrl }}">
     @endif
-    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:type" content="{{ $__env->yieldContent('og_type', 'website') }}">
     <meta property="og:site_name" content="{{ $seoSiteName }}">
-    <meta property="og:title" content="@yield('title', $seoDefaultTitle)">
-    <meta property="og:description" content="@yield('meta_description', $seoDefaultDescription)">
+    <meta property="og:title" content="{{ $__env->yieldContent('title', $seoDefaultTitle) }}">
+    <meta property="og:description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
     @if($seoPublicRoute)
         <meta property="og:url" content="{{ $seoCanonicalUrl }}">
     @endif
@@ -34,8 +34,8 @@
     @else
         <meta name="twitter:card" content="summary">
     @endif
-    <meta name="twitter:title" content="@yield('title', $seoDefaultTitle)">
-    <meta name="twitter:description" content="@yield('meta_description', $seoDefaultDescription)">
+    <meta name="twitter:title" content="{{ $__env->yieldContent('title', $seoDefaultTitle) }}">
+    <meta name="twitter:description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
     
     <!-- Local Bootstrap 5 CSS -->
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
