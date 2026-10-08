@@ -124,6 +124,36 @@ class AdminCmsTest extends TestCase
             ->assertSee('admin-member-edit-photo-status', false);
     }
 
+    public function test_admin_member_details_page_has_accessible_profile_and_actions(): void
+    {
+        $member = Member::create([
+            'id' => 'KSO-CHD-2026-0003',
+            'full_name' => 'Profile Student',
+            'gender' => 'Male',
+            'dob' => '2003-05-15',
+            'phone' => '+91 90000 00003',
+            'email' => 'profile-student@example.org',
+            'blood_group' => 'B+',
+            'institution' => 'Panjab University',
+            'course' => 'BSc',
+            'year_of_study' => '2nd Year',
+            'permanent_address' => 'Manipur',
+            'current_address' => 'Chandigarh',
+            'emergency_contact' => 'Parent',
+            'emergency_phone' => '+91 90000 11113',
+            'status' => 'Pending',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.members.show', $member->id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-member-details.css')
+            ->assertSee('js/pages/admin-member-details.js')
+            ->assertSee('scope="row"', false)
+            ->assertSee('id="printAdminMemberCard"', false)
+            ->assertSee('aria-label="Edit profile for Profile Student"', false);
+    }
+
     public function test_admin_login_is_rate_limited(): void
     {
         for ($attempt = 0; $attempt < 5; $attempt++) {
