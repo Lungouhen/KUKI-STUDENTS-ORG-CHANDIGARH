@@ -309,11 +309,20 @@ class StudentServicesTest extends TestCase
             'author' => 'Portal Student',
             'is_member_post' => true,
         ]);
+        News::create([
+            'title' => 'Unpublished announcement',
+            'category' => 'Notice',
+            'date' => now()->toDateString(),
+            'content' => 'This announcement is still under review.',
+            'author' => 'Executive Desk',
+            'publication_status' => 'review',
+        ]);
 
         $this->loginAsMember();
         $response = $this->get('/members/portal/dashboard');
 
         $response->assertOk();
         $response->assertSee('Hostel tips for freshers.');
+        $response->assertDontSee('This announcement is still under review.');
     }
 }
