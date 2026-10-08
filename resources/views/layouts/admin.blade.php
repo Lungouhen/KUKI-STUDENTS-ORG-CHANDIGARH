@@ -15,6 +15,9 @@
     @if(request()->routeIs('admin.dashboard'))
         <link href="{{ asset('css/pages/admin-dashboard.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.members.index'))
+        <link href="{{ asset('css/pages/admin-members.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -393,6 +396,9 @@
 
     @if(request()->routeIs('admin.dashboard'))
         <script src="{{ asset('js/pages/admin-dashboard.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.index'))
+        <script src="{{ asset('js/pages/admin-members.js') }}" defer></script>
     @endif
     @stack('scripts')
 </body>

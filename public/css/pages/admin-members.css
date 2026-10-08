@@ -1,0 +1,61 @@
+.admin-members-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-members-page .card-header {
+    align-items: flex-start !important;
+}
+
+.admin-members-controls,
+.admin-members-filters {
+    flex-wrap: wrap;
+}
+
+.admin-members-filters .form-control,
+.admin-members-filters .form-select {
+    min-height: 2.5rem;
+}
+
+.admin-members-filters .form-control {
+    min-width: min(15rem, 100%);
+}
+
+.admin-members-filters .form-control:focus,
+.admin-members-filters .form-select:focus {
+    border-color: #0b6fa4;
+    box-shadow: 0 0 0 0.2rem rgba(11, 111, 164, 0.16);
+}
+
+.admin-members-page .table th {
+    white-space: nowrap;
+}
+
+.admin-members-page .table td {
+    overflow-wrap: anywhere;
+}
+
+.admin-member-photo {
+    object-fit: cover;
+}
+
+.admin-members-page .btn-group .btn:focus-visible,
+.admin-members-page .admin-members-controls > a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 2px;
+    z-index: 1;
+}
+
+@media (max-width: 767.98px) {
+    .admin-members-controls,
+    .admin-members-filters {
+        width: 100%;
+    }
+
+    .admin-members-filters > * {
+        flex: 1 1 auto;
+    }
+
+    .admin-members-filters .form-control {
+        min-width: min(12rem, 100%);
+    }
+}

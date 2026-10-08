@@ -49,6 +49,37 @@ class AdminCmsTest extends TestCase
             ->assertSee('id="donations-chart-description"', false);
     }
 
+    public function test_member_list_has_accessible_filters_and_action_labels(): void
+    {
+        Member::create([
+            'id' => 'KSO-CHD-2026-0001',
+            'full_name' => 'Test Student',
+            'gender' => 'Male',
+            'dob' => '2003-05-15',
+            'phone' => '+91 90000 00000',
+            'email' => 'member@example.org',
+            'blood_group' => 'B+',
+            'institution' => 'Panjab University',
+            'course' => 'BSc',
+            'year_of_study' => '2nd Year',
+            'permanent_address' => 'Manipur',
+            'current_address' => 'Chandigarh',
+            'emergency_contact' => 'Parent',
+            'emergency_phone' => '+91 90000 11111',
+            'status' => 'Pending',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.members.index', ['status' => 'Pending']))
+            ->assertOk()
+            ->assertSee('css/pages/admin-members.css')
+            ->assertSee('js/pages/admin-members.js')
+            ->assertSee('for="admin-member-search"', false)
+            ->assertSee('scope="col"', false)
+            ->assertSee('aria-label="Approve member Test Student"', false)
+            ->assertSee('data-member-delete', false);
+    }
+
     public function test_admin_login_is_rate_limited(): void
     {
         for ($attempt = 0; $attempt < 5; $attempt++) {
