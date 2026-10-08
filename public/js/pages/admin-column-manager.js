@@ -1,7 +1,6 @@
 (() => {
     const hiddenClass = 'admin-managed-column';
     const excludedHeader = /^(actions?|options?|select|checkbox|operations?)$/i;
-    const interactiveColumn = 'input, select, textarea, button, form';
 
     const initializeColumnManagers = () => {
         const tables = Array.from(document.querySelectorAll('#main-content table.table'));
@@ -31,8 +30,7 @@
                     key: `${label}:${occurrence}`,
                     manageable: Boolean(label)
                         && !excludedHeader.test(label)
-                        && !header.querySelector(interactiveColumn)
-                        && !bodyRows.some((row) => row.cells[index]?.querySelector(interactiveColumn)),
+                        && !header.hasAttribute('data-column-manager-exclude'),
                 };
             }).filter((column) => column.manageable);
 

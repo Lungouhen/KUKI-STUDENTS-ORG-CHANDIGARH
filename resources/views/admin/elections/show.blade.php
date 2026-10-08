@@ -51,7 +51,7 @@
                                 <th scope="col" class="ps-4">Candidate Name</th>
                                 <th scope="col">Member ID</th>
                                 <th scope="col">Votes</th>
-                                <th scope="col" class="text-end pe-4">Manage Votes</th>
+                                <th scope="col" class="text-end pe-4" data-column-manager-exclude>Manage Votes</th>
                             </tr>
                         </thead>
                         <tbody>

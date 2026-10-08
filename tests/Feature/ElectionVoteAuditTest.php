@@ -89,6 +89,7 @@ class ElectionVoteAuditTest extends TestCase
             ->assertSee('css/pages/admin-election-results.css')
             ->assertSee('js/pages/admin-election-results.js')
             ->assertSee('scope="col"', false)
+            ->assertSee('data-column-manager-exclude', false)
             ->assertSee('for="candidateVotes-'.$this->candidate->id.'"', false)
             ->assertSee('aria-label="Save vote total for Election Candidate"', false);
     }
