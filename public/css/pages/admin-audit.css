@@ -1,0 +1,30 @@
+.admin-audit-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-audit-page .table-responsive {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.admin-audit-page .table {
+    min-width: 880px;
+}
+
+.admin-audit-page .admin-audit-search {
+    width: min(100%, 24rem);
+}
+
+.admin-audit-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+.admin-audit-page td:last-child {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+    .admin-audit-page .card-header {
+        align-items: stretch !important;
+    }
+}
