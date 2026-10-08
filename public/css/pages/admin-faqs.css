@@ -1,0 +1,26 @@
+.admin-faqs-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-faqs-page .table {
+    min-width: 560px;
+}
+
+.admin-faqs-page button:focus-visible,
+.admin-faqs-page a:focus-visible,
+.admin-faqs-page input:focus-visible,
+.admin-faqs-page select:focus-visible,
+.admin-faqs-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+.admin-faqs-page [aria-invalid="true"] {
+    border-color: #dc3545;
+}
+
+@media (max-width: 767.98px) {
+    .admin-faqs-page .card-body {
+        padding: 1rem !important;
+    }
+}
