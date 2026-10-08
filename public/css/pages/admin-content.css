@@ -1,0 +1,49 @@
+.admin-content-page .card,
+.admin-content-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-content-page .admin-content-thumbnail {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.admin-content-page .admin-content-order {
+    width: 100px;
+}
+
+.admin-content-page button:focus-visible,
+.admin-content-page a:focus-visible,
+.admin-content-page input:focus-visible,
+.admin-content-page select:focus-visible,
+.admin-content-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+.admin-content-page .admin-content-bulk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-content-page #bulk-content-action {
+    max-width: 190px;
+}
+
+.admin-content-page #contentBulkSchedule {
+    max-width: 220px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-content-page .card-body,
+    .admin-content-page .card-header {
+        padding: 1rem !important;
+    }
+
+    .admin-content-page .admin-content-bulk {
+        width: 100%;
+    }
+}

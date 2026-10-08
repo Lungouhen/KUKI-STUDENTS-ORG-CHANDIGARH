@@ -1,0 +1,33 @@
+.admin-member-fees-page .card,
+.admin-member-fees-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-member-fees-page .table-responsive {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.admin-member-fees-page .table th,
+.admin-member-fees-page .table td {
+    vertical-align: middle;
+}
+
+.admin-member-fees-page button:focus-visible,
+.admin-member-fees-page a:focus-visible,
+.admin-member-fees-page input:focus-visible,
+.admin-member-fees-page select:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-member-fees-page .card-header {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .admin-member-fees-page .modal-body .row > [class*="col-"] {
+        width: 100%;
+    }
+}

@@ -1,0 +1,68 @@
+.cms-page .public-page-banner {
+    background:
+        radial-gradient(circle at 82% 15%, rgba(255, 191, 0, 0.16), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.cms-page article {
+    max-width: 76ch;
+    margin-inline: auto;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.cms-page article h2,
+.cms-page article h3,
+.cms-page article h4 {
+    margin-block: 1.75em 0.65em;
+    color: #003566;
+    line-height: 1.25;
+    text-wrap: balance;
+}
+
+.cms-page article p,
+.cms-page article ul,
+.cms-page article ol {
+    margin-bottom: 1.1em;
+}
+
+.cms-page article img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+}
+
+.cms-page article table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.cms-page article a {
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+}
+
+.cms-page section.container {
+    max-width: 76ch;
+    line-height: 1.75;
+}
+
+.cms-page .alert {
+    border-left-width: 0.35rem;
+}
+
+.cms-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .cms-page .container-fluid.px-3 {
+        padding-inline: 1rem !important;
+    }
+
+    .cms-page article.bg-white {
+        padding: 1.25rem !important;
+    }
+}

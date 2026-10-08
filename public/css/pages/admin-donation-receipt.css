@@ -1,0 +1,48 @@
+.donation-receipt-page #receiptPrintArea {
+    max-width: 850px;
+    margin-inline: auto;
+    border-radius: 1rem !important;
+}
+
+.donation-receipt-page button:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .donation-receipt-page {
+        margin-block: 1.5rem !important;
+        padding-inline: 0.75rem;
+    }
+
+    .donation-receipt-page #receiptPrintArea {
+        padding: 1.25rem !important;
+    }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 14mm;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #receiptPrintArea,
+    #receiptPrintArea * {
+        visibility: visible !important;
+    }
+
+    #receiptPrintArea {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+}

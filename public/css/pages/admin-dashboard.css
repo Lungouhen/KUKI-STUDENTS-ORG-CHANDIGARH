@@ -1,0 +1,48 @@
+.admin-dashboard .admin-metric-card {
+    min-height: 5.75rem;
+    border-radius: 0.85rem;
+    box-shadow: 0 0.35rem 1.1rem rgba(15, 23, 42, 0.06) !important;
+}
+
+.admin-dashboard .admin-metric-card h3 {
+    overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-donations-metric {
+    border-left-color: #0d9488 !important;
+}
+
+.admin-dashboard .admin-donations-metric-value {
+    color: #0d9488;
+}
+
+.admin-dashboard .card {
+    border-radius: 1rem !important;
+}
+
+.admin-dashboard-chart {
+    min-width: 0;
+}
+
+.admin-dashboard-chart [id$="Chart"] {
+    min-height: 250px;
+    width: 100%;
+}
+
+.admin-dashboard .table-responsive {
+    border-radius: 0.75rem;
+}
+
+@media (max-width: 575.98px) {
+    .admin-dashboard .admin-metric-card {
+        padding: 0.85rem !important;
+    }
+
+    .admin-dashboard .admin-metric-card h3 {
+        font-size: 1.3rem;
+    }
+
+    .admin-dashboard-chart {
+        padding: 1rem !important;
+    }
+}

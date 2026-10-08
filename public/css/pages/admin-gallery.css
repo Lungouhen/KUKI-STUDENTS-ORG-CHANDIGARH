@@ -1,0 +1,36 @@
+.admin-gallery-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-gallery-page .admin-gallery-card {
+    min-height: 250px;
+}
+
+.admin-gallery-page .admin-gallery-card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    background: #f1f3f5;
+}
+
+.admin-gallery-page button:focus-visible,
+.admin-gallery-page a:focus-visible,
+.admin-gallery-page input:focus-visible,
+.admin-gallery-page select:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-gallery-page > .row > .col-lg-4 .card {
+        padding: 1.25rem !important;
+    }
+
+    .admin-gallery-page .admin-gallery-card {
+        min-height: 230px;
+    }
+
+    .admin-gallery-page .admin-gallery-card img {
+        height: 110px;
+    }
+}

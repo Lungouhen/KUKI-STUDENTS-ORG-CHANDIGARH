@@ -1,0 +1,28 @@
+.admin-partners-page .card,
+.admin-partners-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-partners-page .table {
+    min-width: 760px;
+}
+
+.admin-partners-page button:focus-visible,
+.admin-partners-page a:focus-visible,
+.admin-partners-page input:focus-visible,
+.admin-partners-page select:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-partners-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .admin-partners-page > .d-flex > div {
+        flex-wrap: wrap;
+    }
+}

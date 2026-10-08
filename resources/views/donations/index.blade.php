@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="donations-page">
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1"><i class="fa-solid fa-hand-holding-heart me-2"></i> Support KSO Student Welfare Fund</h2>
@@ -17,39 +18,51 @@
             <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border">
                 <h4 class="fw-bold text-primary mb-3">Make a Contribution</h4>
                 
-                <form action="{{ route('donations.store') }}" method="POST">
+                <form action="{{ route('donations.store') }}" method="POST" id="donationForm">
                     @csrf
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Select Welfare Cause</label>
-                        <select class="form-select" name="cause" required>
-                            <option value="Student Emergency Welfare Fund">Student Emergency Welfare Fund (Medical / Legal)</option>
-                            <option value="Annual Cultural Meet">Annual Freshers & Cultural Extravaganza</option>
-                            <option value="Academic & Book Bank">Academic Book Bank & Scholarship Support</option>
-                            <option value="General Support">General Community Support</option>
+                        <label class="form-label fw-bold" for="donation-cause">Select Welfare Cause</label>
+                        <select class="form-select @error('cause') is-invalid @enderror" id="donation-cause" name="cause" @error('cause') aria-invalid="true" aria-describedby="donation-cause-error" @enderror required>
+                            <option value="Student Emergency Welfare Fund" @selected(old('cause', 'Student Emergency Welfare Fund') === 'Student Emergency Welfare Fund')>Student Emergency Welfare Fund (Medical / Legal)</option>
+                            <option value="Annual Cultural Meet" @selected(old('cause') === 'Annual Cultural Meet')>Annual Freshers & Cultural Extravaganza</option>
+                            <option value="Academic & Book Bank" @selected(old('cause') === 'Academic & Book Bank')>Academic Book Bank & Scholarship Support</option>
+                            <option value="General Support" @selected(old('cause') === 'General Support')>General Community Support</option>
                         </select>
+                        @error('cause')<div class="invalid-feedback" id="donation-cause-error">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Donation Amount (₹)</label>
-                        <input type="number" class="form-control form-control-lg fw-bold text-primary" name="amount" value="500" min="10" placeholder="Custom Amount (₹)" required>
+                        <label class="form-label fw-bold" for="donation-amount">Donation Amount (₹)</label>
+                        <div class="donation-amount-options mb-2" role="group" aria-label="Suggested donation amounts">
+                            @foreach([500, 1000, 2500, 5000] as $suggestedAmount)
+                                <button type="button" class="btn btn-outline-primary donation-amount-option" data-donation-amount="{{ $suggestedAmount }}" aria-pressed="{{ (float) old('amount', 500) === (float) $suggestedAmount ? 'true' : 'false' }}">₹{{ number_format($suggestedAmount) }}</button>
+                            @endforeach
+                        </div>
+                        <input type="number" class="form-control form-control-lg fw-bold text-primary @error('amount') is-invalid @enderror" id="donation-amount" name="amount" value="{{ old('amount', 500) }}" min="10" step="0.01" @error('amount') aria-invalid="true" aria-describedby="donation-amount-error" @enderror placeholder="Enter a custom amount" required>
+                        @error('amount')<div class="invalid-feedback" id="donation-amount-error">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Donor Name</label>
-                            <input type="text" class="form-control" name="donor_name" placeholder="Full Name or Anonymous" required>
+                            <label class="form-label fw-bold" for="donor-name">Donor Name</label>
+                            <input type="text" class="form-control @error('donor_name') is-invalid @enderror" id="donor-name" name="donor_name" value="{{ old('donor_name') }}" autocomplete="name" maxlength="255" @error('donor_name') aria-invalid="true" aria-describedby="donor-name-error" @enderror placeholder="Full Name or Anonymous" required>
+                            @error('donor_name')<div class="invalid-feedback" id="donor-name-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Phone Number</label>
-                            <input type="tel" class="form-control" name="phone" placeholder="+91 9876543210">
+                            <label class="form-label fw-bold" for="donor-phone">Phone Number</label>
+                            <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="donor-phone" name="phone" value="{{ old('phone') }}" autocomplete="tel" @error('phone') aria-invalid="true" aria-describedby="donor-phone-error" @enderror placeholder="+91 9876543210">
+                            @error('phone')<div class="invalid-feedback" id="donor-phone-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Email Address</label>
-                            <input type="email" class="form-control" name="email" placeholder="donor@gmail.com">
+                            <label class="form-label fw-bold" for="donor-email">Email Address</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="donor-email" name="email" value="{{ old('email') }}" autocomplete="email" @error('email') aria-invalid="true" aria-describedby="donor-email-error" @enderror placeholder="donor@gmail.com">
+                            @error('email')<div class="invalid-feedback" id="donor-email-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Payment / UPI Reference ID</label>
-                            <input type="text" class="form-control" name="payment_ref" placeholder="UPI Ref / Transaction No." required>
+                            <label class="form-label fw-bold" for="payment-ref">Payment / UPI Reference ID</label>
+                            <input type="text" class="form-control @error('payment_ref') is-invalid @enderror" id="payment-ref" name="payment_ref" value="{{ old('payment_ref') }}" aria-describedby="payment-ref-help @error('payment_ref') payment-ref-error @enderror" @error('payment_ref') aria-invalid="true" @enderror placeholder="UPI Ref / Transaction No." required>
+                            <div id="payment-ref-help" class="form-text">Complete your UPI payment first, then enter its reference number.</div>
+                            @error('payment_ref')<div class="invalid-feedback" id="payment-ref-error">{{ $message }}</div>@enderror
                         </div>
                     </div>
 
@@ -90,4 +103,5 @@
     </div>
 </div>
 
+</div>
 @endsection

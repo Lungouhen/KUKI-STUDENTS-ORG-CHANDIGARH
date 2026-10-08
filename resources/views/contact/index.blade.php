@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="contact-page">
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1">Contact & Emergency Helplines</h2>
@@ -58,7 +59,7 @@
 
             @if(\App\Models\Setting::get('mapEmbedUrl'))
                 <div class="mt-4 rounded-4 overflow-hidden shadow-sm border" style="height: 250px;">
-                    <iframe src="{{ \App\Models\Setting::get('mapEmbedUrl') }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="{{ \App\Models\Setting::get('mapEmbedUrl') }}" title="Map showing the KSO Chandigarh office location" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             @endif
         </div>
@@ -66,33 +67,39 @@
         <div class="col-lg-7">
             <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border">
                 <h4 class="fw-bold text-primary mb-3">Send Us a Message</h4>
-                <form action="{{ route('contact.store') }}" method="POST">
+                <form action="{{ route('contact.store') }}" method="POST" id="contactForm">
                     @csrf
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Your Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" required>
+                            <label class="form-label fw-bold" for="contact-name">Your Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="contact-name" name="name" value="{{ old('name') }}" autocomplete="name" maxlength="255" @error('name') aria-invalid="true" aria-describedby="contact-name-error" @enderror required>
+                            @error('name')<div class="invalid-feedback" id="contact-name-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" name="phone" required>
+                            <label class="form-label fw-bold" for="contact-phone">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="contact-phone" name="phone" value="{{ old('phone') }}" autocomplete="tel" maxlength="20" @error('phone') aria-invalid="true" aria-describedby="contact-phone-error" @enderror required>
+                            @error('phone')<div class="invalid-feedback" id="contact-phone-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-bold">Email Address</label>
-                            <input type="email" class="form-control" name="email">
+                            <label class="form-label fw-bold" for="contact-email">Email Address</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="contact-email" name="email" value="{{ old('email') }}" autocomplete="email" @error('email') aria-invalid="true" aria-describedby="contact-email-error" @enderror>
+                            @error('email')<div class="invalid-feedback" id="contact-email-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="subject" placeholder="Inquiry / Hostel Help / Membership" required>
+                            <label class="form-label fw-bold" for="contact-subject">Subject <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('subject') is-invalid @enderror" id="contact-subject" name="subject" value="{{ old('subject') }}" placeholder="Inquiry / Hostel Help / Membership" maxlength="255" @error('subject') aria-invalid="true" aria-describedby="contact-subject-error" @enderror required>
+                            @error('subject')<div class="invalid-feedback" id="contact-subject-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-bold">Message Details <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="message" rows="4" required></textarea>
+                            <label class="form-label fw-bold" for="contact-message">Message Details <span class="text-danger">*</span></label>
+                            <textarea class="form-control @error('message') is-invalid @enderror" id="contact-message" name="message" rows="5" @error('message') aria-invalid="true" aria-describedby="contact-message-error" @enderror required>{{ old('message') }}</textarea>
+                            @error('message')<div class="invalid-feedback" id="contact-message-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-12 mt-3">
                             <button type="submit" class="btn btn-primary btn-lg px-4 rounded-pill fw-bold">
-                                Send Message <i class="fa-solid fa-paper-plane ms-1"></i>
+                                <span id="contact-submit-label">Send Message</span> <i class="fa-solid fa-paper-plane ms-1" aria-hidden="true"></i>
                             </button>
+                            <span id="contact-submit-status" class="visually-hidden" role="status" aria-live="polite"></span>
                         </div>
                     </div>
                 </form>
@@ -101,4 +108,5 @@
     </div>
 </div>
 
+</div>
 @endsection

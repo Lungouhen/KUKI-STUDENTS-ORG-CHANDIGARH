@@ -1,0 +1,30 @@
+.admin-donations-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-donations-page .table-responsive {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.admin-donations-page .table {
+    min-width: 900px;
+}
+
+.admin-donations-page .admin-donation-search {
+    width: min(100%, 25rem);
+}
+
+.admin-donations-page button:focus-visible,
+.admin-donations-page a:focus-visible,
+.admin-donations-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-donations-page .card-header {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}

@@ -1,0 +1,39 @@
+.admin-events-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-events-page .table {
+    min-width: 920px;
+}
+
+.admin-events-page #events-bulk-status {
+    max-width: 160px;
+}
+
+.admin-events-page #events-bulk-publish-at {
+    max-width: 220px;
+}
+
+.admin-events-page button:focus-visible,
+.admin-events-page a:focus-visible,
+.admin-events-page input:focus-visible,
+.admin-events-page select:focus-visible,
+.admin-events-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-events-page .card-body,
+    .admin-events-page .card-header {
+        padding: 1rem !important;
+    }
+
+    .admin-events-page #eventsBulkForm {
+        width: 100%;
+    }
+
+    .admin-events-page #events-bulk-publish-at {
+        max-width: none;
+    }
+}

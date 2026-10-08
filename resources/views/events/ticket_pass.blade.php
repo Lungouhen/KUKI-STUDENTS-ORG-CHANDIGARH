@@ -4,12 +4,13 @@
 
 @section('content')
 
+<div class="event-pass-page">
 <div class="container my-5 text-center">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card border-0 shadow-lg rounded-4 p-4 text-start bg-white border-top border-4 border-primary" id="ticketPrintArea">
                 <div class="text-center mb-3 border-bottom pb-3">
-                    <img src="{{ asset('images/kso-logo.jpg') }}" class="rounded-circle border border-warning mb-2" width="50" height="50" onerror="this.src='/images/default-avatar-m.png'">
+                    <img src="{{ asset('images/kso-logo.jpg') }}" alt="KSO Chandigarh emblem" class="rounded-circle border border-warning mb-2" width="50" height="50" onerror="this.src='/images/default-avatar-m.png'">
                     <h5 class="fw-bold text-primary mb-0">KSO CHANDIGARH</h5>
                     <p class="text-warning fw-bold extra-small mb-0">Official Event Entry Pass</p>
                 </div>
@@ -19,6 +20,7 @@
                 </div>
 
                 <table class="table table-sm table-borderless extra-small mb-3">
+                    <caption class="visually-hidden">Event pass details</caption>
                     <tr><th class="text-muted">Pass Code:</th><td class="fw-bold text-danger fs-6">{{ $registration->ticket_code }}</td></tr>
                     <tr><th class="text-muted">Attendee:</th><td class="fw-bold text-dark">{{ $registration->full_name }}</td></tr>
                     <tr><th class="text-muted">College:</th><td>{{ $registration->institution }}</td></tr>
@@ -27,19 +29,20 @@
                     <tr><th class="text-muted">Venue:</th><td>{{ $registration->event->venue }}</td></tr>
                 </table>
 
-                <div class="text-center p-2 bg-light rounded border">
-                    <i class="fa-solid fa-qrcode fs-1 text-primary"></i>
-                    <div class="extra-small text-muted mt-1">Present this Pass Code at the Venue Entry Desk</div>
+                <div class="event-pass-instructions text-center p-3 bg-light rounded border">
+                    <i class="fa-solid fa-ticket fs-2 text-primary" aria-hidden="true"></i>
+                    <div class="extra-small text-muted mt-1">Present your pass code at the venue entry desk.</div>
                 </div>
             </div>
 
             <div class="mt-4">
-                <button onclick="window.print()" class="btn btn-accent btn-lg rounded-pill px-5 fw-bold shadow">
-                    <i class="fa-solid fa-print me-2"></i> Print Event Pass
+                <button type="button" id="printEventPass" class="btn btn-accent btn-lg rounded-pill px-5 fw-bold shadow">
+                    <i class="fa-solid fa-print me-2" aria-hidden="true"></i> Print Event Pass
                 </button>
             </div>
         </div>
     </div>
 </div>
 
+</div>
 @endsection

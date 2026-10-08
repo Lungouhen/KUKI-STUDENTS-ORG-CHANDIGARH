@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MemberDocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SeoController as PublicSeoController;
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -33,6 +35,11 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MembershipFormController as AdminMembershipFormController;
 use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
 use App\Http\Controllers\Admin\StudentResourceController as AdminStudentResourceController;
+use App\Http\Controllers\Admin\MemberDocumentController as AdminMemberDocumentController;
+use App\Http\Controllers\Admin\MemberDocumentTemplateController as AdminMemberDocumentTemplateController;
+use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\Admin\CacheManagerController as AdminCacheManagerController;
+use App\Http\Controllers\Admin\SeoController as AdminSeoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +52,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
+Route::get('/robots.txt', [PublicSeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [PublicSeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/ads/{id}/click', [HomeController::class, 'clickAd'])->name('ads.click');
 
 // Membership/Members Routes
@@ -54,6 +63,8 @@ Route::prefix('members')->group(function () {
     Route::get('/verify', [MembershipController::class, 'verifyForm'])->name('membership.verifyForm');
     Route::post('/verify', [MembershipController::class, 'verify'])->name('membership.verify');
     Route::get('/verify/{id}', [MembershipController::class, 'verifyDirect'])->name('membership.verifyDirect');
+    Route::get('/portal/documents/{id}', [MemberDocumentController::class, 'show'])->name('membership.documents.show');
+    Route::post('/portal/documents', [MemberDocumentController::class, 'storeRequest'])->middleware('throttle:5,1')->name('membership.documents.request');
     Route::get('/portal', [MembershipController::class, 'portalForm'])->name('membership.portal');
     Route::post('/portal/login', [MembershipController::class, 'portalLogin'])->middleware('throttle:10,1')->name('membership.portalLogin');
     Route::get('/portal/dashboard', [MembershipController::class, 'portalDashboard'])->name('membership.portalDashboard');
@@ -63,6 +74,10 @@ Route::prefix('members')->group(function () {
     Route::get('/portal/resources/{id}/download', [MembershipController::class, 'downloadResource'])->name('membership.downloadResource');
     Route::get('/id-card/{id}', [MembershipController::class, 'idCard'])->name('membership.idCard');
 });
+Route::get('/documents/verify/{certificateNumber}', [MemberDocumentController::class, 'verify'])
+    ->middleware('throttle:10,1')
+    ->where('certificateNumber', '[A-Za-z0-9-]{1,80}')
+    ->name('documents.verify');
 
 // Events & News
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
@@ -105,7 +120,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::get('/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
     Route::post('/pages', [AdminPageController::class, 'store'])->name('pages.store');
+    Route::post('/pages/bulk', [AdminPageController::class, 'bulk'])->name('pages.bulk');
     Route::get('/pages/{id}/preview', [AdminPageController::class, 'preview'])->name('pages.preview');
+    Route::get('/pages/{id}/revisions/{revisionId}/preview', [AdminPageController::class, 'previewRevision'])->name('pages.revisions.preview');
+    Route::get('/pages/{id}/revisions/{revisionId}/compare', [AdminPageController::class, 'compareRevision'])->name('pages.revisions.compare');
+    Route::post('/pages/{id}/revisions/{revisionId}/restore', [AdminPageController::class, 'restoreRevision'])->name('pages.revisions.restore');
     Route::get('/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy'])->name('pages.destroy');
@@ -127,12 +146,35 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Content Management
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');
     Route::post('/content', [ContentController::class, 'store'])->name('content.store');
+    Route::post('/content/bulk', [ContentController::class, 'bulk'])->name('content.bulk');
     Route::delete('/content/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
+
+    // Shared image library
+    Route::get('/media', [AdminMediaController::class, 'index'])->name('media.index');
+    Route::post('/media', [AdminMediaController::class, 'store'])->name('media.store');
+    Route::put('/media/{id}', [AdminMediaController::class, 'update'])->name('media.update');
+    Route::delete('/media/{id}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
 
     // Audit Trail Logs
     Route::get('/audit', [AdminAuditLogController::class, 'index'])->name('audit.index');
 
     // Members Management
+    Route::get('/member-documents', [AdminMemberDocumentController::class, 'index'])->name('memberDocuments.index');
+    Route::post('/member-documents/direct/preview', [AdminMemberDocumentController::class, 'previewDirect'])->name('memberDocuments.previewDirect');
+    Route::post('/member-documents/direct/issue', [AdminMemberDocumentController::class, 'generateDirect'])->name('memberDocuments.generateDirect');
+    Route::post('/member-documents/bulk/preview', [AdminMemberDocumentController::class, 'previewBulk'])->name('memberDocuments.previewBulk');
+    Route::post('/member-documents/bulk/issue', [AdminMemberDocumentController::class, 'generateBulk'])->name('memberDocuments.generateBulk');
+    Route::get('/member-documents/batches/{id}', [AdminMemberDocumentController::class, 'showBatch'])->name('memberDocuments.batches.show');
+    Route::post('/member-documents/batches/{id}/retry', [AdminMemberDocumentController::class, 'retryBatch'])->name('memberDocuments.batches.retry');
+    Route::get('/member-documents/batches/{id}/print', [AdminMemberDocumentController::class, 'printBatch'])->name('memberDocuments.batches.print');
+    Route::get('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'index'])->name('memberDocumentTemplates.index');
+    Route::post('/member-document-templates/preview', [AdminMemberDocumentTemplateController::class, 'preview'])->name('memberDocumentTemplates.preview');
+    Route::post('/member-document-templates', [AdminMemberDocumentTemplateController::class, 'store'])->name('memberDocumentTemplates.store');
+    Route::post('/member-documents/{id}/preview', [AdminMemberDocumentController::class, 'previewPending'])->name('memberDocuments.previewPending');
+    Route::get('/member-documents/{id}/preview-issued', [AdminMemberDocumentController::class, 'previewIssued'])->name('memberDocuments.previewIssued');
+    Route::post('/member-documents/{id}/issue', [AdminMemberDocumentController::class, 'issue'])->name('memberDocuments.issue');
+    Route::post('/member-documents/{id}/reject', [AdminMemberDocumentController::class, 'reject'])->name('memberDocuments.reject');
+    Route::post('/member-documents/{id}/revoke', [AdminMemberDocumentController::class, 'revoke'])->name('memberDocuments.revoke');
     Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
@@ -151,6 +193,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Events
     Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
     Route::post('/events', [AdminEventController::class, 'store'])->name('events.store');
+    Route::post('/events/bulk', [AdminEventController::class, 'bulk'])->name('events.bulk');
     Route::get('/events/{id}/edit', [AdminEventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{id}', [AdminEventController::class, 'update'])->name('events.update');
     Route::delete('/events/{id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
@@ -158,6 +201,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // News
     Route::get('/news', [AdminNewsController::class, 'index'])->name('news.index');
     Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
+    Route::post('/news/bulk', [AdminNewsController::class, 'bulk'])->name('news.bulk');
     Route::get('/news/{id}/edit', [AdminNewsController::class, 'edit'])->name('news.edit');
     Route::put('/news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
     Route::delete('/news/{id}', [AdminNewsController::class, 'destroy'])->name('news.destroy');
@@ -216,4 +260,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::post('/settings/smtp/test', [AdminSettingController::class, 'testSmtp'])->middleware('throttle:3,1')->name('settings.smtp.test');
     Route::get('/settings/smtp', [AdminSettingController::class, 'smtp'])->name('settings.smtp');
     Route::get('/settings/gateways', [AdminSettingController::class, 'gateways'])->name('settings.gateways');
+    Route::get('/cache', [AdminCacheManagerController::class, 'index'])->name('cache.index');
+    Route::post('/cache/{type}/clear', [AdminCacheManagerController::class, 'clear'])
+        ->whereIn('type', ['application', 'config', 'routes', 'views', 'all'])
+        ->name('cache.clear');
+    Route::get('/seo', [AdminSeoController::class, 'index'])->name('seo.index');
+    Route::post('/seo', [AdminSeoController::class, 'update'])->name('seo.update');
 });

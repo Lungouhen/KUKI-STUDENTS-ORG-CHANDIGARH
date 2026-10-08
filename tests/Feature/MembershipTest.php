@@ -2,13 +2,25 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Member;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class MembershipTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_registration_form_is_accessible_and_family_fields_share_their_alpine_scope(): void
+    {
+        $this->get(route('membership.register'))
+            ->assertOk()
+            ->assertSee('css/pages/membership-register.css')
+            ->assertSee('js/pages/membership-register.js')
+            ->assertSee('membership-registration-page" x-data=', false)
+            ->assertSee('x-show="memberType === \'Family\'"', false)
+            ->assertSee('for="membership-full-name"', false)
+            ->assertSee('id="membership-photo-status"', false);
+    }
 
     public function test_can_register_new_member(): void
     {
@@ -28,12 +40,20 @@ class MembershipTest extends TestCase
             'emergency_phone' => '+91 98765 11111',
         ]);
 
-        $response->assertRedirect();
+        $member = Member::where('email', 'teststudent@gmail.com')->firstOrFail();
+
+        $response->assertRedirect(route('membership.idCard', $member->id));
         $this->assertDatabaseHas('members', [
             'full_name' => 'Test Student Haokip',
             'email' => 'teststudent@gmail.com',
-            'status' => 'Pending'
+            'status' => 'Pending',
         ]);
+        $this->get(route('membership.idCard', $member->id))
+            ->assertOk()
+            ->assertSee('css/pages/member-id-card.css')
+            ->assertSee('js/pages/member-id-card.js')
+            ->assertSee('alt="Member photo for Test Student Haokip"', false)
+            ->assertSee('id="printMemberIdCard"', false);
     }
 
     public function test_can_verify_existing_member_id(): void
@@ -56,11 +76,14 @@ class MembershipTest extends TestCase
         ]);
 
         $response = $this->post('/members/verify', [
-            'member_id' => 'KSO-CHD-2026-9999'
+            'member_id' => 'KSO-CHD-2026-9999',
         ]);
 
-        $response->assertStatus(200);
-        $response->assertSee('Verified Student');
-        $response->assertSee('APPROVED');
+        $response->assertStatus(200)
+            ->assertSee('css/pages/member-verification.css')
+            ->assertSee('js/pages/member-verification.js')
+            ->assertSee('for="verification-member-id"', false)
+            ->assertSee('Verified Student')
+            ->assertSee('APPROVED');
     }
 }

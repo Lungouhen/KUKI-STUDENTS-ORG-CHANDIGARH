@@ -4,30 +4,31 @@
 
 @section('content')
 
+<div class="admin-dashboard">
 <!-- Metric Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-6">
-        <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-primary">
+        <div class="admin-metric-card p-3 bg-white shadow-sm rounded-3 border-start border-4 border-primary">
             <small class="text-muted text-uppercase fw-bold extra-small">Total Members</small>
             <h3 class="fw-black text-primary mb-0">{{ $stats['totalMembers'] }}</h3>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-warning">
+        <div class="admin-metric-card p-3 bg-white shadow-sm rounded-3 border-start border-4 border-warning">
             <small class="text-muted text-uppercase fw-bold extra-small">Pending Approvals</small>
             <h3 class="fw-black text-warning mb-0">{{ $stats['pendingMembers'] }}</h3>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-success">
+        <div class="admin-metric-card p-3 bg-white shadow-sm rounded-3 border-start border-4 border-success">
             <small class="text-muted text-uppercase fw-bold extra-small">Active Events</small>
             <h3 class="fw-black text-success mb-0">{{ $stats['totalEvents'] }}</h3>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="p-3 bg-white shadow-sm rounded-3 border-start border-4 border-teal" style="border-color:#0d9488 !important;">
+        <div class="admin-metric-card admin-donations-metric p-3 bg-white shadow-sm rounded-3 border-start border-4">
             <small class="text-muted text-uppercase fw-bold extra-small">Total Donations</small>
-            <h3 class="fw-black text-teal mb-0" style="color:#0d9488;">₹{{ number_format($stats['totalDonations']) }}</h3>
+            <h3 class="admin-donations-metric-value fw-black mb-0">₹{{ number_format($stats['totalDonations']) }}</h3>
         </div>
     </div>
 </div>
@@ -35,15 +36,17 @@
 <!-- ApexCharts Analytics Graphs -->
 <div class="row g-4 mb-4">
     <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
-            <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-chart-line me-2"></i> Monthly Student Registrations Trend</h6>
-            <div id="membersChart" style="min-height: 250px;"></div>
+        <div class="card admin-dashboard-chart border-0 shadow-sm rounded-4 p-3 bg-white">
+            <h2 class="h6 fw-bold text-primary mb-3"><i class="fa-solid fa-chart-line me-2" aria-hidden="true"></i> Monthly Student Registrations Trend</h2>
+            <div id="membersChart" role="img" aria-describedby="members-chart-description"></div>
+            <p id="members-chart-description" class="visually-hidden">Monthly registrations from January through July: 12, 19, 25, 30, 42, 58, and 75.</p>
         </div>
     </div>
     <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
-            <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-chart-column me-2"></i> Monthly Donations & Welfare Funds Collection (₹)</h6>
-            <div id="donationsChart" style="min-height: 250px;"></div>
+        <div class="card admin-dashboard-chart border-0 shadow-sm rounded-4 p-3 bg-white">
+            <h2 class="h6 fw-bold text-success mb-3"><i class="fa-solid fa-chart-column me-2" aria-hidden="true"></i> Monthly Donations & Welfare Funds Collection (₹)</h2>
+            <div id="donationsChart" role="img" aria-describedby="donations-chart-description"></div>
+            <p id="donations-chart-description" class="visually-hidden">Monthly collection from January through July in rupees: 15,000, 22,000, 18,000, 35,000, 48,000, 52,000, and 65,000.</p>
         </div>
     </div>
 </div>
@@ -61,24 +64,24 @@
                     <table class="table table-hover align-middle mb-0 extra-small">
                         <thead class="table-light">
                             <tr>
-                                <th>Photo</th>
-                                <th>Member ID</th>
-                                <th>Full Name</th>
-                                <th>College</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th scope="col">Photo</th>
+                                <th scope="col">Member ID</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">College</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($recentMembers as $m)
                                 <tr>
-                                    <td><img src="{{ asset($m->photo) }}" class="rounded-circle" width="32" height="36" style="object-fit:cover;" onerror="this.src='/images/default-avatar-m.png'"></td>
+                                    <td><img src="{{ asset($m->photo) }}" alt="Member photo for {{ $m->full_name }}" class="rounded-circle" width="32" height="36" loading="lazy" onerror="this.src='/images/default-avatar-m.png'"></td>
                                     <td class="fw-bold text-primary">{{ $m->id }}</td>
                                     <td class="fw-bold text-dark">{{ $m->full_name }}</td>
                                     <td>{{ $m->institution }}</td>
                                     <td><span class="badge {{ $m->status === 'Approved' ? 'bg-success' : 'bg-warning text-dark' }}">{{ $m->status }}</span></td>
                                     <td>
-                                        <a href="{{ route('admin.members.show', $m->id) }}" class="btn btn-sm btn-outline-primary" title="View Profile"><i class="fa-solid fa-eye"></i></a>
+                                        <a href="{{ route('admin.members.show', $m->id) }}" class="btn btn-sm btn-outline-primary" aria-label="View profile for {{ $m->full_name }}" title="View Profile"><i class="fa-solid fa-eye" aria-hidden="true"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -114,31 +117,6 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Members Growth Chart
-        var optionsMembers = {
-            series: [{ name: 'New Registrations', data: [12, 19, 25, 30, 42, 58, 75] }],
-            chart: { type: 'area', height: 230, toolbar: { show: false } },
-            colors: ['#003566'],
-            stroke: { curve: 'smooth', width: 3 },
-            fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
-            xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] }
-        };
-        new ApexCharts(document.querySelector("#membersChart"), optionsMembers).render();
-
-        // Donations Collection Chart
-        var optionsDonations = {
-            series: [{ name: 'Welfare Funds (₹)', data: [15000, 22000, 18000, 35000, 48000, 52000, 65000] }],
-            chart: { type: 'bar', height: 230, toolbar: { show: false } },
-            colors: ['#0d9488'],
-            plotOptions: { bar: { borderRadius: 6, columnWidth: '45%' } },
-            xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] }
-        };
-        new ApexCharts(document.querySelector("#donationsChart"), optionsDonations).render();
-    });
-</script>
-@endpush
+</div>
 
 @endsection

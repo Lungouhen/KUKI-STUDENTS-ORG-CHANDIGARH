@@ -1,0 +1,60 @@
+.donations-page .public-page-banner {
+    background:
+        radial-gradient(circle at 84% 18%, rgba(255, 191, 0, 0.18), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.donations-page .bg-white {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 1rem 2.5rem rgba(0, 31, 61, 0.08) !important;
+}
+
+.donations-page .form-control,
+.donations-page .form-select {
+    min-height: 3rem;
+    border-color: #cbd5e1;
+}
+
+.donations-page .form-control:focus,
+.donations-page .form-select:focus {
+    border-color: #0b6fa4;
+    box-shadow: 0 0 0 0.22rem rgba(11, 111, 164, 0.16);
+}
+
+.donation-amount-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.donation-amount-option {
+    min-height: 2.75rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+}
+
+.donation-amount-option[aria-pressed="true"] {
+    color: #fff;
+    background: #003566;
+    border-color: #003566;
+}
+
+.donations-page img[alt="UPI QR"] {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 575.98px) {
+    .donations-page .container.my-5 {
+        margin-block: 2rem !important;
+    }
+
+    .donations-page .bg-white.p-4.p-md-5,
+    .donations-page .bg-white.p-4 {
+        padding: 1.25rem !important;
+    }
+
+    .donation-amount-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

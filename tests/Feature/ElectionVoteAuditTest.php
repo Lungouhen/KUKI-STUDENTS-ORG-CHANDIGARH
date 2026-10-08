@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\AuditLog;
 use App\Models\Candidate;
 use App\Models\Election;
+use App\Models\Member;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,6 +17,7 @@ class ElectionVoteAuditTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Candidate $candidate;
 
     protected function setUp(): void
@@ -27,6 +29,23 @@ class ElectionVoteAuditTest extends TestCase
             'email' => 'election-admin@example.org',
             'password' => Hash::make('secure test password'),
             'is_admin' => true,
+        ]);
+
+        Member::create([
+            'id' => 'KSO-CHD-2026-0010',
+            'full_name' => 'Election Candidate',
+            'gender' => 'Female',
+            'phone' => '+91 90000 00000',
+            'email' => 'election-candidate@example.org',
+            'blood_group' => 'A+',
+            'institution' => 'Test College',
+            'course' => 'BCom',
+            'year_of_study' => '1st Year',
+            'permanent_address' => 'Manipur',
+            'current_address' => 'Chandigarh',
+            'emergency_contact' => 'Parent',
+            'emergency_phone' => '+91 90000 00001',
+            'status' => 'Approved',
         ]);
 
         $term = Term::create([
@@ -48,6 +67,31 @@ class ElectionVoteAuditTest extends TestCase
             'member_id' => 'KSO-CHD-2026-0010',
             'votes_received' => 10,
         ]);
+    }
+
+    public function test_admin_election_list_has_accessible_schedule_form_and_scoped_assets(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.elections.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-elections.css')
+            ->assertSee('js/pages/admin-elections.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('for="electionTerm"', false)
+            ->assertSee('Completed');
+    }
+
+    public function test_admin_election_results_page_has_accessible_vote_controls(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.elections.show', $this->candidate->election_id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-election-results.css')
+            ->assertSee('js/pages/admin-election-results.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('data-column-manager-exclude', false)
+            ->assertSee('for="candidateVotes-'.$this->candidate->id.'"', false)
+            ->assertSee('aria-label="Save vote total for Election Candidate"', false);
     }
 
     public function test_admin_vote_count_change_is_validated_and_audited(): void

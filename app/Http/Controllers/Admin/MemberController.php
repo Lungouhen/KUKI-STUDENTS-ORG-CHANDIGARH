@@ -112,7 +112,8 @@ class MemberController extends Controller
     public function show($id)
     {
         $member = Member::findOrFail($id);
-        return view('admin.members.show', compact('member'));
+        $documents = $member->documents()->latest()->limit(10)->get();
+        return view('admin.members.show', compact('member', 'documents'));
     }
 
     public function edit($id)
@@ -182,6 +183,11 @@ class MemberController extends Controller
     public function destroy($id)
     {
         $member = Member::findOrFail($id);
+
+        if ($member->feePayments()->exists() || $member->electionVotes()->exists() || $member->candidacies()->exists() || $member->documents()->exists()) {
+            return back()->with('error', 'This member has financial, election, or official document records and cannot be deleted. Deactivate the member instead.');
+        }
+
         $member->delete();
         AuditLog::log('ADMIN_DELETE_MEMBER', "Member ID: {$id}");
         return back()->with('success', "Member {$id} deleted successfully.");

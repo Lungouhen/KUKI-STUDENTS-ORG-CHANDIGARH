@@ -12,6 +12,99 @@
     <link href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
     <!-- Custom Styles & Vite Bundle -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    @if(request()->routeIs('admin.dashboard'))
+        <link href="{{ asset('css/pages/admin-dashboard.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.members.index'))
+        <link href="{{ asset('css/pages/admin-members.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.members.create'))
+        <link href="{{ asset('css/pages/admin-member-create.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.members.edit'))
+        <link href="{{ asset('css/pages/admin-member-edit.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.members.show'))
+        <link href="{{ asset('css/pages/admin-member-details.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.members.fees'))
+        <link href="{{ asset('css/pages/admin-member-fees.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.memberDocuments.index'))
+        <link href="{{ asset('css/pages/admin-member-documents.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.memberDocumentTemplates.index'))
+        <link href="{{ asset('css/pages/admin-member-document-templates.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.membershipForms.index'))
+        <link href="{{ asset('css/pages/admin-membership-forms.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.resources.index'))
+        <link href="{{ asset('css/pages/admin-resources.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.accommodations.index'))
+        <link href="{{ asset('css/pages/admin-accommodations.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.accommodations.create', 'admin.accommodations.edit'))
+        <link href="{{ asset('css/pages/admin-accommodation-form.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.committee.index'))
+        <link href="{{ asset('css/pages/admin-committee.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.committee.edit'))
+        <link href="{{ asset('css/pages/admin-committee-edit.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.users.index'))
+        <link href="{{ asset('css/pages/admin-users.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.donations.index'))
+        <link href="{{ asset('css/pages/admin-donations.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.audit.index'))
+        <link href="{{ asset('css/pages/admin-audit.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.terms.index'))
+        <link href="{{ asset('css/pages/admin-terms.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.beneficiaries.index'))
+        <link href="{{ asset('css/pages/admin-beneficiaries.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.projects.index'))
+        <link href="{{ asset('css/pages/admin-projects.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.partners.index'))
+        <link href="{{ asset('css/pages/admin-partners.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.faqs.index', 'admin.faqs.edit'))
+        <link href="{{ asset('css/pages/admin-faqs.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.events.index', 'admin.events.edit'))
+        <link href="{{ asset('css/pages/admin-events.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.news.index', 'admin.news.edit'))
+        <link href="{{ asset('css/pages/admin-news.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.testimonials.index', 'admin.testimonials.edit'))
+        <link href="{{ asset('css/pages/admin-testimonials.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.gallery.index'))
+        <link href="{{ asset('css/pages/admin-gallery.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.media.index'))
+        <link href="{{ asset('css/pages/admin-media.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.content.index'))
+        <link href="{{ asset('css/pages/admin-content.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.elections.index'))
+        <link href="{{ asset('css/pages/admin-elections.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.elections.show'))
+        <link href="{{ asset('css/pages/admin-election-results.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('admin.*'))
+        <link href="{{ asset('css/pages/admin-column-manager.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -26,7 +119,7 @@
 
     @stack('styles')
 </head>
-<body class="admin-app" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
+<body class="admin-app" data-admin-user-id="{{ auth()->id() }}" :class="darkMode ? 'bg-dark' : 'bg-light'" x-data="{ 
     sidebarOpen: true,
     sidebarMobileOpen: false,
     darkMode: localStorage.getItem('theme') === 'dark',
@@ -43,11 +136,11 @@
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
     },
     // Dynamic initialization of folder states based on current route
-    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
-    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
+    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.media*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
+    membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.memberDocuments*') || request()->routeIs('admin.memberDocumentTemplates*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
-    settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
+    settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') || request()->routeIs('admin.cache*') || request()->routeIs('admin.seo*') ? 'true' : 'false' }},
     electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
 }" :data-bs-theme="darkMode ? 'dark' : 'light'" @keydown.escape.window="sidebarMobileOpen = false">
 
@@ -96,6 +189,11 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.gallery.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-photo-film"></i> Gallery Items
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.media.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.media*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-photo-film"></i> Media Library
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
@@ -151,6 +249,16 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.membershipForms.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.membershipForms*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-file-invoice"></i> Membership Forms
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.memberDocuments.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.memberDocuments*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-award"></i> Certificates & Documents
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.memberDocumentTemplates.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.memberDocumentTemplates*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-file-lines"></i> Document Templates
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
@@ -264,6 +372,16 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.seo.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.seo*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-magnifying-glass-chart"></i> SEO Pro
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.cache.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.cache*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-server"></i> Cache Manager
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.users.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-shield-halved"></i> Admin Users
                                 </a>
@@ -373,6 +491,99 @@
         }
     </script>
 
+    @if(request()->routeIs('admin.dashboard'))
+        <script src="{{ asset('js/pages/admin-dashboard.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.index'))
+        <script src="{{ asset('js/pages/admin-members.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.create'))
+        <script src="{{ asset('js/pages/admin-member-create.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.edit'))
+        <script src="{{ asset('js/pages/admin-member-edit.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.show'))
+        <script src="{{ asset('js/pages/admin-member-details.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.members.fees'))
+        <script src="{{ asset('js/pages/admin-member-fees.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.memberDocuments.index'))
+        <script src="{{ asset('js/pages/admin-member-documents.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.memberDocumentTemplates.index'))
+        <script src="{{ asset('js/pages/admin-member-document-templates.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.membershipForms.index'))
+        <script src="{{ asset('js/pages/admin-membership-forms.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.resources.index'))
+        <script src="{{ asset('js/pages/admin-resources.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.accommodations.index'))
+        <script src="{{ asset('js/pages/admin-accommodations.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.accommodations.create', 'admin.accommodations.edit'))
+        <script src="{{ asset('js/pages/admin-accommodation-form.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.committee.index'))
+        <script src="{{ asset('js/pages/admin-committee.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.committee.edit'))
+        <script src="{{ asset('js/pages/admin-committee-edit.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.users.index'))
+        <script src="{{ asset('js/pages/admin-users.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.donations.index'))
+        <script src="{{ asset('js/pages/admin-donations.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.audit.index'))
+        <script src="{{ asset('js/pages/admin-audit.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.terms.index'))
+        <script src="{{ asset('js/pages/admin-terms.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.beneficiaries.index'))
+        <script src="{{ asset('js/pages/admin-beneficiaries.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.projects.index'))
+        <script src="{{ asset('js/pages/admin-projects.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.partners.index'))
+        <script src="{{ asset('js/pages/admin-partners.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.faqs.index', 'admin.faqs.edit'))
+        <script src="{{ asset('js/pages/admin-faqs.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.events.index', 'admin.events.edit'))
+        <script src="{{ asset('js/pages/admin-events.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.news.index', 'admin.news.edit'))
+        <script src="{{ asset('js/pages/admin-news.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.testimonials.index', 'admin.testimonials.edit'))
+        <script src="{{ asset('js/pages/admin-testimonials.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.gallery.index'))
+        <script src="{{ asset('js/pages/admin-gallery.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.media.index'))
+        <script src="{{ asset('js/pages/admin-media.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.content.index'))
+        <script src="{{ asset('js/pages/admin-content.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.elections.index'))
+        <script src="{{ asset('js/pages/admin-elections.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.elections.show'))
+        <script src="{{ asset('js/pages/admin-election-results.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.*'))
+        <script src="{{ asset('js/pages/admin-column-manager.js') }}" defer></script>
+    @endif
     @stack('scripts')
 </body>
 </html>

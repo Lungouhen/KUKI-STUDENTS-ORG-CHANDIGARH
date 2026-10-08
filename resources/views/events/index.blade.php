@@ -4,9 +4,19 @@
 
 @section('content')
 
+@php
+    $calendarEvents = $events->map(fn ($event) => [
+        'title' => $event->title,
+        'start' => $event->date?->format('Y-m-d'),
+        'url' => route('events.show', $event->id),
+        'backgroundColor' => $event->category === 'Cultural' ? '#003566' : ($event->category === 'Sports' ? '#0d9488' : '#780000'),
+    ])->values();
+@endphp
+
+<div class="events-page">
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
-        <h2 class="fw-black mb-1">Events & Official Announcements</h2>
+        <h1 class="fw-black mb-1">Events & Official Announcements</h1>
         <p class="small text-light opacity-90 mb-0">Stay connected with upcoming cultural meets, sports, and press releases</p>
     </div>
 </div>
@@ -16,16 +26,16 @@
     <!-- FullCalendar JS Community Grid -->
     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
         <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-calendar-check text-warning me-2"></i> KSO Community Event Calendar Grid</h4>
-        <div id="fullCalendarGrid" style="min-height: 450px;"></div>
+        <div id="fullCalendarGrid" role="region" aria-label="KSO community events calendar" tabindex="0"></div>
     </div>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div class="btn-group" role="group">
-            <a href="{{ route('events.index', ['category' => 'All']) }}" class="btn {{ !$category || $category == 'All' ? 'btn-primary active' : 'btn-outline-primary' }}">All Events</a>
-            <a href="{{ route('events.index', ['category' => 'Cultural']) }}" class="btn {{ $category == 'Cultural' ? 'btn-primary active' : 'btn-outline-primary' }}">Cultural</a>
-            <a href="{{ route('events.index', ['category' => 'Sports']) }}" class="btn {{ $category == 'Sports' ? 'btn-primary active' : 'btn-outline-primary' }}">Sports</a>
-            <a href="{{ route('events.index', ['category' => 'Academic']) }}" class="btn {{ $category == 'Academic' ? 'btn-primary active' : 'btn-outline-primary' }}">Academic</a>
-            <a href="{{ route('events.index', ['category' => 'Social Service']) }}" class="btn {{ $category == 'Social Service' ? 'btn-primary active' : 'btn-outline-primary' }}">Social Service</a>
+        <div class="events-category-filters" role="group" aria-label="Filter events by category">
+            <a href="{{ route('events.index', ['category' => 'All']) }}" class="btn {{ !$category || $category == 'All' ? 'btn-primary active' : 'btn-outline-primary' }}" @if(!$category || $category === 'All') aria-current="page" @endif>All Events</a>
+            <a href="{{ route('events.index', ['category' => 'Cultural']) }}" class="btn {{ $category == 'Cultural' ? 'btn-primary active' : 'btn-outline-primary' }}" @if($category === 'Cultural') aria-current="page" @endif>Cultural</a>
+            <a href="{{ route('events.index', ['category' => 'Sports']) }}" class="btn {{ $category == 'Sports' ? 'btn-primary active' : 'btn-outline-primary' }}" @if($category === 'Sports') aria-current="page" @endif>Sports</a>
+            <a href="{{ route('events.index', ['category' => 'Academic']) }}" class="btn {{ $category == 'Academic' ? 'btn-primary active' : 'btn-outline-primary' }}" @if($category === 'Academic') aria-current="page" @endif>Academic</a>
+            <a href="{{ route('events.index', ['category' => 'Social Service']) }}" class="btn {{ $category == 'Social Service' ? 'btn-primary active' : 'btn-outline-primary' }}" @if($category === 'Social Service') aria-current="page" @endif>Social Service</a>
         </div>
     </div>
 
@@ -74,33 +84,7 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('fullCalendarGrid');
-        if (calendarEl) {
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
-                },
-                events: [
-                    @foreach($events as $ev)
-                    {
-                        title: '{{ $ev->title }}',
-                        start: '{{ $ev->date ? $ev->date->format("Y-m-d") : "" }}',
-                        url: '{{ route("events.show", $ev->id) }}',
-                        backgroundColor: '{{ $ev->category === "Cultural" ? "#003566" : ($ev->category === "Sports" ? "#0d9488" : "#780000") }}'
-                    },
-                    @endforeach
-                ]
-            });
-            calendar.render();
-        }
-    });
-</script>
-@endpush
+<script type="application/json" id="calendar-events-data">{!! json_encode($calendarEvents, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 
+</div>
 @endsection

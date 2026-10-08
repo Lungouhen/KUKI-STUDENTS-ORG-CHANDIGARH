@@ -4,10 +4,25 @@
 
 @section('content')
 
+<div class="admin-terms-page">
+@if(session('success'))
+    <div class="alert alert-success rounded-4 small" role="status" aria-live="polite">{{ session('success') }}</div>
+@endif
+@if($errors->any())
+    <div class="alert alert-danger rounded-4 small" role="alert" aria-labelledby="termErrorsHeading">
+        <h2 id="termErrorsHeading" class="h6 fw-bold">Review the executive term details</h2>
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-dark mb-0">Executive Terms Management</h4>
+    <h1 class="h4 fw-bold text-dark mb-0">Executive Terms Management</h1>
     <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTermModal">
-        <i class="fa-solid fa-plus me-1"></i> New Term
+        <i class="fa-solid fa-plus me-1" aria-hidden="true"></i> New Term
     </button>
 </div>
 
@@ -15,17 +30,17 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
+                <caption class="visually-hidden">Executive terms and active status</caption>
                 <thead class="bg-light text-muted extra-small text-uppercase">
                     <tr>
-                        <th class="ps-4">Term Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="ps-4">Term Name</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($terms as $t)
+                    @forelse($terms as $t)
                         <tr class="extra-small">
                             <td class="ps-4 fw-bold text-dark">{{ $t->name }}</td>
                             <td>{{ $t->start_date }}</td>
@@ -35,11 +50,10 @@
                                     {{ $t->is_active ? 'Active' : 'Past' }}
                                 </span>
                             </td>
-                            <td class="text-end pe-4">
-                                <button class="btn btn-sm btn-light border"><i class="fa-solid fa-eye"></i></button>
-                            </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="4" class="text-center text-muted py-4">No executive terms have been defined.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -47,28 +61,28 @@
 </div>
 
 <!-- Add Term Modal -->
-<div class="modal fade" id="addTermModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade" id="addTermModal" tabindex="-1" aria-labelledby="addTermModalTitle" data-reopen-on-error="{{ $errors->any() ? 'true' : 'false' }}">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0">
             <div class="modal-header">
-                <h5 class="fw-bold">Define Executive Term</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h2 class="h5 fw-bold" id="addTermModalTitle">Define Executive Term</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close executive term form"></button>
             </div>
-            <form action="{{ route('admin.terms.store') }}" method="POST">
+            <form action="{{ route('admin.terms.store') }}" method="POST" id="createTermForm">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Term Label (e.g. 2026-2027)</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="termName" class="form-label extra-small fw-bold">Term Label (e.g. 2026-2027)</label>
+                        <input id="termName" type="text" name="name" class="form-control" value="{{ old('name') }}" required>
                     </div>
                     <div class="row g-3">
                         <div class="col-6">
-                            <label class="form-label extra-small fw-bold">Start Date</label>
-                            <input type="date" name="start_date" class="form-control" required>
+                            <label for="termStartDate" class="form-label extra-small fw-bold">Start Date</label>
+                            <input id="termStartDate" type="date" name="start_date" class="form-control" value="{{ old('start_date') }}" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label extra-small fw-bold">End Date</label>
-                            <input type="date" name="end_date" class="form-control" required>
+                            <label for="termEndDate" class="form-label extra-small fw-bold">End Date</label>
+                            <input id="termEndDate" type="date" name="end_date" class="form-control" value="{{ old('end_date') }}" required>
                         </div>
                     </div>
                 </div>
@@ -80,4 +94,5 @@
     </div>
 </div>
 
+</div>
 @endsection

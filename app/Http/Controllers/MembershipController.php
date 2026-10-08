@@ -142,7 +142,9 @@ class MembershipController extends Controller
         }
 
         // Fetch all news/notices & student updates as a social feed
-        $posts = \App\Models\News::orderBy('created_at', 'desc')->get();
+        $posts = \App\Models\News::where('publication_status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         // Real membership fee history for this member
         $feePayments = $member->feePayments()->orderByDesc('paid_on')->get();
@@ -162,6 +164,8 @@ class MembershipController extends Controller
         $accommodations = \App\Models\Accommodation::where('is_active', true)
             ->orderByDesc('created_at')
             ->get();
+        $documents = $member->documents()->latest()->paginate(15, ['*'], 'documents_page')->withQueryString();
+        $documentTypes = config('member_documents.types');
         $resources = \App\Models\StudentResource::where('is_active', true)
             ->orderBy('category')
             ->orderBy('title')
@@ -179,6 +183,8 @@ class MembershipController extends Controller
             'openElections',
             'votedElectionIds',
             'accommodations',
+            'documents',
+            'documentTypes',
             'resources'
         ));
     }

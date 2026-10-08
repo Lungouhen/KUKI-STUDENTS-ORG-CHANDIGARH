@@ -4,8 +4,10 @@
 
 @section('content')
 
+<div class="admin-resources-page">
 @if($errors->any())
-    <div class="alert alert-danger rounded-4 small">
+    <div class="alert alert-danger rounded-4 small" role="alert" aria-labelledby="resourceErrorsHeading">
+        <h2 id="resourceErrorsHeading" class="h6 fw-bold">The resource could not be saved</h2>
         <ul class="mb-0">
             @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
@@ -13,11 +15,14 @@
         </ul>
     </div>
 @endif
+@if(session('success'))
+    <div class="alert alert-success rounded-4 small" role="status" aria-live="polite">{{ session('success') }}</div>
+@endif
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-dark mb-0">Student Academic Resource Library</h4>
+    <h1 class="h4 fw-bold text-dark mb-0">Student Academic Resource Library</h1>
     <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadResourceModal">
-        <i class="fa-solid fa-upload me-1"></i> Upload Resource
+        <i class="fa-solid fa-upload me-1" aria-hidden="true"></i> Upload Resource
     </button>
 </div>
 
@@ -25,14 +30,15 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
+                <caption class="visually-hidden">Student resources, visibility, and download counts</caption>
                 <thead class="bg-light text-muted extra-small text-uppercase">
                     <tr>
-                        <th class="ps-4">Title</th>
-                        <th>Category</th>
-                        <th>File</th>
-                        <th>Downloads</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="ps-4">Title</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">File</th>
+                        <th scope="col">Downloads</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,14 +56,14 @@
                             <td class="text-end pe-4">
                                 <form action="{{ route('admin.resources.toggle', $r->id) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-light border me-1" title="{{ $r->is_active ? 'Hide from portal' : 'Show in portal' }}">
-                                        <i class="fa-solid {{ $r->is_active ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                                    <button type="submit" class="btn btn-sm btn-light border me-1" aria-label="{{ $r->is_active ? 'Hide' : 'Show' }} {{ $r->title }} {{ $r->is_active ? 'from' : 'in' }} the member portal">
+                                        <i class="fa-solid {{ $r->is_active ? 'fa-eye-slash' : 'fa-eye' }}" aria-hidden="true"></i>
                                     </button>
                                 </form>
                                 <form action="{{ route('admin.resources.destroy', $r->id) }}" method="POST" class="d-inline" id="delete-resource-{{ $r->id }}">
                                     @csrf @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-light border text-danger" onclick="confirmDelete('delete-resource-{{ $r->id }}')">
-                                        <i class="fa-solid fa-trash"></i>
+                                    <button type="button" class="btn btn-sm btn-light border text-danger resource-delete-button" data-form-id="delete-resource-{{ $r->id }}" data-confirm-message="Remove {{ $r->title }} from the student resource library?" aria-label="Delete {{ $r->title }}">
+                                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </form>
                             </td>
@@ -75,32 +81,32 @@
 </div>
 
 <!-- Upload Resource Modal -->
-<div class="modal fade" id="uploadResourceModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade" id="uploadResourceModal" tabindex="-1" aria-labelledby="uploadResourceModalTitle" data-reopen-on-error="{{ $errors->any() ? 'true' : 'false' }}">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold">Upload Student Resource</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h2 class="h5 fw-bold" id="uploadResourceModalTitle">Upload Student Resource</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close resource upload form"></button>
             </div>
-            <form action="{{ route('admin.resources.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.resources.store') }}" method="POST" enctype="multipart/form-data" id="uploadResourceForm">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Title</label>
-                        <input type="text" name="title" class="form-control" placeholder="e.g. PU Exam Calendar (2026-2027)" required>
+                        <label for="resourceTitle" class="form-label extra-small fw-bold">Title</label>
+                        <input id="resourceTitle" type="text" name="title" class="form-control" value="{{ old('title') }}" maxlength="255" placeholder="e.g. PU Exam Calendar (2026-2027)" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label extra-small fw-bold">Category</label>
-                        <select name="category" class="form-select" required>
+                        <label for="resourceCategory" class="form-label extra-small fw-bold">Category</label>
+                        <select id="resourceCategory" name="category" class="form-select" required>
                             @foreach(\App\Models\StudentResource::CATEGORIES as $category)
-                                <option value="{{ $category }}">{{ $category }}</option>
+                                <option value="{{ $category }}" @selected(old('category') === $category)>{{ $category }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label extra-small fw-bold">File</label>
-                        <input type="file" name="resourceFile" class="form-control" accept=".pdf,.zip,.doc,.docx,.ppt,.pptx,.xls,.xlsx" required>
-                        <div class="form-text extra-small">PDF, ZIP, Office documents. Max size 20MB.</div>
+                        <label for="resourceFile" class="form-label extra-small fw-bold">File</label>
+                        <input id="resourceFile" type="file" name="resourceFile" class="form-control" accept=".pdf,.zip,.doc,.docx,.ppt,.pptx,.xls,.xlsx" aria-describedby="resourceFileHelp" required>
+                        <div id="resourceFileHelp" class="form-text extra-small">PDF, ZIP, Office documents. Max size 20MB.</div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -111,4 +117,5 @@
     </div>
 </div>
 
+</div>
 @endsection

@@ -1,0 +1,43 @@
+.admin-member-documents-page .card {
+    border-radius: 1rem;
+}
+
+.admin-member-documents-page .table-responsive {
+    border-radius: 0.75rem;
+}
+
+.admin-member-documents-page .table {
+    min-width: 760px;
+}
+
+.admin-member-documents-page .member-document-actions {
+    min-width: 260px;
+}
+
+.admin-member-documents-page .member-document-actions .btn {
+    white-space: nowrap;
+}
+
+.admin-member-documents-page button:focus-visible,
+.admin-member-documents-page a:focus-visible,
+.admin-member-documents-page input:focus-visible,
+.admin-member-documents-page select:focus-visible,
+.admin-member-documents-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-member-documents-page > .d-flex {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .admin-member-documents-page > .d-flex > .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .admin-member-documents-page .card-body {
+        padding: 1rem;
+    }
+}

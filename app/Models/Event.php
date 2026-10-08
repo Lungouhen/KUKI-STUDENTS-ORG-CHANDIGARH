@@ -20,10 +20,13 @@ class Event extends Model
         'status',
         'registration_link',
         'is_featured',
+        'publication_status',
+        'scheduled_publish_at',
     ];
 
     protected $casts = [
         'date' => 'date',
         'is_featured' => 'boolean',
+        'scheduled_publish_at' => 'datetime',
     ];
 }

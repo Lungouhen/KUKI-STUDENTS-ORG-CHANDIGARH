@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GalleryItem extends Model
 {
@@ -20,4 +21,9 @@ class GalleryItem extends Model
     protected $casts = [
         'date' => 'date',
     ];
+
+    public function mediaAsset(): BelongsTo
+    {
+        return $this->belongsTo(MediaAsset::class, 'image_url', 'path');
+    }
 }

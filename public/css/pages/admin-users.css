@@ -1,0 +1,26 @@
+.admin-user-directory-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-user-directory-page .table-responsive {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.admin-user-directory-page .table {
+    min-width: 560px;
+}
+
+.admin-user-directory-page .admin-user-search {
+    width: min(100%, 22rem);
+}
+
+.admin-user-directory-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-user-directory-page .card-header {
+        align-items: stretch !important;
+    }
+}

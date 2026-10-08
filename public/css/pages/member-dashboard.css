@@ -1,0 +1,69 @@
+.member-dashboard-banner {
+    background:
+        radial-gradient(circle at 82% 15%, rgba(255, 191, 0, 0.18), transparent 25%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.member-dashboard-banner h1 {
+    text-wrap: balance;
+}
+
+.member-dashboard-page [x-cloak] {
+    display: none !important;
+}
+
+.member-dashboard-page .portal-tab-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    padding: 0.25rem 0.25rem 0.75rem;
+}
+
+.member-dashboard-page .portal-tab-btn {
+    min-height: 2.75rem;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.member-dashboard-page .portal-tab-btn:focus-visible,
+.member-dashboard-page .social-action-btn:focus-visible,
+.member-dashboard-page .share-tag-pill:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+    z-index: 1;
+}
+
+.member-dashboard-page .share-textarea:focus-visible {
+    outline: 3px solid #0b6fa4;
+    outline-offset: 2px;
+    border-color: #0b6fa4;
+}
+
+.member-dashboard-page .candidate-voter-card:focus-within {
+    outline: 3px solid #0b6fa4;
+    outline-offset: 3px;
+}
+
+.member-dashboard-page .table td {
+    overflow-wrap: anywhere;
+}
+
+.member-dashboard-page .social-action-btn,
+.member-dashboard-page .share-tag-pill {
+    min-height: 2.75rem;
+}
+
+@media (max-width: 575.98px) {
+    .member-dashboard-page.container {
+        margin-block: 1.5rem !important;
+    }
+
+    .member-dashboard-page .portal-tab-nav {
+        margin-inline: -0.5rem;
+    }
+
+    .member-dashboard-page .card.p-4 {
+        padding: 1.25rem !important;
+    }
+}

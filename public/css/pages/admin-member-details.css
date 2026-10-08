@@ -1,0 +1,36 @@
+.admin-member-details-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-member-details-page .table th {
+    width: 35%;
+    white-space: normal;
+}
+
+.admin-member-details-page .table td {
+    overflow-wrap: anywhere;
+}
+
+.admin-member-details-page .table-responsive {
+    border-radius: 0.75rem;
+}
+
+.admin-member-details-page button:focus-visible,
+.admin-member-details-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-member-details-page .card.p-4 {
+        padding: 1.25rem !important;
+    }
+
+    .admin-member-details-page .mt-3.d-flex {
+        flex-wrap: wrap;
+    }
+
+    .admin-member-details-page .mt-3.d-flex > * {
+        flex: 1 1 auto;
+    }
+}

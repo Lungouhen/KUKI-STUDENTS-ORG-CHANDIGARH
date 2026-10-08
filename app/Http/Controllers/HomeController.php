@@ -22,9 +22,14 @@ class HomeController extends Controller
         ];
 
         $committee = CommitteeMember::orderBy('display_order')->take(4)->get();
-        $upcomingEvents = Event::where('status', 'Upcoming')->orderBy('date')->take(3)->get();
+        $upcomingEvents = Event::where('publication_status', 'published')
+            ->where('status', 'Upcoming')
+            ->orderBy('date')
+            ->take(3)
+            ->get();
         $latestNews = News::official()->orderBy('date', 'desc')->take(3)->get();
-        $galleryHighlights = GalleryItem::where('image_url', 'not like', '/images/gallery-%')
+        $galleryHighlights = GalleryItem::with('mediaAsset')
+            ->where('image_url', 'not like', '/images/gallery-%')
             ->orderByDesc('date')
             ->take(6)
             ->get();

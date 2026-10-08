@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="about-page">
 <div class="public-page-banner bg-primary text-white py-5 mb-5">
     <div class="container text-center">
         <h1 class="fw-black display-5 mb-2">About KSO Chandigarh</h1>
@@ -17,7 +18,7 @@
     <div class="row g-5">
         <div class="col-lg-8">
             <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border mb-4">
-                <h3 class="fw-bold text-primary mb-3"><i class="fa-solid fa-landmark me-2"></i> Our History & Founding</h3>
+                <h2 class="fw-bold text-primary mb-3"><i class="fa-solid fa-landmark me-2" aria-hidden="true"></i> Our History & Founding</h2>
                 <p class="text-secondary leading-relaxed">
                     The Kuki Students' Organisation (KSO) Chandigarh branch was established to create a supportive community for youth leaving their home state of Manipur to pursue higher education in Chandigarh, known as "The City Beautiful".
                 </p>
@@ -27,7 +28,7 @@
 
                 <hr class="my-4">
 
-                <h3 class="fw-bold text-teal mb-3" style="color:#0d9488;"><i class="fa-solid fa-bullseye me-2"></i> Mission & Vision</h3>
+                <h2 class="fw-bold text-teal mb-3" style="color:#0d9488;"><i class="fa-solid fa-bullseye me-2" aria-hidden="true"></i> Mission & Vision</h2>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
@@ -45,7 +46,7 @@
 
                 <hr class="my-4">
 
-                <h3 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shield-halved me-2"></i> Constitutional Aims</h3>
+                <h2 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i> Constitutional Aims</h2>
                 <ul class="list-group list-group-flush text-secondary">
                     <li class="list-group-item bg-transparent"><i class="fa-solid fa-check-circle text-success me-2"></i> To foster unity, brotherhood, and discipline among all Kuki students in Chandigarh, Mohali, and Panchkula.</li>
                     <li class="list-group-item bg-transparent"><i class="fa-solid fa-check-circle text-success me-2"></i> To assist freshers during college admissions, hostel allocations, PG accommodations, and city orientation.</li>
@@ -61,7 +62,7 @@
                 <p class="small opacity-90">Need urgent assistance with admissions, PG accommodation, or medical support?</p>
                 <div class="d-grid gap-2">
                     <a href="tel:{{ \App\Models\Setting::get('helpline', '+91 98765 43211') }}" class="btn btn-warning fw-bold text-dark"><i class="fa-solid fa-headset me-2"></i> Call Helpline</a>
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp', '919876543210')) }}" target="_blank" class="btn btn-success fw-bold"><i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Support</a>
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp', '919876543210')) }}" target="_blank" rel="noopener noreferrer" class="btn btn-success fw-bold"><i class="fa-brands fa-whatsapp me-2" aria-hidden="true"></i> WhatsApp Support</a>
                 </div>
             </div>
 
@@ -86,7 +87,7 @@
             @foreach($committee as $c)
                 <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center bg-white hover-lift">
-                        <img src="{{ asset($c->photo ?? '/images/default-avatar-m.png') }}" class="rounded-circle me-3 border border-2 border-primary" style="width: 85px; height: 80px; object-fit: cover;" onerror="this.src='/images/default-avatar-m.png'">
+                        <img src="{{ asset($c->photo ?? '/images/default-avatar-m.png') }}" alt="{{ $c->name }} — {{ $c->designation }}" class="rounded-circle me-3 border border-2 border-primary" style="width: 85px; height: 80px; object-fit: cover;" onerror="this.src='/images/default-avatar-m.png'">
                         <div>
                             <h6 class="fw-bold text-dark mb-1">{{ $c->name }}</h6>
                             <span class="badge bg-teal text-white rounded-pill px-2 py-1 extra-small mb-1 d-inline-block" style="background:#0d9488;">{{ $c->designation }}</span>
@@ -100,4 +101,5 @@
     </div>
 </div>
 
+</div>
 @endsection

@@ -40,6 +40,7 @@
                 <form action="{{ route('admin.membershipForms.print') }}" method="GET" id="membership-form-modules">
                     <fieldset>
                         <legend class="form-label fw-bold">Form sections</legend>
+                        <p id="membership-section-error" class="alert alert-danger small py-2" role="alert" aria-live="assertive" hidden>Choose at least one form section.</p>
                         <div class="row g-2 mb-4">
                             @foreach($modules as $key => $label)
                                 <div class="col-sm-6">
@@ -76,38 +77,4 @@
     </aside>
 </section>
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('membership-form-modules');
-        const checkboxes = Array.from(form.querySelectorAll('input[name="modules[]"]'));
-        const selectAllButton = document.getElementById('select-all-membership-modules');
-        const copyButton = document.getElementById('copy-membership-link');
-        const copyStatus = document.querySelector('.membership-copy-status');
-
-        selectAllButton.addEventListener('click', function () {
-            checkboxes.forEach((checkbox) => { checkbox.checked = true; });
-        });
-
-        form.addEventListener('submit', function (event) {
-            if (!checkboxes.some((checkbox) => checkbox.checked)) {
-                event.preventDefault();
-                checkboxes[0].focus();
-                window.alert('Choose at least one form section.');
-            }
-        });
-
-        copyButton.addEventListener('click', async function () {
-            try {
-                await navigator.clipboard.writeText(copyButton.dataset.copyValue);
-                copyStatus.textContent = 'Link copied.';
-            } catch (error) {
-                const input = document.getElementById('membership-registration-link');
-                input.select();
-                copyStatus.textContent = 'Select and copy the link above.';
-            }
-        });
-    });
-</script>
-@endpush
 @endsection

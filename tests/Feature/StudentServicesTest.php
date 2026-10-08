@@ -18,6 +18,7 @@ class StudentServicesTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Member $member;
 
     protected function setUp(): void
@@ -50,6 +51,27 @@ class StudentServicesTest extends TestCase
         ]);
     }
 
+    public function test_admin_resource_library_has_accessible_table_and_upload_form(): void
+    {
+        StudentResource::create([
+            'title' => 'Exam Preparation Guide',
+            'category' => 'Question Banks',
+            'file_path' => 'uploads/resources/exam-guide.pdf',
+            'file_size' => 2048,
+            'download_count' => 3,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.resources.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-resources.css')
+            ->assertSee('js/pages/admin-resources.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('for="resourceTitle"', false)
+            ->assertSee('aria-label="Hide Exam Preparation Guide from the member portal"', false);
+    }
+
     private function loginAsMember(): void
     {
         $this->withSession(['member_id' => $this->member->id]);
@@ -79,6 +101,58 @@ class StudentServicesTest extends TestCase
         $this->assertTrue($listing->is_active);
         $this->assertStringStartsWith('/storage/uploads/accommodations/', $listing->photo);
         $this->assertDatabaseHas('audit_logs', ['action' => 'CREATE_ACCOMMODATION']);
+    }
+
+    public function test_admin_accommodation_create_form_has_accessible_fields_and_scoped_assets(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.create'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodation-form.css')
+            ->assertSee('js/pages/admin-accommodation-form.js')
+            ->assertSee('for="accommodationName"', false)
+            ->assertSee('for="accommodationPhoto"', false)
+            ->assertSee('id="accommodationPhotoPreview"', false);
+    }
+
+    public function test_admin_accommodation_edit_form_shows_current_photo_and_shared_assets(): void
+    {
+        $listing = Accommodation::create([
+            'name' => 'Campus View Hostel',
+            'type' => 'Hostel',
+            'location' => 'Sector 14, Chandigarh',
+            'rent_monthly' => 6000,
+            'contact_phone' => '+91 90000 33333',
+            'photo' => '/storage/uploads/accommodations/campus-view.jpg',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.edit', $listing->id))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodation-form.css')
+            ->assertSee('js/pages/admin-accommodation-form.js')
+            ->assertSee('alt="Current photo of Campus View Hostel"', false)
+            ->assertSee('for="accommodationName"', false);
+    }
+
+    public function test_admin_accommodation_list_has_accessible_table_actions(): void
+    {
+        Accommodation::create([
+            'name' => 'Panjab Campus Hostel',
+            'type' => 'Hostel',
+            'location' => 'Sector 15, Chandigarh',
+            'rent_monthly' => 5500,
+            'contact_phone' => '+91 90000 22222',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.accommodations.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-accommodations.css')
+            ->assertSee('js/pages/admin-accommodations.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('aria-label="Edit Panjab Campus Hostel"', false)
+            ->assertSee('aria-label="Delete Panjab Campus Hostel"', false);
     }
 
     public function test_admin_can_update_and_hide_accommodation(): void
@@ -309,11 +383,20 @@ class StudentServicesTest extends TestCase
             'author' => 'Portal Student',
             'is_member_post' => true,
         ]);
+        News::create([
+            'title' => 'Unpublished announcement',
+            'category' => 'Notice',
+            'date' => now()->toDateString(),
+            'content' => 'This announcement is still under review.',
+            'author' => 'Executive Desk',
+            'publication_status' => 'review',
+        ]);
 
         $this->loginAsMember();
         $response = $this->get('/members/portal/dashboard');
 
         $response->assertOk();
         $response->assertSee('Hostel tips for freshers.');
+        $response->assertDontSee('This announcement is still under review.');
     }
 }

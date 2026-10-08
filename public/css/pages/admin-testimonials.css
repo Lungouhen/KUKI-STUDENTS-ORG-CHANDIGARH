@@ -1,0 +1,34 @@
+.admin-testimonials-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-testimonials-page .table {
+    min-width: 680px;
+}
+
+.admin-testimonials-page .testimonial-quote {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-testimonials-page button:focus-visible,
+.admin-testimonials-page a:focus-visible,
+.admin-testimonials-page input:focus-visible,
+.admin-testimonials-page select:focus-visible,
+.admin-testimonials-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-testimonials-page .card-body,
+    .admin-testimonials-page .card-header {
+        padding: 1rem !important;
+    }
+
+    .admin-testimonials-page > .row > .col-lg-5 .card {
+        padding: 1.25rem !important;
+    }
+}

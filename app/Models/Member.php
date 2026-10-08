@@ -87,4 +87,14 @@ class Member extends Model
     {
         return $this->hasMany(ElectionVote::class, 'member_id', 'id');
     }
+
+    public function candidacies()
+    {
+        return $this->hasMany(Candidate::class, 'member_id', 'id');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(MemberDocument::class, 'member_id', 'id');
+    }
 }

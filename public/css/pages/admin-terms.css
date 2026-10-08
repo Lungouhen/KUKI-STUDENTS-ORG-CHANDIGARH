@@ -1,0 +1,27 @@
+.admin-terms-page .card,
+.admin-terms-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-terms-page .table-responsive {
+    border-radius: 1rem;
+}
+
+.admin-terms-page .table {
+    min-width: 560px;
+}
+
+.admin-terms-page button:focus-visible,
+.admin-terms-page a:focus-visible,
+.admin-terms-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-terms-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
