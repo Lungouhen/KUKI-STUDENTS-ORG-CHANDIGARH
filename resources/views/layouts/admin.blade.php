@@ -136,12 +136,12 @@
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
     },
     // Dynamic initialization of folder states based on current route
-    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.media*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') ? 'true' : 'false' }},
+    contentOpen: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.gallery*') || request()->routeIs('admin.media*') || request()->routeIs('admin.news*') || request()->routeIs('admin.content*') || request()->routeIs('admin.messages*') || request()->routeIs('admin.events*') || request()->routeIs('admin.faqs*') || request()->routeIs('admin.testimonials*') ? 'true' : 'false' }},
     membersOpen: {{ request()->routeIs('admin.members*') || request()->routeIs('admin.memberDocuments*') || request()->routeIs('admin.memberDocumentTemplates*') || request()->routeIs('admin.membershipForms*') || request()->routeIs('admin.committee*') || request()->routeIs('admin.accommodations*') || request()->routeIs('admin.resources*') ? 'true' : 'false' }},
     ngoOpen: {{ request()->routeIs('admin.partners*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.beneficiaries*') ? 'true' : 'false' }},
     financeOpen: {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.financial*') ? 'true' : 'false' }},
     settingsOpen: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.users*') || request()->routeIs('admin.cache*') || request()->routeIs('admin.seo*') ? 'true' : 'false' }},
-    electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
+    electionsOpen: {{ request()->routeIs('admin.elections*') || request()->routeIs('admin.terms*') || request()->routeIs('admin.audit*') ? 'true' : 'false' }}
 }" :data-bs-theme="darkMode ? 'dark' : 'light'" @keydown.escape.window="sidebarMobileOpen = false">
 
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -217,6 +217,11 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.events.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.events*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-calendar-days"></i> Events Calendar
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.content.index', ['type' => 'notice']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'notice'])) ? 'active' : '' }}">
                                     <i class="fa-solid fa-bullhorn"></i> Notices
                                 </a>
@@ -229,6 +234,16 @@
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.content.index', ['type' => 'career']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.content.index', ['type' => 'career'])) ? 'active' : '' }}">
                                     <i class="fa-solid fa-briefcase"></i> Careers
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.faqs.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.faqs*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-circle-question"></i> FAQ Manager
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.testimonials.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.testimonials*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-quote-left"></i> Testimonials
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
@@ -396,6 +411,11 @@
                             <i class="fa-solid fa-chevron-right chevron-icon" x-show="sidebarOpen"></i>
                         </button>
                         <ul id="elections-submenu" class="sidebar-submenu p-0 m-0 mt-1" x-show="electionsOpen" x-transition x-cloak>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.terms.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.terms*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-calendar-check"></i> Executive Terms
+                                </a>
+                            </li>
                             <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.elections.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.elections*') ? 'active' : '' }}">
                                     <i class="fa-solid fa-check-to-slot"></i> Election Module
