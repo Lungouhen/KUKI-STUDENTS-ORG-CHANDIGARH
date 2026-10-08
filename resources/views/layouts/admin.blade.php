@@ -81,6 +81,9 @@
     @if(request()->routeIs('admin.events.index', 'admin.events.edit'))
         <link href="{{ asset('css/pages/admin-events.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.news.index', 'admin.news.edit'))
+        <link href="{{ asset('css/pages/admin-news.css') }}" rel="stylesheet">
+    @endif
     @if(request()->routeIs('admin.elections.index'))
         <link href="{{ asset('css/pages/admin-elections.css') }}" rel="stylesheet">
     @endif
@@ -531,6 +534,9 @@
     @endif
     @if(request()->routeIs('admin.events.index', 'admin.events.edit'))
         <script src="{{ asset('js/pages/admin-events.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.news.index', 'admin.news.edit'))
+        <script src="{{ asset('js/pages/admin-news.js') }}" defer></script>
     @endif
     @if(request()->routeIs('admin.elections.index'))
         <script src="{{ asset('js/pages/admin-elections.js') }}" defer></script>
