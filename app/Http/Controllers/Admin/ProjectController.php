@@ -3,22 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\AuditLog;
 use App\Models\Project;
 use App\Models\Term;
-use App\Models\AuditLog;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function index()
     {
         $projects = Project::with('term')->orderBy('created_at', 'desc')->paginate(15);
-        return view('admin.projects.index', compact('projects'));
+        $terms = Term::orderByDesc('is_active')->orderByDesc('start_date')->get();
+        $projectTemplates = config('project_templates', []);
+
+        return view('admin.projects.index', compact('projects', 'terms', 'projectTemplates'));
     }
 
     public function create()
     {
         $terms = Term::all();
+
         return view('admin.projects.create', compact('terms'));
     }
 
@@ -26,15 +30,16 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'term_id' => 'required|exists:terms,id',
-            'title' => 'required|string',
-            'budget' => 'required|numeric',
-            'status' => 'required|string',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:10000',
+            'budget' => 'required|numeric|min:0',
+            'status' => 'required|in:Planned,Active,Completed',
         ]);
 
         Project::create([
-            'id' => \App\Models\Project::generateProjectId(),
             'term_id' => $validated['term_id'],
             'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
             'budget' => $validated['budget'],
             'status' => $validated['status'],
         ]);

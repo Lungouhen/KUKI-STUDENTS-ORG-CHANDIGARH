@@ -58,18 +58,33 @@
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label extra-small fw-bold" for="project-template">Start from a built-in template</label>
+                        <select id="project-template" class="form-select">
+                            <option value="">Start from scratch</option>
+                            @foreach($projectTemplates as $key => $template)
+                                <option value="{{ $key }}" data-title="{{ $template['title'] }}" data-description="{{ $template['description'] }}" data-summary="{{ $template['summary'] }}">{{ $template['name'] }}</option>
+                            @endforeach
+                        </select>
+                        <div id="project-template-summary" class="form-text">Choose an optional starting point; you can edit all generated text.</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label extra-small fw-bold">Project Title</label>
-                        <input type="text" name="title" class="form-control" required>
+                        <input type="text" name="title" id="project-title" class="form-control" value="{{ old('title') }}" maxlength="255" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label extra-small fw-bold" for="project-description">Project Description</label>
+                        <textarea name="description" id="project-description" class="form-control" rows="4" maxlength="10000">{{ old('description') }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label extra-small fw-bold">Budget Allocation (₹)</label>
-                        <input type="number" name="budget" class="form-control" value="0">
+                        <input type="number" name="budget" class="form-control" value="{{ old('budget', '0') }}" min="0" step="0.01" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label extra-small fw-bold">Initial Status</label>
-                        <select name="status" class="form-select">
-                            <option>Planned</option>
-                            <option>Active</option>
+                        <select name="status" class="form-select" required>
+                            <option value="Planned" @selected(old('status', 'Planned') === 'Planned')>Planned</option>
+                            <option value="Active" @selected(old('status') === 'Active')>Active</option>
+                            <option value="Completed" @selected(old('status') === 'Completed')>Completed</option>
                         </select>
                     </div>
                 </div>
@@ -82,3 +97,24 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const templateSelect = document.getElementById('project-template');
+    const templateSummary = document.getElementById('project-template-summary');
+
+    templateSelect?.addEventListener('change', () => {
+        const template = templateSelect.selectedOptions[0];
+        if (!template.value) {
+            templateSummary.textContent = 'Choose an optional starting point; you can edit all generated text.';
+            return;
+        }
+
+        document.getElementById('project-title').value = template.dataset.title || '';
+        document.getElementById('project-description').value = template.dataset.description || '';
+        templateSummary.textContent = template.dataset.summary || '';
+    });
+});
+</script>
+@endpush
