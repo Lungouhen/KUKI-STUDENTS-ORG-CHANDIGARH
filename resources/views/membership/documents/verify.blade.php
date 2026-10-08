@@ -6,21 +6,28 @@
     <meta name="robots" content="noindex,nofollow">
     <title>Certificate verification | KSO Chandigarh</title>
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pages/certificate-verification.css') }}" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <main class="container py-5" style="max-width: 680px;">
+<body class="certificate-verification-page bg-light">
+    <main class="container py-5">
         <section class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
                 <p class="text-uppercase small fw-bold text-primary mb-2">Kuki Students’ Organisation Chandigarh</p>
                 @if(!$document)
-                    <h1 class="h3 text-muted">Certificate not found</h1>
-                    <p class="text-muted">No issued certificate matches this certificate number.</p>
+                    <div class="verification-status verification-status--missing" role="alert">
+                        <h1 class="h3">Certificate not found</h1>
+                        <p class="mb-0">No issued certificate matches this certificate number.</p>
+                    </div>
                 @elseif($document->status === 'issued')
-                    <h1 class="h3 text-success">✓ Valid certificate</h1>
-                    <p class="text-muted">This certificate number matches an active record in the organisation’s register.</p>
+                    <div class="verification-status verification-status--valid" role="status" aria-live="polite">
+                        <h1 class="h3">Valid certificate</h1>
+                        <p class="mb-0">This certificate number matches an active record in the organisation’s register.</p>
+                    </div>
                 @else
-                    <h1 class="h3 text-danger">Certificate revoked</h1>
-                    <p class="text-muted">This certificate is no longer valid. Contact KSO Chandigarh if you need more information.</p>
+                    <div class="verification-status verification-status--revoked" role="status" aria-live="polite">
+                        <h1 class="h3">Certificate revoked</h1>
+                        <p class="mb-0">This certificate is no longer valid. Contact KSO Chandigarh if you need more information.</p>
+                    </div>
                 @endif
                 @if($document)
                 <dl class="row mt-4 mb-0">

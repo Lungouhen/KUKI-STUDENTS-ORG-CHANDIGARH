@@ -138,6 +138,8 @@ class MemberDocumentTest extends TestCase
         $document->refresh();
         $this->get(route('documents.verify', $document->certificate_number))
             ->assertOk()
+            ->assertSee('css/pages/certificate-verification.css')
+            ->assertSee('role="status"', false)
             ->assertSee('Valid certificate')
             ->assertSee($this->member->full_name)
             ->assertDontSee($this->member->email)
