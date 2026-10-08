@@ -4,6 +4,7 @@
     const preview = document.getElementById('committeeEditPhotoPreview');
     const previewImage = document.getElementById('committeeEditPhotoPreviewImage');
     const previewStatus = document.getElementById('committeeEditPhotoPreviewStatus');
+    const previewableImageTypes = new Set(['image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/webp']);
     let previewUrl;
 
     photoInput?.addEventListener('change', () => {
@@ -14,7 +15,7 @@
             previewUrl = undefined;
         }
 
-        if (!file || !file.type.startsWith('image/') || !preview || !previewImage) {
+        if (!file || !previewableImageTypes.has(file.type) || !preview || !previewImage) {
             if (preview) {
                 preview.hidden = true;
             }
