@@ -1,0 +1,35 @@
+.admin-committee-edit-page .card {
+    max-width: 900px;
+    border-radius: 1rem !important;
+}
+
+.admin-committee-edit-page button:focus-visible,
+.admin-committee-edit-page a:focus-visible,
+.admin-committee-edit-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+.admin-committee-edit-page .committee-current-photo img,
+.admin-committee-edit-page .committee-photo-preview img {
+    width: min(100%, 12rem);
+    max-height: 9rem;
+    border-radius: 0.75rem;
+    object-fit: cover;
+}
+
+.admin-committee-edit-page .committee-photo-preview[hidden] {
+    display: none;
+}
+
+@media (max-width: 575.98px) {
+    .admin-committee-edit-page .card {
+        padding: 1rem !important;
+    }
+
+    .admin-committee-edit-page .border-bottom {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
