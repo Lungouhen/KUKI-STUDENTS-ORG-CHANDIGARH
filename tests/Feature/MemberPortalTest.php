@@ -49,6 +49,17 @@ class MemberPortalTest extends TestCase
         $this->withSession(['member_id' => $this->member->id]);
     }
 
+    public function test_portal_login_page_has_labeled_fields_and_scoped_assets(): void
+    {
+        $this->get(route('membership.portal'))
+            ->assertOk()
+            ->assertSee('css/pages/member-login.css')
+            ->assertSee('js/pages/member-login.js')
+            ->assertSee('for="member-identifier"', false)
+            ->assertSee('for="member-dob"', false)
+            ->assertSee('id="member-login-status"', false);
+    }
+
     private function makeOngoingElection(): array
     {
         $term = Term::create([
