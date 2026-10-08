@@ -55,6 +55,18 @@
                 <label class="form-label fw-bold">Event Poster / Image</label>
                 <input type="file" name="imageFile" class="form-control" accept="image/*">
             </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Editorial status</label>
+                <select name="publication_status" class="form-select">
+                    @foreach(['published' => 'Published', 'draft' => 'Draft', 'review' => 'In review', 'scheduled' => 'Scheduled'] as $value => $label)
+                        <option value="{{ $value }}" @selected(old('publication_status', $event->publication_status) === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Publish at (scheduled only)</label>
+                <input type="datetime-local" name="scheduled_publish_at" class="form-control" value="{{ old('scheduled_publish_at', $event->scheduled_publish_at?->format('Y-m-d\TH:i')) }}">
+            </div>
             <div class="col-12 mt-4 text-end">
                 <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold"><i class="fa-solid fa-save me-2"></i> Update Event</button>
             </div>

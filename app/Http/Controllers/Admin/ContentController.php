@@ -30,7 +30,7 @@ class ContentController extends Controller
         }
 
         $status = $request->query('status', 'all');
-        if (! in_array($status, ['all', 'published', 'draft'], true)) {
+        if (! is_string($status) || ! in_array($status, ['all', 'published', 'draft', 'review', 'scheduled'], true)) {
             $status = 'all';
         }
 
@@ -38,7 +38,7 @@ class ContentController extends Controller
         $search = is_string($search) ? mb_substr(trim($search), 0, 100) : '';
         $contents = GeneralContent::with('mediaAsset')
             ->where('type', $type)
-            ->when($status !== 'all', fn ($query) => $query->where('is_published', $status === 'published'))
+            ->when($status !== 'all', fn ($query) => $query->where('publication_status', $status))
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('title', 'like', '%'.$search.'%')
@@ -66,6 +66,8 @@ class ContentController extends Controller
             'imageFile' => 'nullable|image|max:5120',
             'image_asset_path' => ['nullable', 'string', Rule::exists('media_assets', 'path')],
             'alt_text' => 'required_with:imageFile|nullable|string|max:255',
+            'publication_status' => ['sometimes', Rule::in(['draft', 'review', 'scheduled', 'published'])],
+            'scheduled_publish_at' => 'required_if:publication_status,scheduled|nullable|date|after:now',
         ]);
 
         $asset = $request->file('imageFile')
@@ -79,6 +81,10 @@ class ContentController extends Controller
             'link' => $data['link'] ?? null,
             'image' => $asset?->path ?? $data['image_asset_path'] ?? null,
             'display_order' => GeneralContent::where('type', $data['type'])->max('display_order') + 1,
+            'publication_status' => $data['publication_status'] ?? 'published',
+            'scheduled_publish_at' => ($data['publication_status'] ?? 'published') === 'scheduled'
+                ? $data['scheduled_publish_at']
+                : null,
         ]);
 
         AuditLog::log('CREATE_CONTENT', "Type: {$data['type']}, Title: {$data['title']}");
@@ -92,7 +98,8 @@ class ContentController extends Controller
             'type' => ['required', Rule::in(array_keys(self::TITLES))],
             'ids' => 'required|array|min:1|max:100',
             'ids.*' => 'required|integer|distinct|exists:general_contents,id',
-            'action' => ['required', Rule::in(['publish', 'unpublish', 'delete', 'reorder'])],
+            'action' => ['required', Rule::in(['publish', 'unpublish', 'draft', 'review', 'scheduled', 'delete', 'reorder'])],
+            'scheduled_publish_at' => 'required_if:action,scheduled|nullable|date|after:now',
             'display_orders' => 'required_if:action,reorder|nullable|array',
             'display_orders.*' => 'required_if:action,reorder|nullable|integer|min:0',
         ]);
@@ -118,7 +125,11 @@ class ContentController extends Controller
                     }
                     $content->update(['display_order' => $displayOrder]);
                 } else {
-                    $content->update(['is_published' => $data['action'] === 'publish']);
+                    $status = $data['action'] === 'unpublish' ? 'draft' : $data['action'];
+                    $content->update([
+                        'publication_status' => $status,
+                        'scheduled_publish_at' => $status === 'scheduled' ? $data['scheduled_publish_at'] : null,
+                    ]);
                 }
             }
 

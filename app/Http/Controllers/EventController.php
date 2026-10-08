@@ -13,7 +13,7 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $category = $request->query('category');
-        $query = Event::query();
+        $query = Event::where('publication_status', 'published');
 
         if ($category && $category !== 'All') {
             $query->where('category', $category);
@@ -27,13 +27,13 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::findOrFail($id);
+        $event = Event::where('publication_status', 'published')->findOrFail($id);
         return view('events.show', compact('event'));
     }
 
     public function registerAttendee(Request $request, $id)
     {
-        $event = Event::findOrFail($id);
+        $event = Event::where('publication_status', 'published')->findOrFail($id);
 
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',

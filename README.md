@@ -83,7 +83,7 @@ php artisan serve
 
 Use `php artisan kso:deploy --seed` only when you intentionally want the project's sample data. Seeding does not create or reset admin accounts. To add another admin, run `php artisan kso:admin:create` with that person's unique email. Existing accounts are never promoted, renamed, or assigned a new password by this command or by seeding.
 
-Scheduled CMS pages are published by Laravel's scheduler. Configure the host to run `php artisan schedule:run` once per minute (for example, with the standard Laravel scheduler cron entry) for scheduled publication to take effect.
+Scheduled CMS pages, news, events, and reusable content are published by Laravel's scheduler. Configure the host to run `php artisan schedule:run` once per minute (for example, with the standard Laravel scheduler cron entry) for scheduled publication to take effect.
 
 ## 🧪 Testing
 

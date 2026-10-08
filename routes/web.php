@@ -188,6 +188,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Events
     Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
     Route::post('/events', [AdminEventController::class, 'store'])->name('events.store');
+    Route::post('/events/bulk', [AdminEventController::class, 'bulk'])->name('events.bulk');
     Route::get('/events/{id}/edit', [AdminEventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{id}', [AdminEventController::class, 'update'])->name('events.update');
     Route::delete('/events/{id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
@@ -195,6 +196,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // News
     Route::get('/news', [AdminNewsController::class, 'index'])->name('news.index');
     Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
+    Route::post('/news/bulk', [AdminNewsController::class, 'bulk'])->name('news.bulk');
     Route::get('/news/{id}/edit', [AdminNewsController::class, 'edit'])->name('news.edit');
     Route::put('/news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
     Route::delete('/news/{id}', [AdminNewsController::class, 'destroy'])->name('news.destroy');

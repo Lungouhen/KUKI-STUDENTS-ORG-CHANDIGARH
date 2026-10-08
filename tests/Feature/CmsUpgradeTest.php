@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\GalleryItem;
+use App\Models\Event;
 use App\Models\GeneralContent;
 use App\Models\MediaAsset;
+use App\Models\News;
 use App\Models\Page;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -262,6 +264,155 @@ class CmsUpgradeTest extends TestCase
             ->assertRedirect();
 
         $this->assertSame('Students at health camp', $asset->fresh()->alt_text);
+    }
+
+    public function test_public_news_and_events_only_show_published_items(): void
+    {
+        News::create([
+            'title' => 'Public announcement',
+            'category' => 'Notice',
+            'date' => now()->toDateString(),
+            'content' => 'Public news content',
+            'publication_status' => 'published',
+        ]);
+        News::create([
+            'title' => 'Review announcement',
+            'category' => 'Notice',
+            'date' => now()->toDateString(),
+            'content' => 'Private news content',
+            'publication_status' => 'review',
+        ]);
+        News::create([
+            'title' => 'Member-only portal post',
+            'category' => 'Community',
+            'date' => now()->toDateString(),
+            'content' => 'Member post',
+            'is_member_post' => true,
+            'publication_status' => 'published',
+        ]);
+
+        $publishedEvent = $this->event([
+            'title' => 'Published event',
+            'publication_status' => 'published',
+        ]);
+        $draftEvent = $this->event([
+            'title' => 'Draft event',
+            'publication_status' => 'draft',
+        ]);
+
+        $this->get(route('events.index'))
+            ->assertOk()
+            ->assertSee('Public announcement')
+            ->assertSee('Published event')
+            ->assertDontSee('Review announcement')
+            ->assertDontSee('Member-only portal post')
+            ->assertDontSee('Draft event');
+
+        $this->get(route('events.show', $draftEvent->id))->assertNotFound();
+        $this->post(route('events.registerAttendee', $draftEvent->id), [
+            'full_name' => 'Test Visitor',
+            'email' => 'visitor@example.org',
+            'phone' => '1234567890',
+            'institution' => 'Test College',
+        ])->assertNotFound();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Public announcement')
+            ->assertSee('Published event')
+            ->assertDontSee('Review announcement')
+            ->assertDontSee('Draft event');
+    }
+
+    public function test_news_events_and_general_content_support_editorial_states(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.news.store'), [
+            'title' => 'News awaiting review',
+            'category' => 'Academic',
+            'content' => 'Review content',
+            'publication_status' => 'review',
+        ])->assertRedirect();
+
+        $news = News::where('title', 'News awaiting review')->firstOrFail();
+        $this->assertSame('review', $news->publication_status);
+        $this->get(route('events.index'))->assertDontSee('News awaiting review');
+
+        $eventResponse = $this->post(route('admin.events.store'), [
+            'title' => 'Scheduled campus event',
+            'category' => 'Academic',
+            'date' => now()->addWeek()->toDateString(),
+            'time' => '10:00 AM',
+            'venue' => 'Campus',
+            'description' => 'Planned event details',
+            'status' => 'Upcoming',
+            'publication_status' => 'scheduled',
+            'scheduled_publish_at' => now()->addMinutes(20)->toDateTimeString(),
+        ]);
+        $eventResponse->assertRedirect();
+        $event = Event::where('title', 'Scheduled campus event')->firstOrFail();
+        $this->assertSame('scheduled', $event->publication_status);
+        $this->get(route('events.show', $event->id))->assertNotFound();
+
+        $this->actingAs($this->admin)->post(route('admin.content.store'), [
+            'type' => 'notice',
+            'title' => 'Draft reusable notice',
+            'content' => 'Not public yet',
+            'publication_status' => 'draft',
+        ])->assertRedirect();
+        $content = GeneralContent::where('title', 'Draft reusable notice')->firstOrFail();
+        $this->assertSame('draft', $content->publication_status);
+        $this->assertFalse($content->is_published);
+    }
+
+    public function test_global_scheduled_publisher_publishes_news_events_and_reusable_content(): void
+    {
+        $publishAt = now()->addMinutes(5)->startOfMinute();
+        $news = News::create([
+            'title' => 'Scheduled announcement',
+            'category' => 'Notice',
+            'date' => now()->toDateString(),
+            'content' => 'Scheduled news',
+            'publication_status' => 'scheduled',
+            'scheduled_publish_at' => $publishAt,
+        ]);
+        $event = $this->event([
+            'title' => 'Scheduled event',
+            'publication_status' => 'scheduled',
+            'scheduled_publish_at' => $publishAt,
+        ]);
+        $content = GeneralContent::create([
+            'type' => 'notice',
+            'title' => 'Scheduled reusable content',
+            'publication_status' => 'scheduled',
+            'scheduled_publish_at' => $publishAt,
+        ]);
+
+        $this->travelTo($publishAt->copy()->addMinute());
+        $this->artisan('cms:publish-scheduled')
+            ->expectsOutput('Published 0 page(s), 1 news item(s), 1 event(s), and 1 content item(s).')
+            ->assertExitCode(0);
+
+        $this->assertSame('published', $news->fresh()->publication_status);
+        $this->assertSame('published', $event->fresh()->publication_status);
+        $this->assertSame('published', $content->fresh()->publication_status);
+        $this->assertTrue($content->fresh()->is_published);
+        $this->assertNull($news->fresh()->scheduled_publish_at);
+        $this->assertNull($event->fresh()->scheduled_publish_at);
+        $this->assertNull($content->fresh()->scheduled_publish_at);
+    }
+
+    private function event(array $overrides = []): Event
+    {
+        return Event::create(array_merge([
+            'title' => 'Test event',
+            'category' => 'Cultural',
+            'date' => now()->addWeek()->toDateString(),
+            'time' => '10:00 AM',
+            'venue' => 'Campus',
+            'description' => 'Test event details',
+            'status' => 'Upcoming',
+            'publication_status' => 'published',
+        ], $overrides));
     }
 
     private function mediaAsset(string $path, string $altText): MediaAsset

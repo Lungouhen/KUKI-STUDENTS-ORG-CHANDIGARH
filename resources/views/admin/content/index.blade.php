@@ -18,7 +18,7 @@
             <div class="col-md-3">
                 <label class="visually-hidden" for="content-status">Filter publication status</label>
                 <select id="content-status" name="status" class="form-select form-select-sm">
-                    @foreach(['all' => 'All statuses', 'published' => 'Published', 'draft' => 'Unpublished'] as $value => $label)
+                    @foreach(['all' => 'All statuses', 'published' => 'Published', 'draft' => 'Draft', 'review' => 'In review', 'scheduled' => 'Scheduled'] as $value => $label)
                         <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -36,9 +36,12 @@
                 <option value="">Choose action</option>
                 <option value="publish">Publish</option>
                 <option value="unpublish">Unpublish</option>
+                <option value="review">Send to review</option>
+                <option value="scheduled">Schedule</option>
                 <option value="reorder">Save order</option>
                 <option value="delete">Delete</option>
             </select>
+            <input type="datetime-local" name="scheduled_publish_at" class="form-control form-control-sm" style="max-width:210px" aria-label="Scheduled publish time">
             <button class="btn btn-sm btn-outline-primary">Apply</button>
             <span class="small text-muted">Set display order below and select those rows to reorder.</span>
         </div>
@@ -69,7 +72,10 @@
                                     <td>{{ Str::limit($content->content, 50) }}</td>
                                 @endif
                                 <td><input type="number" name="display_orders[{{ $content->id }}]" value="{{ $content->display_order }}" min="0" class="form-control form-control-sm" style="width:90px" aria-label="Display order for {{ $content->title }}"></td>
-                                <td><span class="badge {{ $content->is_published ? 'bg-success' : 'bg-secondary' }}">{{ $content->is_published ? 'Yes' : 'No' }}</span></td>
+                                <td>
+                                    <span class="badge {{ $content->publication_status === 'published' ? 'bg-success' : 'bg-secondary' }}">{{ ucfirst($content->publication_status) }}</span>
+                                    @if($content->scheduled_publish_at)<small class="d-block">{{ $content->scheduled_publish_at->format('Y-m-d H:i') }}</small>@endif
+                                </td>
                                 <td class="text-end pe-4"><span class="text-muted">Use bulk actions</span></td>
                             </tr>
                         @empty
@@ -111,6 +117,15 @@
                     </div>
                     <div class="mb-3"><label class="form-label extra-small fw-bold">Or upload image</label><input type="file" name="imageFile" class="form-control" accept="image/*"></div>
                     <div class="mb-3"><label class="form-label extra-small fw-bold">Alternative text for uploaded image</label><input type="text" name="alt_text" class="form-control" maxlength="255"></div>
+                    <div class="mb-3">
+                        <label class="form-label extra-small fw-bold">Editorial status</label>
+                        <select name="publication_status" class="form-select">
+                            @foreach(['published' => 'Publish now', 'draft' => 'Draft', 'review' => 'In review', 'scheduled' => 'Scheduled'] as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label extra-small fw-bold">Publish at (scheduled only)</label><input type="datetime-local" name="scheduled_publish_at" class="form-control"></div>
                 </div>
                 <div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100 fw-bold shadow">Save Content</button></div>
             </form>
