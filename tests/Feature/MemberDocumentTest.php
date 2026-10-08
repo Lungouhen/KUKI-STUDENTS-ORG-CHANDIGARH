@@ -112,6 +112,10 @@ class MemberDocumentTest extends TestCase
         $this->withSession(['member_id' => $this->member->id])
             ->get(route('membership.documents.show', $document->id))
             ->assertOk()
+            ->assertSee('css/pages/member-certificate.css')
+            ->assertSee('js/pages/member-certificate.js')
+            ->assertSee('aria-label="Certificate actions"', false)
+            ->assertSee('id="printMemberCertificate"', false)
             ->assertSee('&lt;script&gt;', false)
             ->assertDontSee('University accommodation application');
 

@@ -5,34 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>{{ $document->typeLabel() }} · {{ $document->member_snapshot['full_name'] }}</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 24px; background: #eef2f7; color: #17233b; font: 16px/1.6 Georgia, "Times New Roman", serif; }
-        .toolbar { max-width: 980px; margin: 0 auto 16px; display: flex; justify-content: space-between; font: 14px Arial, sans-serif; }
-        .certificate { position: relative; max-width: 980px; min-height: 680px; margin: auto; padding: 56px 70px; background: #fff; border: 12px double var(--certificate-color, #17365d); box-shadow: 0 12px 40px #14243b22; text-align: center; }
-        .logo { width: 86px; height: 86px; object-fit: contain; }
-        .org { margin: 10px 0 0; color: #17365d; font: bold 14px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
-        h1 { margin: 34px 0 8px; color: #17365d; font-size: 34px; text-transform: uppercase; letter-spacing: .06em; }
-        .lead { color: #68758b; font: 14px Arial, sans-serif; }
-        .name { margin: 20px 0; font-size: 32px; font-weight: bold; }
-        .body { max-width: 700px; margin: 0 auto; font-size: 19px; }
-        .details { max-width: 700px; margin: 20px auto 0; font-size: 17px; white-space: pre-line; }
-        .member { margin: 22px 0; color: #46536a; font: 14px/1.8 Arial, sans-serif; }
-        .bottom { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-top: 60px; font: 12px Arial, sans-serif; text-align: left; }
-        .signature { min-width: 220px; padding-top: 10px; border-top: 1px solid #59677b; text-align: center; }
-        .verification { max-width: 300px; overflow-wrap: anywhere; color: #526078; }
-        .verification img { width: 86px; height: 86px; margin-top: 8px; }
-        .certificate.blue { --certificate-color: #175ea8; }
-        .certificate.forest { --certificate-color: #246b4b; }
-        @media (max-width: 700px) { body { padding: 10px; } .certificate { min-height: 0; padding: 30px 20px; } .bottom { flex-direction: column; align-items: stretch; } h1 { font-size: 25px; } .name { font-size: 25px; } }
-        @media print { body { padding: 0; background: #fff; } .toolbar { display: none; } .certificate { max-width: none; min-height: 100vh; border-width: 10px; box-shadow: none; break-inside: avoid; } }
-    </style>
+    <link href="{{ asset('css/pages/member-certificate.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/pages/member-certificate.js') }}" defer></script>
 </head>
 <body>
-    <div class="toolbar">
+    <nav class="toolbar" aria-label="Certificate actions">
         <a href="{{ !empty($adminPreview) ? route('admin.members.show', $document->member_id) : route('membership.portalDashboard') }}">← {{ !empty($adminPreview) ? 'Return to member profile' : 'Return to member portal' }}</a>
-        <button type="button" onclick="window.print()">Print / Save as PDF</button>
-    </div>
+        <button type="button" id="printMemberCertificate">Print / Save as PDF</button>
+    </nav>
     @php
         $snapshot = $document->content_snapshot ?? [];
         $verificationUrl = $snapshot['verification_url'] ?? secure_url(route('documents.verify', $document->certificate_number, false));
