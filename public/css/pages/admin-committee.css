@@ -1,0 +1,28 @@
+.admin-committee-page .card {
+    border-radius: 1rem !important;
+}
+
+.admin-committee-page .table-responsive {
+    border-radius: 1rem;
+}
+
+.admin-committee-page .table {
+    min-width: 680px;
+}
+
+.admin-committee-page .committee-designation {
+    background: #0d9488;
+}
+
+.admin-committee-page button:focus-visible,
+.admin-committee-page a:focus-visible,
+.admin-committee-page input:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-committee-page .card.p-4 {
+        padding: 1rem !important;
+    }
+}
