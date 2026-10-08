@@ -4,17 +4,18 @@
 
 @section('content')
 
+<div class="admin-login-page">
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-5 col-lg-4">
             <div class="card shadow-lg border-0 rounded-4 p-4 text-center">
                 <div class="icon-circle bg-teal text-white mx-auto mb-3 fs-3" style="background:#0d9488;">
-                    <i class="fa-solid fa-user-shield"></i>
+                    <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                 </div>
-                <h4 class="fw-bold text-dark mb-1">CMS Admin Login</h4>
+                <h1 class="h3 fw-bold text-dark mb-1">CMS Admin Login</h1>
                 <p class="text-muted extra-small mb-4">KSO Chandigarh Management Portal</p>
 
-                <form action="{{ route('admin.login.post') }}" method="POST">
+                <form action="{{ route('admin.login.post') }}" method="POST" id="adminLoginForm">
                     @csrf
                     <div class="mb-3 text-start">
                         <label for="admin-email" class="form-label fw-bold">Admin Email</label>
@@ -27,12 +28,14 @@
                         @error('password')<div id="admin-password-error" class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <button type="submit" class="btn btn-teal text-white btn-lg w-100 fw-bold shadow-sm" style="background:#0d9488;">
-                        Sign In <i class="fa-solid fa-right-to-bracket ms-1"></i>
+                        <span id="admin-login-label">Sign In</span> <i class="fa-solid fa-right-to-bracket ms-1" aria-hidden="true"></i>
                     </button>
+                    <span class="visually-hidden" id="admin-login-status" role="status" aria-live="polite"></span>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+</div>
 @endsection

@@ -61,6 +61,9 @@
     @if(request()->routeIs('membership.idCard'))
         <link href="{{ asset('css/pages/member-id-card.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.login'))
+        <link href="{{ asset('css/pages/admin-login.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -169,6 +172,8 @@
         <script src="{{ asset('js/pages/member-dashboard.js') }}" defer></script>
     @elseif(request()->routeIs('membership.idCard'))
         <script src="{{ asset('js/pages/member-id-card.js') }}" defer></script>
+    @elseif(request()->routeIs('admin.login'))
+        <script src="{{ asset('js/pages/admin-login.js') }}" defer></script>
     @endif
 
     <script>

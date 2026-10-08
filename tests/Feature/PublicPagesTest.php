@@ -231,6 +231,8 @@ class PublicPagesTest extends TestCase
     {
         $this->get('/admin/login')
             ->assertOk()
+            ->assertSee('css/pages/admin-login.css')
+            ->assertSee('js/pages/admin-login.js')
             ->assertDontSee('admin123')
             ->assertDontSee('value="admin@ksochandigarh.org"', false)
             ->assertSee('for="admin-email"', false)
