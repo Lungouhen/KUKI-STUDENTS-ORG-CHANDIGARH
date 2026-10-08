@@ -41,10 +41,13 @@ class ProjectTemplatesTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.projects.index'));
 
         $response->assertOk();
+        $response->assertSee('css/pages/admin-projects.css');
+        $response->assertSee('js/pages/admin-projects.js');
         $response->assertSee('Start from a built-in template');
         $response->assertSee('Student Support');
         $response->assertSee('Career Readiness');
         $response->assertSee('2026-2027');
+        $response->assertDontSee('View Details');
     }
 
     public function test_project_creation_saves_description_and_budget(): void

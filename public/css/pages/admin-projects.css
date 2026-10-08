@@ -1,0 +1,29 @@
+.admin-projects-page .card,
+.admin-projects-page .modal-content {
+    border-radius: 1rem !important;
+}
+
+.admin-projects-page .project-status {
+    white-space: nowrap;
+}
+
+.admin-projects-page button:focus-visible,
+.admin-projects-page a:focus-visible,
+.admin-projects-page input:focus-visible,
+.admin-projects-page select:focus-visible,
+.admin-projects-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-projects-page > .d-flex {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .admin-projects-page .card-body {
+        padding: 1.25rem !important;
+    }
+}
