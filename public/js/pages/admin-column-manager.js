@@ -15,7 +15,7 @@
             const headerCells = Array.from(table.tHead.rows[table.tHead.rows.length - 1].cells);
             const bodyRows = table.tBodies.length ? Array.from(table.tBodies).flatMap((body) => Array.from(body.rows)) : [];
 
-            if (headerCells.length < 2 || bodyRows.length === 0) {
+            if (headerCells.length < 2) {
                 return;
             }
 
