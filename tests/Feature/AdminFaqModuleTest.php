@@ -86,4 +86,21 @@ class AdminFaqModuleTest extends TestCase
             ->assertSee('Revised FAQ')
             ->assertSee('aria-describedby="faqAnswerError"', false);
     }
+
+    public function test_faq_list_paginates_large_registers(): void
+    {
+        foreach (range(1, 16) as $index) {
+            Faq::create([
+                'question' => "FAQ question {$index}",
+                'answer' => "FAQ answer {$index}",
+                'category' => 'Membership',
+                'sort_order' => $index,
+            ]);
+        }
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.faqs.index'))
+            ->assertOk()
+            ->assertSee('page=2');
+    }
 }

@@ -11,7 +11,7 @@
             <ul class="mb-0">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
-                @endforelse
+                @endforeach
             </ul>
         </div>
     @endif
@@ -58,7 +58,7 @@
                                 <tr data-faq-empty>
                                     <td colspan="3" class="text-center py-4 text-muted">No FAQs have been added yet.</td>
                                 </tr>
-                            @endforeach
+                            @endforelse
                             <tr data-faq-no-results hidden>
                                 <td colspan="3" class="text-center py-4 text-muted">No FAQs match your search on this page.</td>
                             </tr>
