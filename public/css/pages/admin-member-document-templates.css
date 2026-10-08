@@ -1,0 +1,26 @@
+.admin-member-document-templates-page .card {
+    border-radius: 1rem;
+}
+
+.admin-member-document-templates-page .table-responsive {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.admin-member-document-templates-page .table {
+    min-width: 560px;
+}
+
+.admin-member-document-templates-page button:focus-visible,
+.admin-member-document-templates-page a:focus-visible,
+.admin-member-document-templates-page input:focus-visible,
+.admin-member-document-templates-page select:focus-visible,
+.admin-member-document-templates-page textarea:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .admin-member-document-templates-page .card-body {
+        padding: 1rem;
+    }
+}

@@ -64,6 +64,17 @@ class MemberDocumentGenerationTest extends TestCase
             ->assertSessionHasErrors('statement');
     }
 
+    public function test_admin_template_history_page_has_accessible_scoped_assets(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.memberDocumentTemplates.index'))
+            ->assertOk()
+            ->assertSee('css/pages/admin-member-document-templates.css')
+            ->assertSee('js/pages/admin-member-document-templates.js')
+            ->assertSee('aria-describedby="template-placeholder-help"', false)
+            ->assertSee('scope="col"', false);
+    }
+
     public function test_template_changes_create_versions_without_rewriting_issued_content(): void
     {
         $template = $this->activeTemplate();
