@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="home-page">
 <!-- Hero Section -->
 <div class="hero-section position-relative py-5">
     <div class="container position-relative py-4">
@@ -63,7 +64,7 @@
                 <div class="icon-circle bg-primary-lt mx-auto mb-3 text-primary fs-3">
                     <i class="fa-solid fa-users"></i>
                 </div>
-                <h3 class="fw-bold text-primary mb-1"><span class="counter">{{ $stats['membersCount'] }}</span><span>+</span></h3>
+                <h3 class="fw-bold text-primary mb-1" aria-label="{{ number_format($stats['membersCount']) }}+ active members"><span class="counter" data-counter-target="{{ $stats['membersCount'] }}" aria-hidden="true">{{ $stats['membersCount'] }}</span><span aria-hidden="true">+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Active Members</p>
             </div>
         </div>
@@ -72,7 +73,7 @@
                 <div class="icon-circle bg-success-lt mx-auto mb-3 text-success fs-3">
                     <i class="fa-solid fa-university"></i>
                 </div>
-                <h3 class="fw-bold text-success mb-1"><span class="counter">{{ $stats['collegesCount'] }}</span><span>+</span></h3>
+                <h3 class="fw-bold text-success mb-1" aria-label="{{ number_format($stats['collegesCount']) }}+ colleges and universities"><span class="counter" data-counter-target="{{ $stats['collegesCount'] }}" aria-hidden="true">{{ $stats['collegesCount'] }}</span><span aria-hidden="true">+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Colleges & Universities</p>
             </div>
         </div>
@@ -81,7 +82,7 @@
                 <div class="icon-circle bg-warning-lt mx-auto mb-3 text-warning fs-3">
                     <i class="fa-solid fa-calendar-days"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1"><span class="counter">{{ $stats['eventsCount'] }}</span><span>+</span></h3>
+                <h3 class="fw-bold text-dark mb-1" aria-label="{{ number_format($stats['eventsCount']) }}+ annual events held"><span class="counter" data-counter-target="{{ $stats['eventsCount'] }}" aria-hidden="true">{{ $stats['eventsCount'] }}</span><span aria-hidden="true">+</span></h3>
                 <p class="text-muted small mb-0 fw-semibold">Annual Events Held</p>
             </div>
         </div>
@@ -267,7 +268,7 @@
     <div class="container text-center mb-3">
         <span class="text-uppercase extra-small tracking-wider text-light opacity-75">Representing Students Across Leading Institutions in Tricity</span>
     </div>
-    <div class="marquee-container">
+    <div class="marquee-container" role="group" aria-label="Institutions represented by KSO students">
         <div class="marquee-content d-flex align-items-center gap-5 fs-6 fw-bold">
             <span><i class="fa-solid fa-graduation-cap me-2 text-warning"></i> Panjab University (PU) Sector 14</span>
             <span><i class="fa-solid fa-graduation-cap me-2 text-warning"></i> MCM DAV College Sector 36</span>
@@ -281,4 +282,5 @@
     </div>
 </div>
 
+</div>
 @endsection

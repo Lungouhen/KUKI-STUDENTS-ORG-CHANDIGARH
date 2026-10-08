@@ -15,6 +15,10 @@ class PublicPagesTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('KUKI STUDENTS\' ORGANISATION CHANDIGARH');
+        $response->assertSee('css/home.css')
+            ->assertSee('js/home.js')
+            ->assertSee('data-counter-target=', false);
+        $this->get('/about')->assertDontSee('js/home.js');
     }
 
     public function test_about_page_is_accessible(): void

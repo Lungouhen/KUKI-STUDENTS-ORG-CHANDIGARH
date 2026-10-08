@@ -14,6 +14,9 @@
     @if(request()->routeIs('gallery.index'))
         <link href="{{ asset('vendor/magnific-popup/magnific-popup.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('home'))
+        <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+    @endif
     <!-- Custom Styles -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @if(file_exists(public_path('build/manifest.json')))
@@ -96,15 +99,7 @@
     <!-- Local Bootstrap 5 JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     @if(request()->routeIs('home'))
-        <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-        <script src="{{ asset('vendor/waypoints/jquery.waypoints.min.js') }}"></script>
-        <script src="{{ asset('vendor/counterup/jquery.counterup.min.js') }}"></script>
-        <script>
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (!reduceMotion) {
-                jQuery('.counter').counterUp({ delay: 10, time: 1500, offset: 70, beginAt: 0 });
-            }
-        </script>
+        <script src="{{ asset('js/home.js') }}" defer></script>
     @elseif(request()->routeIs('gallery.index'))
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>

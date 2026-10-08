@@ -1,0 +1,48 @@
+.home-page .hero-section {
+    min-height: clamp(34rem, 50vw, 44rem);
+    aspect-ratio: auto;
+}
+
+.home-page .hero-section > .container {
+    z-index: 1;
+}
+
+.home-page .stat-card {
+    height: 100%;
+}
+
+.home-page .marquee-container {
+    white-space: normal;
+}
+
+.home-page .marquee-content {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: none;
+}
+
+@media (max-width: 767.98px) {
+    .home-page .hero-section {
+        min-height: 0;
+    }
+
+    .home-page .stat-card {
+        padding: 1.1rem 0.75rem !important;
+    }
+
+    .home-page .stat-card h3 {
+        font-size: clamp(1.35rem, 6vw, 1.8rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-page *,
+    .home-page *::before,
+    .home-page *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
