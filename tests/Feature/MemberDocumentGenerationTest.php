@@ -261,7 +261,12 @@ class MemberDocumentGenerationTest extends TestCase
         $document = $batch->documents()->firstOrFail();
 
         $this->actingAs($this->admin)->get(route('admin.memberDocuments.index', ['certificate_number' => $document->certificate_number]))
-            ->assertOk()->assertSee($document->certificate_number);
+            ->assertOk()
+            ->assertSee($document->certificate_number)
+            ->assertSee('css/pages/admin-member-documents.css')
+            ->assertSee('js/pages/admin-member-documents.js')
+            ->assertSee('scope="col"', false)
+            ->assertSee('aria-label="Privately preview certificate '.$document->certificate_number.'"', false);
         $this->actingAs($this->admin)->get(route('admin.memberDocuments.index', ['member_id' => $this->member->id]))
             ->assertOk()->assertSee($document->certificate_number);
         $this->actingAs($this->admin)->get(route('admin.memberDocuments.index', ['batch_id' => $batch->id]))

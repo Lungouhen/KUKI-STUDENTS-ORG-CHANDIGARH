@@ -3,7 +3,7 @@
 @section('title', 'Certificates & Documents | KSO CMS')
 
 @section('content')
-<div class="container-fluid py-3">
+<div class="admin-member-documents-page container-fluid py-3">
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
             <h1 class="h3 fw-bold mb-1">Certificates & Documents</h1>
@@ -13,8 +13,18 @@
             <a class="btn btn-outline-primary" href="{{ route('admin.memberDocumentTemplates.index') }}">Manage templates</a>
         </div>
     </div>
-    @if(session('success')) <div class="alert alert-success">{{ session('success') }}</div> @endif
-    @if(session('error')) <div class="alert alert-danger">{{ session('error') }}</div> @endif
+    @if(session('success')) <div class="alert alert-success" role="status" aria-live="polite">{{ session('success') }}</div> @endif
+    @if(session('error')) <div class="alert alert-danger" role="alert">{{ session('error') }}</div> @endif
+    @if($errors->any())
+        <div class="alert alert-danger" role="alert" aria-labelledby="memberDocumentErrorsHeading">
+            <h2 id="memberDocumentErrorsHeading" class="h6 fw-bold">Review the document request</h2>
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="row g-4 mb-4">
         <div class="col-xl-5">
@@ -22,7 +32,7 @@
                 <div class="card-body">
                     <h2 class="h5">Generate for one member</h2>
                     <p class="small text-muted">Only active, approved members are eligible. Review the rendered certificate before confirming.</p>
-                    <form action="{{ route('admin.memberDocuments.previewDirect') }}" method="POST" class="row g-3">
+                    <form action="{{ route('admin.memberDocuments.previewDirect') }}" method="POST" class="row g-3 member-document-action-form">
                         @csrf
                         <div class="col-md-5">
                             <label class="form-label" for="direct-member">Member ID</label>
@@ -32,7 +42,7 @@
                             <label class="form-label" for="direct-template">Template version</label>
                             <select id="direct-template" name="template_id" class="form-select" required>
                                 @foreach($templates as $template)
-                                    <option value="{{ $template->id }}">{{ $types[$template->document_type]['label'] ?? $template->document_type }} · v{{ $template->version }}</option>
+                                    <option value="{{ $template->id }}" @selected(old('template_id') == $template->id)>{{ $types[$template->document_type]['label'] ?? $template->document_type }} · v{{ $template->version }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -50,7 +60,7 @@
                 <div class="card-body">
                     <h2 class="h5">Generate a batch</h2>
                     <p class="small text-muted">Enter member IDs separated by commas/newlines, or use an institution/course cohort. Maximum 500 requested recipients per batch; every recipient is rechecked at issue time.</p>
-                    <form action="{{ route('admin.memberDocuments.previewBulk') }}" method="POST" class="row g-3">
+                    <form action="{{ route('admin.memberDocuments.previewBulk') }}" method="POST" class="row g-3 member-document-action-form">
                         @csrf
                         <div class="col-sm-4">
                             <label class="form-label" for="bulk-mode">Recipient source</label>
@@ -75,7 +85,7 @@
                             <label class="form-label" for="bulk-template">Template version</label>
                             <select id="bulk-template" name="template_id" class="form-select" required>
                                 @foreach($templates as $template)
-                                    <option value="{{ $template->id }}">{{ $types[$template->document_type]['label'] ?? $template->document_type }} · v{{ $template->version }}</option>
+                                    <option value="{{ $template->id }}" @selected(old('template_id') == $template->id)>{{ $types[$template->document_type]['label'] ?? $template->document_type }} · v{{ $template->version }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -85,7 +95,6 @@
                         </div>
                         <div class="col-12"><button class="btn btn-outline-primary" type="submit">Preview recipients and certificates</button></div>
                     </form>
-                    @if($errors->any()) <div class="alert alert-danger mt-3 mb-0">{{ $errors->first() }}</div> @endif
                 </div>
             </div>
         </div>
@@ -95,7 +104,8 @@
         <div class="card-header bg-white"><h2 class="h5 mb-0">Recent batches</h2></div>
         <div class="table-responsive">
             <table class="table align-middle mb-0">
-                <thead><tr><th>Batch</th><th>Type / template</th><th>Status</th><th>Issued</th><th>Skipped</th><th>Failed</th><th>Created</th><th></th></tr></thead>
+                <caption class="visually-hidden">Recent document generation batches</caption>
+                <thead><tr><th scope="col">Batch</th><th scope="col">Type / template</th><th scope="col">Status</th><th scope="col">Issued</th><th scope="col">Skipped</th><th scope="col">Failed</th><th scope="col">Created</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
                 <tbody>
                 @forelse($batches as $batch)
                     <tr>
@@ -106,7 +116,7 @@
                         <td>{{ $batch->skipped_count }}</td>
                         <td>{{ $batch->failed_count }}</td>
                         <td>{{ $batch->created_at->format('d M Y H:i') }}</td>
-                        <td><a class="btn btn-sm btn-outline-primary" href="{{ route('admin.memberDocuments.batches.show', $batch->id) }}">Details</a></td>
+                        <td><a class="btn btn-sm btn-outline-primary" href="{{ route('admin.memberDocuments.batches.show', $batch->id) }}" aria-label="View details for batch {{ $batch->id }}">Details</a></td>
                     </tr>
                 @empty
                     <tr><td colspan="8" class="text-muted text-center py-3">No generation batches yet.</td></tr>
@@ -133,7 +143,8 @@
         </div>
         <div class="table-responsive">
             <table class="table align-middle mb-0">
-                <thead class="table-light"><tr><th>Member</th><th>Document</th><th>Purpose / decision</th><th>Issued / submitted</th><th>Status</th><th>Template / issuer / notification</th><th>Actions</th></tr></thead>
+                <caption class="visually-hidden">Member certificate and document register</caption>
+                <thead class="table-light"><tr><th scope="col">Member</th><th scope="col">Document</th><th scope="col">Purpose / decision</th><th scope="col">Issued / submitted</th><th scope="col">Status</th><th scope="col">Template / issuer / notification</th><th scope="col">Actions</th></tr></thead>
                 <tbody>
                 @forelse($documents as $document)
                     <tr>
@@ -147,29 +158,33 @@
                             <div class="text-muted">{{ $document->issued_by_name ?: '—' }}</div>
                             <div class="text-muted">Email: {{ ucfirst(str_replace('_', ' ', $document->notification_status)) }}</div>
                         </td>
-                        <td style="min-width:260px">
+                        <td class="member-document-actions">
                             @if($document->status === 'pending')
                                 @if($document->member->status === 'Approved' && $document->member->is_active)
-                                    <form action="{{ route('admin.memberDocuments.previewPending', $document->id) }}" method="POST" class="mb-2">
+                                    <form action="{{ route('admin.memberDocuments.previewPending', $document->id) }}" method="POST" class="member-document-action-form mb-2">
                                         @csrf
-                                        <select name="template_id" class="form-select form-select-sm mb-2" required>
+                                        <label class="visually-hidden" for="pending-template-{{ $document->id }}">Template for {{ $document->typeLabel() }} request from {{ $document->member->full_name }}</label>
+                                        <select id="pending-template-{{ $document->id }}" name="template_id" class="form-select form-select-sm mb-2" required>
                                             @foreach($templates->where('document_type', $document->document_type) as $template)<option value="{{ $template->id }}">{{ $types[$template->document_type]['label'] ?? $template->document_type }} · v{{ $template->version }}</option>@endforeach
                                         </select>
-                                        <textarea name="document_details" class="form-control form-control-sm mb-2" rows="2" maxlength="1500" minlength="5" placeholder="Certificate details / activity" required></textarea>
-                                        <button class="btn btn-sm btn-success" type="submit">Preview and issue</button>
+                                        <label class="visually-hidden" for="pending-details-{{ $document->id }}">Certificate details for {{ $document->typeLabel() }} request from {{ $document->member->full_name }}</label>
+                                        <textarea id="pending-details-{{ $document->id }}" name="document_details" class="form-control form-control-sm mb-2" rows="2" maxlength="1500" minlength="5" placeholder="Certificate details / activity" required></textarea>
+                                        <button class="btn btn-sm btn-success" type="submit" aria-label="Preview and issue {{ $document->typeLabel() }} request for {{ $document->member->full_name }}">Preview and issue</button>
                                     </form>
                                 @else <span class="small text-warning">Member must be active and approved.</span> @endif
-                                <form action="{{ route('admin.memberDocuments.reject', $document->id) }}" method="POST">
+                                <form action="{{ route('admin.memberDocuments.reject', $document->id) }}" method="POST" class="member-document-action-form">
                                     @csrf
-                                    <div class="input-group input-group-sm"><input name="resolution_note" class="form-control" maxlength="1000" minlength="5" placeholder="Reason if rejecting" required><button class="btn btn-outline-danger" type="submit">Reject</button></div>
+                                    <label class="visually-hidden" for="reject-reason-{{ $document->id }}">Reason for rejecting {{ $document->typeLabel() }} request from {{ $document->member->full_name }}</label>
+                                    <div class="input-group input-group-sm"><input id="reject-reason-{{ $document->id }}" name="resolution_note" class="form-control" maxlength="1000" minlength="5" placeholder="Reason if rejecting" required><button class="btn btn-outline-danger" type="submit" aria-label="Reject {{ $document->typeLabel() }} request for {{ $document->member->full_name }}">Reject</button></div>
                                 </form>
                             @elseif($document->status === 'issued')
-                                <a href="{{ route('admin.memberDocuments.previewIssued', $document->id) }}" class="btn btn-sm btn-outline-secondary mb-2">Private preview</a>
-                                <a href="{{ route('documents.verify', $document->certificate_number) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mb-2">Verify</a>
+                                <a href="{{ route('admin.memberDocuments.previewIssued', $document->id) }}" class="btn btn-sm btn-outline-secondary mb-2" aria-label="Privately preview certificate {{ $document->certificate_number }}">Private preview</a>
+                                <a href="{{ route('documents.verify', $document->certificate_number) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mb-2" aria-label="Open public verification for certificate {{ $document->certificate_number }}">Verify</a>
                                 <a href="{{ route('admin.members.show', $document->member_id) }}" class="btn btn-sm btn-outline-secondary mb-2">Member profile</a>
-                                <form action="{{ route('admin.memberDocuments.revoke', $document->id) }}" method="POST">
+                                <form action="{{ route('admin.memberDocuments.revoke', $document->id) }}" method="POST" class="member-document-action-form">
                                     @csrf
-                                    <div class="input-group input-group-sm"><input name="resolution_note" class="form-control" maxlength="1000" minlength="5" placeholder="Reason if revoking" required><button class="btn btn-outline-danger" type="submit">Revoke</button></div>
+                                    <label class="visually-hidden" for="revoke-reason-{{ $document->id }}">Reason for revoking certificate {{ $document->certificate_number }}</label>
+                                    <div class="input-group input-group-sm"><input id="revoke-reason-{{ $document->id }}" name="resolution_note" class="form-control" maxlength="1000" minlength="5" placeholder="Reason if revoking" required><button class="btn btn-outline-danger" type="submit" aria-label="Revoke certificate {{ $document->certificate_number }}">Revoke</button></div>
                                 </form>
                             @else <span class="text-muted small">No further actions</span> @endif
                         </td>
