@@ -34,6 +34,18 @@
     @if(request()->routeIs('events.index'))
         <link href="{{ asset('css/pages/events.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('events.show'))
+        <link href="{{ asset('css/pages/event-detail.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('events.ticketPass'))
+        <link href="{{ asset('css/pages/event-pass.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('page.faqs'))
+        <link href="{{ asset('css/pages/faqs.css') }}" rel="stylesheet">
+    @endif
+    @if(request()->routeIs('page.show'))
+        <link href="{{ asset('css/pages/cms-page.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -128,6 +140,10 @@
     @elseif(request()->routeIs('events.index'))
         <script src="{{ asset('vendor/fullcalendar/fullcalendar.min.js') }}"></script>
         <script src="{{ asset('js/pages/events.js') }}" defer></script>
+    @elseif(request()->routeIs('events.show'))
+        <script src="{{ asset('js/pages/event-detail.js') }}" defer></script>
+    @elseif(request()->routeIs('events.ticketPass'))
+        <script src="{{ asset('js/pages/event-pass.js') }}" defer></script>
     @endif
 
     <script>

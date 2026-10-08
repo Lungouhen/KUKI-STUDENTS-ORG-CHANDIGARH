@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Event;
+use App\Models\EventRegistration;
+use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,6 +41,71 @@ class PublicPagesTest extends TestCase
             ->assertStatus(200)
             ->assertSee('css/pages/events.css')
             ->assertSee('js/pages/events.js');
+    }
+
+    public function test_event_detail_page_assets_and_submission_fields_are_accessible(): void
+    {
+        $event = Event::create([
+            'title' => 'Student Cultural Meet',
+            'category' => 'Cultural',
+            'date' => now()->addWeek()->toDateString(),
+            'time' => '10:00 AM',
+            'venue' => 'Campus',
+            'description' => 'Community event',
+            'status' => 'Upcoming',
+            'publication_status' => 'published',
+        ]);
+
+        $this->get(route('events.show', $event->id))
+            ->assertOk()
+            ->assertSee('css/pages/event-detail.css')
+            ->assertSee('js/pages/event-detail.js')
+            ->assertSee('for="event-full-name"', false);
+    }
+
+    public function test_event_ticket_page_loads_print_assets_and_has_a_real_pass_code(): void
+    {
+        $event = Event::create([
+            'title' => 'Student Cultural Meet',
+            'category' => 'Cultural',
+            'date' => now()->addWeek()->toDateString(),
+            'time' => '10:00 AM',
+            'venue' => 'Campus',
+            'description' => 'Community event',
+            'status' => 'Upcoming',
+            'publication_status' => 'published',
+        ]);
+        $registration = EventRegistration::create([
+            'event_id' => $event->id,
+            'full_name' => 'Test Attendee',
+            'email' => 'attendee@example.org',
+            'phone' => '+91 90000 00000',
+            'institution' => 'Panjab University',
+            'ticket_code' => 'TICKET-2026-ABC123',
+        ]);
+
+        $this->get(route('events.ticketPass', $registration->ticket_code))
+            ->assertOk()
+            ->assertSee('css/pages/event-pass.css')
+            ->assertSee('js/pages/event-pass.js')
+            ->assertSee('TICKET-2026-ABC123')
+            ->assertSee('id="printEventPass"', false);
+    }
+
+    public function test_faq_page_uses_accessible_accordion_markup_and_scoped_styles(): void
+    {
+        Faq::create([
+            'question' => 'Where can I find help?',
+            'answer' => 'Contact the student support cell.',
+            'category' => 'Support',
+            'is_published' => true,
+        ]);
+
+        $this->get('/faqs')
+            ->assertOk()
+            ->assertSee('css/pages/faqs.css')
+            ->assertSee('aria-controls="collapse-', false)
+            ->assertSee('role="region"', false);
     }
 
     public function test_event_calendar_data_escapes_untrusted_titles_as_json(): void

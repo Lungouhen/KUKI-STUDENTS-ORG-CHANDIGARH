@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="cms-page">
 @if($isPreview ?? false)
     <div class="alert alert-warning rounded-0 mb-0 text-center" role="status">
         Preview only — this page is not publicly available until it is published.
@@ -20,4 +21,5 @@
 
 @include('pages.sections', ['sections' => $page->sections ?? [], 'mediaAltText' => $mediaAltText ?? collect()])
 
+</div>
 @endsection
