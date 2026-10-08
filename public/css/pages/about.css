@@ -1,0 +1,76 @@
+.about-page .public-page-banner {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 85% 15%, rgba(255, 191, 0, 0.2), transparent 28%),
+        linear-gradient(125deg, #003566, #075a78 70%, #0d766e) !important;
+}
+
+.about-page .public-page-banner h1 {
+    letter-spacing: -0.035em;
+}
+
+.about-page .public-page-banner p {
+    max-width: 44rem;
+    line-height: 1.7;
+}
+
+.about-page .container > .row > .col-lg-8 > .bg-white,
+.about-page .container > .row > .col-lg-4 > .bg-white,
+.about-page .container > .row > .col-lg-4 > .bg-primary {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 1rem 2.5rem rgba(0, 31, 61, 0.08) !important;
+}
+
+.about-page h2,
+.about-page h4,
+.about-page h5 {
+    text-wrap: balance;
+}
+
+.about-page .list-group-item {
+    padding-block: 0.8rem;
+    line-height: 1.65;
+}
+
+.about-page .card.hover-lift {
+    min-height: 7.5rem;
+}
+
+.about-page .card.hover-lift img {
+    flex: 0 0 auto;
+}
+
+.about-page a:focus-visible {
+    outline: 3px solid #ffbf00;
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .about-page .public-page-banner {
+        padding-block: 2.25rem !important;
+    }
+
+    .about-page .container.my-5 {
+        margin-block: 2rem !important;
+    }
+
+    .about-page .container > .row > .col-lg-8 > .bg-white {
+        padding: 1.25rem !important;
+    }
+
+    .about-page .card.hover-lift {
+        align-items: flex-start !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-page *,
+    .about-page *::before,
+    .about-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

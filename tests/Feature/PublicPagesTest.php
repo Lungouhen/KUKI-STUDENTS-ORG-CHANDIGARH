@@ -26,6 +26,9 @@ class PublicPagesTest extends TestCase
         $response = $this->get('/about');
         $response->assertStatus(200);
         $response->assertSee('About KSO Chandigarh');
+        $response->assertSee('css/pages/about.css')
+            ->assertSee('alt="', false);
+        $this->get('/contact')->assertDontSee('css/pages/about.css');
     }
 
     public function test_events_page_is_accessible(): void

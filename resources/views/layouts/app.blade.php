@@ -19,6 +19,9 @@
     @endif
     <!-- Custom Styles -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    @if(request()->routeIs('about'))
+        <link href="{{ asset('css/pages/about.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
