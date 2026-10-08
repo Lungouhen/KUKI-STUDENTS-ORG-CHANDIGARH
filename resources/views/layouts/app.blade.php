@@ -55,6 +55,9 @@
     @if(request()->routeIs('membership.verifyForm', 'membership.verify', 'membership.verifyDirect'))
         <link href="{{ asset('css/pages/member-verification.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('membership.portalDashboard'))
+        <link href="{{ asset('css/pages/member-dashboard.css') }}" rel="stylesheet">
+    @endif
     @if(file_exists(public_path('build/manifest.json')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -159,6 +162,8 @@
         <script src="{{ asset('js/pages/member-login.js') }}" defer></script>
     @elseif(request()->routeIs('membership.verifyForm', 'membership.verify', 'membership.verifyDirect'))
         <script src="{{ asset('js/pages/member-verification.js') }}" defer></script>
+    @elseif(request()->routeIs('membership.portalDashboard'))
+        <script src="{{ asset('js/pages/member-dashboard.js') }}" defer></script>
     @endif
 
     <script>

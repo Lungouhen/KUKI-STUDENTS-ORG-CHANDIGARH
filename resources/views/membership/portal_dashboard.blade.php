@@ -9,45 +9,45 @@
     $feedAds = \App\Models\Advertisement::getActiveByPlacement('Feed_Banner');
 @endphp
 
-<div class="bg-primary text-white py-4 mb-4" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;">
+<div class="member-dashboard-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
-        <h2 class="fw-black mb-1">Welcome, {{ $member->full_name }}!</h2>
+        <h1 class="fw-black mb-1">Welcome, {{ $member->full_name }}!</h1>
         <p class="small text-light opacity-90 mb-0">Member ID: <strong>{{ $member->id }}</strong> • Status: <span class="badge {{ $member->status === 'Approved' ? 'bg-success' : 'bg-warning text-dark' }}">{{ $member->status }}</span></p>
-    </div>
+    </label>
 </div>
 
-<div class="container my-5" x-data="{ activeTab: 'overview' }">
+<div class="container my-5 member-dashboard-page" x-data="{ activeTab: 'overview', setActiveTab(tab) { this.activeTab = tab; this.$nextTick(() => document.getElementById('dashboard-tab-' + tab)?.focus()); } }">
     
     <!-- ─── RE-ENHANCED STUDENT PORTAL NAVIGATION TABS ─── -->
-    <div class="portal-tab-nav mb-4">
-        <button @click="activeTab = 'overview'" :class="activeTab === 'overview' ? 'active' : ''" class="portal-tab-btn">
-            <i class="fa-solid fa-gauge"></i> Overview & Digital ID
+    <div class="portal-tab-nav mb-4" role="tablist" aria-label="Member dashboard sections">
+        <button type="button" id="dashboard-tab-overview" role="tab" aria-controls="dashboard-panel-overview" :aria-selected="activeTab === 'overview'" :tabindex="activeTab === 'overview' ? 0 : -1" data-dashboard-tab @click="setActiveTab('overview')" :class="activeTab === 'overview' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-gauge" aria-hidden="true"></i> Overview & Digital ID
         </button>
-        <button @click="activeTab = 'election'" :class="activeTab === 'election' ? 'active' : ''" class="portal-tab-btn">
-            <i class="fa-solid fa-check-to-slot"></i> Election Booth 🗳️
+        <button type="button" id="dashboard-tab-election" role="tab" aria-controls="dashboard-panel-election" :aria-selected="activeTab === 'election'" :tabindex="activeTab === 'election' ? 0 : -1" data-dashboard-tab @click="setActiveTab('election')" :class="activeTab === 'election' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-check-to-slot" aria-hidden="true"></i> Election Booth 🗳️
         </button>
-        <button @click="activeTab = 'accommodation'" :class="activeTab === 'accommodation' ? 'active' : ''" class="portal-tab-btn">
-            <i class="fa-solid fa-hotel"></i> Hostel & PG Finder 🏡
+        <button type="button" id="dashboard-tab-accommodation" role="tab" aria-controls="dashboard-panel-accommodation" :aria-selected="activeTab === 'accommodation'" :tabindex="activeTab === 'accommodation' ? 0 : -1" data-dashboard-tab @click="setActiveTab('accommodation')" :class="activeTab === 'accommodation' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-hotel" aria-hidden="true"></i> Hostel & PG Finder 🏡
         </button>
-        <button @click="activeTab = 'academic'" :class="activeTab === 'academic' ? 'active' : ''" class="portal-tab-btn">
-            <i class="fa-solid fa-book-open-reader"></i> Academic Desk 📚
+        <button type="button" id="dashboard-tab-academic" role="tab" aria-controls="dashboard-panel-academic" :aria-selected="activeTab === 'academic'" :tabindex="activeTab === 'academic' ? 0 : -1" data-dashboard-tab @click="setActiveTab('academic')" :class="activeTab === 'academic' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-book-open-reader" aria-hidden="true"></i> Academic Desk 📚
         </button>
-        <button @click="activeTab = 'documents'" :class="activeTab === 'documents' ? 'active' : ''" class="portal-tab-btn">
-            <i class="fa-solid fa-award"></i> Certificates & Documents
+        <button type="button" id="dashboard-tab-documents" role="tab" aria-controls="dashboard-panel-documents" :aria-selected="activeTab === 'documents'" :tabindex="activeTab === 'documents' ? 0 : -1" data-dashboard-tab @click="setActiveTab('documents')" :class="activeTab === 'documents' ? 'active' : ''" class="portal-tab-btn">
+            <i class="fa-solid fa-award" aria-hidden="true"></i> Certificates & Documents
         </button>
     </div>
 
     <!-- ─── TAB 1: OVERVIEW & ID CARD PANORAMA ─── -->
-    <div x-show="activeTab === 'overview'" x-transition x-cloak>
+    <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" tabindex="0" x-show="activeTab === 'overview'" x-transition x-cloak>
         <div class="row g-4">
             <div class="col-lg-4">
                 <div class="text-center">
-                    <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-id-card me-2"></i> Your Official Digital ID Card</h5>
+                    <h2 class="h5 fw-bold text-primary mb-3"><i class="fa-solid fa-id-card me-2" aria-hidden="true"></i> Your Official Digital ID Card</h2>
                     
                     <div class="id-card-wrapper shadow-lg text-start my-3 mx-auto" id="idCardPrintArea" style="max-width: 320px;">
                         <div class="id-card-header">
                             <div class="d-flex align-items-center justify-content-center gap-2">
-                                <img src="{{ asset('images/kso-logo.jpg') }}" onerror="this.src='/images/default-avatar-m.png'">
+                                <img src="{{ asset('images/kso-logo.jpg') }}" alt="KSO Chandigarh emblem">
                                 <div>
                                     <h5 class="mb-0 text-white">KSO CHANDIGARH</h5>
                                     <p class="text-warning fw-bold small">Kuki Students' Organisation</p>
@@ -57,7 +57,7 @@
                         
                         <div class="id-card-body">
                             <div class="id-card-photo-container">
-                                <img src="{{ asset($member->photo) }}" onerror="this.src='/images/default-avatar-m.png'">
+                                <img src="{{ asset($member->photo) }}" alt="Member photo for {{ $member->full_name }}" onerror="this.src='/images/default-avatar-m.png'">
                             </div>
 
                             <div class="text-center">
@@ -88,8 +88,8 @@
                     </div>
 
                     <div class="mt-3">
-                        <button onclick="window.print()" class="btn btn-accent btn-sm rounded-pill px-4 fw-bold mb-2">
-                            <i class="fa-solid fa-print me-1"></i> Print / Download
+                        <button type="button" id="printMemberIdCard" class="btn btn-accent btn-sm rounded-pill px-4 fw-bold mb-2">
+                            <i class="fa-solid fa-print me-1" aria-hidden="true"></i> Print / Download
                         </button>
                         <a href="{{ route('membership.portalLogout') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 mb-2">
                             <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
@@ -101,7 +101,7 @@
                 <div class="card shadow-sm border-0 rounded-4 p-4 mt-4 bg-white text-center">
                     <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-check-to-slot me-1"></i> Student Elections</h6>
                     <p class="extra-small text-muted">KSO Executive Council student body election and active voting booth is open.</p>
-                    <button @click.prevent="activeTab = 'election'" class="btn btn-sm btn-outline-primary rounded-pill w-100 fw-bold">
+                    <button type="button" @click.prevent="setActiveTab('election')" class="btn btn-sm btn-outline-primary rounded-pill w-100 fw-bold">
                         Go to Election Booth <i class="fa-solid fa-vote-yea ms-1"></i>
                     </button>
                 </div>
@@ -222,20 +222,23 @@
                             
                             <div class="share-input-row">
                                 <div class="social-avatar-container shadow-sm">
-                                    <img src="{{ asset($member->photo) }}" onerror="this.src='/images/default-avatar-m.png'">
+                                    <img src="{{ asset($member->photo) }}" alt="Your member profile photo" onerror="this.src='/images/default-avatar-m.png'">
                                 </div>
                                 <div class="flex-grow-1">
-                                    <textarea name="content" class="share-textarea" placeholder="What's on your mind, {{ explode(' ', $member->full_name)[0] }}? Share admission info, hosteling tips, or discussion posts..." rows="3" required></textarea>
+                                    <label class="visually-hidden" for="member-post-content">Share an update with students</label>
+                                    <textarea id="member-post-content" name="content" class="share-textarea @error('content') is-invalid @enderror" placeholder="What's on your mind, {{ explode(' ', $member->full_name)[0] }}? Share admission info, hosteling tips, or discussion posts..." rows="3" maxlength="1000" aria-describedby="member-post-content-help @error('content')member-post-content-error @enderror" required>{{ old('content') }}</textarea>
+                                    <small id="member-post-content-help" class="form-text text-muted">Maximum 1,000 characters.</small>
+                                    @error('content')<div class="invalid-feedback" id="member-post-content-error">{{ $message }}</div>@enderror
                                 </div>
                             </div>
 
                             <div class="share-actions-row">
                                 <div class="d-flex flex-wrap gap-2 align-items-center">
                                     <span class="extra-small text-muted fw-bold me-1">Tag with:</span>
-                                    <button type="button" @click="selectedCategory = 'Discussion'" :class="selectedCategory === 'Discussion' ? 'active' : ''" class="share-tag-pill">#Discussion</button>
-                                    <button type="button" @click="selectedCategory = 'Housing'" :class="selectedCategory === 'Housing' ? 'active' : ''" class="share-tag-pill">#Housing</button>
-                                    <button type="button" @click="selectedCategory = 'Admission'" :class="selectedCategory === 'Admission' ? 'active' : ''" class="share-tag-pill">#Admission</button>
-                                    <button type="button" @click="selectedCategory = 'CampusLife'" :class="selectedCategory === 'CampusLife' ? 'active' : ''" class="share-tag-pill">#CampusLife</button>
+                                    <button type="button" @click="selectedCategory = 'Discussion'" :aria-pressed="selectedCategory === 'Discussion'" :class="selectedCategory === 'Discussion' ? 'active' : ''" class="share-tag-pill">#Discussion</button>
+                                    <button type="button" @click="selectedCategory = 'Housing'" :aria-pressed="selectedCategory === 'Housing'" :class="selectedCategory === 'Housing' ? 'active' : ''" class="share-tag-pill">#Housing</button>
+                                    <button type="button" @click="selectedCategory = 'Admission'" :aria-pressed="selectedCategory === 'Admission'" :class="selectedCategory === 'Admission' ? 'active' : ''" class="share-tag-pill">#Admission</button>
+                                    <button type="button" @click="selectedCategory = 'CampusLife'" :aria-pressed="selectedCategory === 'CampusLife'" :class="selectedCategory === 'CampusLife' ? 'active' : ''" class="share-tag-pill">#CampusLife</button>
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary rounded-pill btn-sm px-4 fw-bold">
@@ -289,7 +292,7 @@
                                 addComment() {
                                     if (this.newComment.trim() === '') return;
                                     this.comments.push({
-                                        author: '{{ explode(' ', $member->full_name)[0] }} (You)',
+                                        author: @js(explode(' ', $member->full_name)[0] . ' (You)'),
                                         text: this.newComment
                                     });
                                     this.newComment = '';
@@ -311,9 +314,9 @@
                                     <div class="social-author-info">
                                         <div class="social-avatar-container shadow-sm border-{{ $isOfficial ? 'warning' : 'primary' }}">
                                             @if($isOfficial)
-                                                <img src="{{ asset('images/kso-logo.jpg') }}" onerror="this.src='/images/default-avatar-m.png'">
+                                                <img src="{{ asset('images/kso-logo.jpg') }}" alt="KSO Chandigarh emblem" onerror="this.src='/images/default-avatar-m.png'">
                                             @else
-                                                <img src="/images/default-avatar-m.png" onerror="this.src='/images/default-avatar-m.png'">
+                                                <img src="/images/default-avatar-m.png" alt="Student member avatar">
                                             @endif
                                         </div>
                                         <div>
@@ -375,18 +378,18 @@
                                 </div>
 
                                 <div class="social-actions">
-                                    <button class="social-action-btn" :class="liked ? 'liked' : ''" @click="toggleLike()">
-                                        <i class="fa-solid fa-heart"></i> <span x-text="likesCount"></span> Likes
+                                    <button type="button" class="social-action-btn" :class="liked ? 'liked' : ''" :aria-pressed="liked" @click="toggleLike()">
+                                        <i class="fa-solid fa-heart" aria-hidden="true"></i> <span x-text="likesCount"></span> Likes
                                     </button>
-                                    <button class="social-action-btn" @click="commentsOpen = !commentsOpen">
-                                        <i class="fa-solid fa-comment-dots"></i> <span x-text="comments.length"></span> Comments
+                                    <button type="button" class="social-action-btn" :aria-expanded="commentsOpen" aria-controls="post-comments-{{ $post->id }}" @click="commentsOpen = !commentsOpen">
+                                        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i> <span x-text="comments.length"></span> Comments
                                     </button>
-                                    <button class="social-action-btn" @click="sharePost()">
-                                        <i class="fa-solid fa-share-nodes"></i> Share
+                                    <button type="button" class="social-action-btn" @click="sharePost()">
+                                        <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share
                                     </button>
                                 </div>
 
-                                <div class="social-comments-drawer" x-show="commentsOpen" x-transition x-cloak>
+                                <div class="social-comments-drawer" id="post-comments-{{ $post->id }}" x-show="commentsOpen" x-transition x-cloak>
                                     <div class="social-comment-thread">
                                         <template x-for="comment in comments">
                                             <div class="social-comment-item">
@@ -402,9 +405,10 @@
                                     </div>
 
                                     <div class="comment-form-container">
-                                        <input type="text" class="comment-input-field form-control" placeholder="Write a comment..." x-model="newComment" @keyup.enter="addComment()">
-                                        <button class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" @click="addComment()">
-                                            <i class="fa-solid fa-paper-plane" style="font-size: 0.75rem;"></i>
+                                        <label class="visually-hidden" for="post-comment-{{ $post->id }}">Write a comment</label>
+                                        <input type="text" id="post-comment-{{ $post->id }}" class="comment-input-field form-control" placeholder="Write a comment..." x-model="newComment" @keyup.enter="addComment()">
+                                        <button type="button" class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" aria-label="Add comment" @click="addComment()">
+                                            <i class="fa-solid fa-paper-plane" aria-hidden="true" style="font-size: 0.75rem;"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -492,7 +496,7 @@
     </div>
 
     <!-- ─── TAB 2: INTERACTIVE ELECTRONIC VOTING BOOTH ─── -->
-    <div x-show="activeTab === 'election'" x-transition x-cloak>
+    <div id="dashboard-panel-election" role="tabpanel" aria-labelledby="dashboard-tab-election" tabindex="0" x-show="activeTab === 'election'" x-transition x-cloak>
         @forelse($openElections as $election)
             @php
                 $alreadyVoted = in_array($election->id, $votedElectionIds);
@@ -537,18 +541,17 @@
 
                         <form action="{{ route('membership.castVote') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="candidate_id" :value="selectedCandidate">
-
-                            <div class="row g-4 justify-content-center mb-4">
+                            <div class="row g-4 justify-content-center mb-4" role="radiogroup" aria-label="Choose a candidate for {{ $election->position }}">
                                 @foreach($election->candidates as $candidate)
                                     <div class="col-md-5">
-                                        <div @click="selectedCandidate = {{ $candidate->id }}" :class="selectedCandidate === {{ $candidate->id }} ? 'selected' : ''" class="candidate-voter-card">
-                                            <div class="selected-badge"><i class="fa-solid fa-check"></i></div>
-                                            <img src="{{ asset($candidate->member->photo ?? '/images/default-avatar-m.png') }}" class="candidate-voter-photo" alt="Candidate photo" onerror="this.src='/images/default-avatar-m.png'">
-                                            <h5 class="fw-bold text-dark mb-1">{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</h5>
+                                        <label :class="selectedCandidate === {{ $candidate->id }} ? 'selected' : ''" class="candidate-voter-card d-block">
+                                            <input type="radio" name="candidate_id" value="{{ $candidate->id }}" x-model.number="selectedCandidate" class="visually-hidden" aria-label="Vote for {{ $candidate->member->full_name ?? 'candidate ' . $candidate->id }}" required>
+                                            <span class="selected-badge" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                            <img src="{{ asset($candidate->member->photo ?? '/images/default-avatar-m.png') }}" class="candidate-voter-photo" alt="Candidate photo for {{ $candidate->member->full_name ?? 'candidate' }}" onerror="this.src='/images/default-avatar-m.png'">
+                                            <span class="fw-bold text-dark mb-1 d-block">{{ $candidate->member->full_name ?? 'Candidate #' . $candidate->id }}</span>
                                             <span class="badge bg-primary rounded-pill px-2 py-1 extra-small mb-2">{{ $election->position }} Candidate</span>
                                             @if($candidate->member)
-                                                <p class="extra-small text-muted mb-0"><i class="fa-solid fa-university me-1"></i> {{ $candidate->member->institution }}</p>
+                                                <span class="extra-small text-muted mb-0 d-block"><i class="fa-solid fa-university me-1" aria-hidden="true"></i> {{ $candidate->member->institution }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -575,7 +578,7 @@
 
 
     <!-- ─── TAB 3: HOSTEL & PG FINDER DIRECTORY ─── -->
-    <div x-show="activeTab === 'accommodation'" x-transition x-cloak>
+    <div id="dashboard-panel-accommodation" role="tabpanel" aria-labelledby="dashboard-tab-accommodation" tabindex="0" x-show="activeTab === 'accommodation'" x-transition x-cloak>
         <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-hotel text-primary me-2"></i> KSO Verified Hostels & PG Accommodations</h5>
@@ -625,7 +628,7 @@
 
 
     <!-- ─── TAB 4: ACADEMIC & CAREER RESOURCES DESK ─── -->
-    <div x-show="activeTab === 'academic'" x-transition x-cloak>
+    <div id="dashboard-panel-academic" role="tabpanel" aria-labelledby="dashboard-tab-academic" tabindex="0" x-show="activeTab === 'academic'" x-transition x-cloak>
         <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
                 <h5 class="fw-black text-dark mb-0"><i class="fa-solid fa-book-open text-primary me-2"></i> KSO Student Academic Resources & Question Bank</h5>
@@ -667,7 +670,7 @@
         </div>
     </div>
 
-    <div x-show="activeTab === 'documents'" x-transition x-cloak>
+    <div id="dashboard-panel-documents" role="tabpanel" aria-labelledby="dashboard-tab-documents" tabindex="0" x-show="activeTab === 'documents'" x-transition x-cloak>
         <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
                 <div>

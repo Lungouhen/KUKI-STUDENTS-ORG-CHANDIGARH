@@ -211,6 +211,13 @@ class MemberPortalTest extends TestCase
         $response = $this->get('/members/portal/dashboard');
 
         $response->assertOk();
+        $response->assertSee('css/pages/member-dashboard.css')
+            ->assertSee('js/pages/member-dashboard.js')
+            ->assertSee('role="tablist"', false)
+            ->assertSee('role="tabpanel"', false)
+            ->assertSee('id="dashboard-tab-overview"', false)
+            ->assertSee('id="printMemberIdCard"', false)
+            ->assertSee('role="radiogroup"', false);
         $response->assertViewHas('totalFeesPaid', 250.0);
         $response->assertViewHas('paymentsCount', 1);
         $response->assertViewHas('openElections', fn ($elections) => $elections->contains('id', $election->id));
