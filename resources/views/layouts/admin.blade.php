@@ -93,6 +93,9 @@
     @if(request()->routeIs('admin.media.index'))
         <link href="{{ asset('css/pages/admin-media.css') }}" rel="stylesheet">
     @endif
+    @if(request()->routeIs('admin.content.index'))
+        <link href="{{ asset('css/pages/admin-content.css') }}" rel="stylesheet">
+    @endif
     @if(request()->routeIs('admin.elections.index'))
         <link href="{{ asset('css/pages/admin-elections.css') }}" rel="stylesheet">
     @endif
@@ -555,6 +558,9 @@
     @endif
     @if(request()->routeIs('admin.media.index'))
         <script src="{{ asset('js/pages/admin-media.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('admin.content.index'))
+        <script src="{{ asset('js/pages/admin-content.js') }}" defer></script>
     @endif
     @if(request()->routeIs('admin.elections.index'))
         <script src="{{ asset('js/pages/admin-elections.js') }}" defer></script>
