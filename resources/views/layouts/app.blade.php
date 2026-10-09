@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
-        $siteName = \App\Models\Setting::get('siteName') ?: "KUKI STUDENTS' ORGANISATION CHANDIGARH";
+        $siteName = \App\Models\Setting::get('siteName') ?: 'KSO Chandigarh';
         $siteAbbreviation = \App\Models\Setting::get('abbreviation') ?: 'KSO CHANDIGARH';
         $siteTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
         $sitePrimaryColor = \App\Models\Setting::get('primaryColor', '#003566');
@@ -18,29 +18,33 @@
         $seoPublicRoute = request()->routeIs('home', 'about', 'page.show', 'page.faqs', 'events.index', 'events.show', 'gallery.index', 'donations.index', 'contact.index');
         $seoCanonicalPath = trim(request()->path(), '/');
         $seoCanonicalUrl = rtrim(config('app.url'), '/').($seoCanonicalPath === '' ? '' : '/'.$seoCanonicalPath);
+        $pageTitle = html_entity_decode((string) $__env->yieldContent('title', $seoDefaultTitle), ENT_QUOTES, 'UTF-8');
+        $pageMetaDescription = html_entity_decode((string) $__env->yieldContent('meta_description', $seoDefaultDescription), ENT_QUOTES, 'UTF-8');
+        $pageRobots = html_entity_decode((string) $__env->yieldContent('robots', $seoIndexingEnabled && $seoPublicRoute ? 'index,follow' : 'noindex,nofollow'), ENT_QUOTES, 'UTF-8');
+        $pageOgType = html_entity_decode((string) $__env->yieldContent('og_type', 'website'), ENT_QUOTES, 'UTF-8');
+        $seoImage = html_entity_decode((string) $__env->yieldContent('og_image', $seoDefaultImage), ENT_QUOTES, 'UTF-8');
     @endphp
-    <title>{{ $__env->yieldContent('title', $seoDefaultTitle) }}</title>
-    <meta name="description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
-    <meta name="robots" content="{{ $__env->yieldContent('robots', $seoIndexingEnabled && $seoPublicRoute ? 'index,follow' : 'noindex,nofollow') }}">
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageMetaDescription }}">
+    <meta name="robots" content="{{ $pageRobots }}">
     @if($seoPublicRoute)
         <link rel="canonical" href="{{ $seoCanonicalUrl }}">
     @endif
-    <meta property="og:type" content="{{ $__env->yieldContent('og_type', 'website') }}">
+    <meta property="og:type" content="{{ $pageOgType }}">
     <meta property="og:site_name" content="{{ $seoSiteName }}">
-    <meta property="og:title" content="{{ $__env->yieldContent('title', $seoDefaultTitle) }}">
-    <meta property="og:description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageMetaDescription }}">
     @if($seoPublicRoute)
         <meta property="og:url" content="{{ $seoCanonicalUrl }}">
     @endif
-    @php($seoImage = $__env->yieldContent('og_image', $seoDefaultImage))
     @if(filled($seoImage))
         <meta property="og:image" content="{{ $seoImage }}">
         <meta name="twitter:card" content="summary_large_image">
     @else
         <meta name="twitter:card" content="summary">
     @endif
-    <meta name="twitter:title" content="{{ $__env->yieldContent('title', $seoDefaultTitle) }}">
-    <meta name="twitter:description" content="{{ $__env->yieldContent('meta_description', $seoDefaultDescription) }}">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageMetaDescription }}">
     
     <!-- Local Bootstrap 5 CSS -->
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
