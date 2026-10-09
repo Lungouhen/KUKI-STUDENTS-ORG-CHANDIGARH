@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\Member;
+use App\Models\MemberCustomField;
+use App\Models\MemberCustomFieldValue;
 use App\Models\MemberFeePayment;
 use App\Models\FinancialAccount;
 use App\Models\Transaction;
@@ -49,12 +51,16 @@ class MemberController extends Controller
 
     public function create()
     {
-        return view('admin.members.create');
+        $customFields = MemberCustomField::active()->get();
+
+        return view('admin.members.create', compact('customFields'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $customFieldRules = $this->customFieldValidationRules();
+
+        $validated = $request->validate(array_merge([
             'full_name' => 'required|string|max:255',
             'gender' => 'required|string',
             'dob' => 'nullable|date',
@@ -71,7 +77,7 @@ class MemberController extends Controller
             'emergency_phone' => 'required|string',
             'status' => 'required|in:Pending,Approved,Rejected',
             'photoFile' => 'nullable|image|max:5120',
-        ]);
+        ], $customFieldRules));
 
         $id = Member::generateMembershipId();
 
@@ -104,6 +110,8 @@ class MemberController extends Controller
             'valid_until' => Member::calculateValidityDate(),
         ]);
 
+        $this->saveCustomFieldValues($member, $request);
+
         AuditLog::log('ADMIN_CREATE_MEMBER', "Member ID: {$member->id}, Name: {$member->full_name}");
 
         return redirect()->route('admin.members.index')->with('success', "Member {$member->id} registered successfully!");
@@ -119,14 +127,18 @@ class MemberController extends Controller
     public function edit($id)
     {
         $member = Member::findOrFail($id);
-        return view('admin.members.edit', compact('member'));
+        $customFields = MemberCustomField::active()->get();
+
+        return view('admin.members.edit', compact('member', 'customFields'));
     }
 
     public function update(Request $request, $id)
     {
         $member = Member::findOrFail($id);
 
-        $validated = $request->validate([
+        $customFieldRules = $this->customFieldValidationRules();
+
+        $validated = $request->validate(array_merge([
             'full_name' => 'required|string|max:255',
             'gender' => 'required|string',
             'dob' => 'nullable|date',
@@ -143,7 +155,7 @@ class MemberController extends Controller
             'emergency_phone' => 'required|string',
             'status' => 'required|in:Pending,Approved,Rejected',
             'photoFile' => 'nullable|image|max:5120',
-        ]);
+        ], $customFieldRules));
 
         if ($request->hasFile('photoFile')) {
             $path = $request->file('photoFile')->store('uploads/members', 'public');
@@ -151,6 +163,7 @@ class MemberController extends Controller
         }
 
         $member->update($validated);
+        $this->saveCustomFieldValues($member, $request);
         AuditLog::log('ADMIN_UPDATE_MEMBER', "Member ID: {$member->id}");
 
         return redirect()->route('admin.members.show', $member->id)->with('success', 'Member record updated successfully.');
@@ -197,11 +210,18 @@ class MemberController extends Controller
     {
         $response = new StreamedResponse(function () {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['ID', 'Full Name', 'Gender', 'DOB', 'Phone', 'Email', 'Blood Group', 'Institution', 'Course', 'Department', 'Year', 'Roll No', 'Permanent Address', 'Current Address', 'Emergency Contact', 'Emergency Phone', 'Status', 'Applied Date']);
+            $header = ['ID', 'Full Name', 'Gender', 'DOB', 'Phone', 'Email', 'Blood Group', 'Institution', 'Course', 'Department', 'Year', 'Roll No', 'Permanent Address', 'Current Address', 'Emergency Contact', 'Emergency Phone', 'Status', 'Applied Date'];
+            $customFields = MemberCustomField::active()->get();
 
-            Member::chunk(100, function ($members) use ($handle) {
+            foreach ($customFields as $field) {
+                $header[] = $field->label;
+            }
+
+            fputcsv($handle, $header);
+
+            Member::chunk(100, function ($members) use ($handle, $customFields) {
                 foreach ($members as $m) {
-                    fputcsv($handle, [
+                    $row = [
                         $m->id,
                         $m->full_name,
                         $m->gender,
@@ -220,7 +240,14 @@ class MemberController extends Controller
                         $m->emergency_phone,
                         $m->status,
                         $m->applied_date ? $m->applied_date->format('Y-m-d') : '',
-                    ]);
+                    ];
+
+                    foreach ($customFields as $field) {
+                        $value = $m->customFieldValues()->where('field_id', $field->id)->value('value');
+                        $row[] = $value ?? '';
+                    }
+
+                    fputcsv($handle, $row);
                 }
             });
 
@@ -231,6 +258,74 @@ class MemberController extends Controller
         $response->headers->set('Content-Disposition', 'attachment; filename="kso_members_export.csv"');
 
         return $response;
+    }
+
+    protected function customFieldValidationRules(): array
+    {
+        $rules = [];
+
+        foreach (MemberCustomField::active()->get() as $field) {
+            $key = 'custom_fields.' . $field->slug;
+            $rule = [];
+
+            if ($field->field_type === 'checkbox') {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'boolean';
+            } elseif ($field->field_type === 'number') {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'numeric';
+            } elseif ($field->field_type === 'date') {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'date';
+            } elseif ($field->field_type === 'textarea') {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'string';
+                $rule[] = 'max:2000';
+            } elseif ($field->field_type === 'select' || $field->field_type === 'radio') {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'string';
+                $rule[] = 'max:255';
+                if ($field->optionList() !== []) {
+                    $rule[] = 'in:' . implode(',', $field->optionList());
+                }
+            } else {
+                $rule[] = 'sometimes';
+                $rule[] = 'nullable';
+                $rule[] = 'string';
+                $rule[] = 'max:255';
+            }
+
+            if ($field->is_required) {
+                $rule = array_values(array_filter($rule, fn ($item) => $item !== 'nullable'));
+                $rule[] = 'required';
+            }
+
+            $rules[$key] = $rule;
+        }
+
+        return $rules;
+    }
+
+    protected function saveCustomFieldValues(Member $member, Request $request): void
+    {
+        foreach (MemberCustomField::active()->get() as $field) {
+            $key = 'custom_fields.' . $field->slug;
+            $value = $request->input($key);
+
+            if ($value === null || $value === '') {
+                $member->customFieldValues()->where('field_id', $field->id)->delete();
+                continue;
+            }
+
+            $fieldValue = $member->customFieldValues()->firstOrNew(['field_id' => $field->id]);
+            $fieldValue->value = is_array($value) ? json_encode($value) : (string) $value;
+            $fieldValue->save();
+        }
     }
 
     public function fees()

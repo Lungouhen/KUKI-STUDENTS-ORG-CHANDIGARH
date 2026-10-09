@@ -106,6 +106,37 @@
                 <input type="tel" id="admin-member-edit-emergency-phone" name="emergency_phone" class="form-control @error('emergency_phone') is-invalid @enderror" value="{{ old('emergency_phone', $member->emergency_phone) }}" autocomplete="tel" @error('emergency_phone') aria-invalid="true" aria-describedby="admin-member-edit-emergency-phone-error" @enderror required>
                 @error('emergency_phone')<div class="invalid-feedback" id="admin-member-edit-emergency-phone-error">{{ $message }}</div>@enderror
             </div>
+            @foreach($customFields as $field)
+                @php
+                    $value = $member->customFieldValues()->where('field_id', $field->id)->value('value');
+                    $name = 'custom_fields.' . $field->slug;
+                @endphp
+                <div class="col-md-6">
+                    @if($field->field_type === 'textarea')
+                        <label class="form-label fw-bold" for="custom-field-edit-{{ $field->slug }}">{{ $field->label }}{{ $field->is_required ? ' <span class="text-danger">*</span>' : '' }}</label>
+                        <textarea id="custom-field-edit-{{ $field->slug }}" name="{{ $name }}" class="form-control @error($name) is-invalid @enderror" rows="3" @if($field->is_required) required @endif>{{ old($name, $value) }}</textarea>
+                    @elseif($field->field_type === 'select' || $field->field_type === 'radio')
+                        <label class="form-label fw-bold" for="custom-field-edit-{{ $field->slug }}">{{ $field->label }}{{ $field->is_required ? ' <span class="text-danger">*</span>' : '' }}</label>
+                        <select id="custom-field-edit-{{ $field->slug }}" name="{{ $name }}" class="form-select @error($name) is-invalid @enderror" @if($field->is_required) required @endif>
+                            <option value="">Select {{ $field->label }}</option>
+                            @foreach($field->optionList() as $option)
+                                <option value="{{ $option }}" {{ old($name, $value) === $option ? 'selected' : '' }}>{{ $option }}</option>
+                            @endforeach
+                        </select>
+                    @elseif($field->field_type === 'checkbox')
+                        <div class="form-check mt-4">
+                            <input id="custom-field-edit-{{ $field->slug }}" type="checkbox" name="{{ $name }}" value="1" class="form-check-input @error($name) is-invalid @enderror" {{ old($name, $value) == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold" for="custom-field-edit-{{ $field->slug }}">{{ $field->label }}{{ $field->is_required ? ' <span class="text-danger">*</span>' : '' }}</label>
+                        </div>
+                    @else
+                        <label class="form-label fw-bold" for="custom-field-edit-{{ $field->slug }}">{{ $field->label }}{{ $field->is_required ? ' <span class="text-danger">*</span>' : '' }}</label>
+                        <input id="custom-field-edit-{{ $field->slug }}" type="{{ $field->field_type === 'number' ? 'number' : ($field->field_type === 'date' ? 'date' : 'text') }}" name="{{ $name }}" value="{{ old($name, $value) }}" class="form-control @error($name) is-invalid @enderror" @if($field->is_required) required @endif>
+                    @endif
+                    @error($name)
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            @endforeach
             <div class="col-12">
                 <label class="form-label fw-bold" for="admin-member-edit-photo">Passport Photo</label>
                 <div class="admin-member-edit-photo-preview mb-2">

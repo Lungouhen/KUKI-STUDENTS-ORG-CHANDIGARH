@@ -185,6 +185,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/membership-forms', [AdminMembershipFormController::class, 'index'])->name('membershipForms.index');
     Route::get('/membership-forms/print', [AdminMembershipFormController::class, 'print'])->name('membershipForms.print');
     Route::get('/membership-forms/download', [AdminMembershipFormController::class, 'download'])->name('membershipForms.download');
+    Route::get('/member-custom-fields', [\App\Http\Controllers\Admin\MemberCustomFieldController::class, 'index'])->name('memberCustomFields.index');
+    Route::post('/member-custom-fields', [\App\Http\Controllers\Admin\MemberCustomFieldController::class, 'store'])->name('memberCustomFields.store');
+    Route::put('/member-custom-fields/{id}', [\App\Http\Controllers\Admin\MemberCustomFieldController::class, 'update'])->name('memberCustomFields.update');
+    Route::delete('/member-custom-fields/{id}', [\App\Http\Controllers\Admin\MemberCustomFieldController::class, 'destroy'])->name('memberCustomFields.destroy');
     Route::get('/members/fees', [AdminMemberController::class, 'fees'])->name('members.fees');
     Route::post('/members/{id}/fees', [AdminMemberController::class, 'recordFeePayment'])->name('members.recordFee');
     Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');

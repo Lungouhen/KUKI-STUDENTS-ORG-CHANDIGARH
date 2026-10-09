@@ -97,4 +97,9 @@ class Member extends Model
     {
         return $this->hasMany(MemberDocument::class, 'member_id', 'id');
     }
+
+    public function customFieldValues()
+    {
+        return $this->hasMany(MemberCustomFieldValue::class, 'member_id', 'id');
+    }
 }

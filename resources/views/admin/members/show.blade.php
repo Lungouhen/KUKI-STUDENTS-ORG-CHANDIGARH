@@ -49,6 +49,12 @@
                         <tr><th scope="row" class="text-primary">Emergency Contact:</th><td>{{ $member->emergency_contact }} (<strong>{{ $member->emergency_phone }}</strong>)</td></tr>
                         <tr><th scope="row" class="text-primary">Applied Date:</th><td>{{ $member->applied_date ? $member->applied_date->format('Y-m-d') : '' }}</td></tr>
                         <tr><th scope="row" class="text-primary">Approval Date:</th><td>{{ $member->approval_date ? $member->approval_date->format('Y-m-d') : 'Pending' }}</td></tr>
+                        @foreach(App\Models\MemberCustomField::active()->get() as $field)
+                            @php $value = $member->customFieldValues()->where('field_id', $field->id)->value('value'); @endphp
+                            @if($value !== null && $value !== '')
+                                <tr><th scope="row" class="text-primary">{{ $field->label }}:</th><td>{{ $value }}</td></tr>
+                            @endif
+                        @endforeach
                     </tbody>
                 </table>
             </div>

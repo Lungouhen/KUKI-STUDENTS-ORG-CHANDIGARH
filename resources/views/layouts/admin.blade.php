@@ -282,6 +282,11 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
+                                <a href="{{ route('admin.memberCustomFields.index') }}" class="sidebar-submenu-link {{ request()->routeIs('admin.memberCustomFields*') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-table-columns"></i> Custom Member Fields
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu-item">
                                 <a href="{{ route('admin.members.index', ['status' => 'Pending']) }}" class="sidebar-submenu-link {{ request()->fullUrlIs(route('admin.members.index', ['status' => 'Pending'])) ? 'active' : '' }}">
                                     <i class="fa-solid fa-user-clock"></i> Member Requests
                                 </a>
