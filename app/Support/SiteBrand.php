@@ -25,7 +25,11 @@ class SiteBrand
     {
         $value = Setting::get($key, $default);
 
-        return is_string($value) ? trim($value) ?: $default : (string) $value ?: $default;
+        if (is_string($value)) {
+            return trim($value) ?: $default;
+        }
+
+        return ((string) $value) ?: $default;
     }
 
     public static function name(): string
