@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Events & News | KSO Chandigarh')
+@section('title', 'Events & News | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 

@@ -56,7 +56,7 @@
         <hr class="border-secondary my-3">
 
         <div class="text-center extra-small text-slate-300">
-            &copy; {{ date('Y') }} Kuki Students' Organisation Chandigarh. Built with Laravel 11. All Rights Reserved.
+            &copy; {{ date('Y') }} {{ $footerSiteName }}. Built with Laravel 11. All Rights Reserved.
         </div>
     </div>
 </footer>

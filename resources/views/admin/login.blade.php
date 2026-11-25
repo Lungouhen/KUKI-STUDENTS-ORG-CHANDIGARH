@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin CMS Login | KSO Chandigarh')
+@section('title', 'Admin CMS Login | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 
@@ -13,7 +13,7 @@
                     <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                 </div>
                 <h1 class="h3 fw-bold text-dark mb-1">CMS Admin Login</h1>
-                <p class="text-muted extra-small mb-4">KSO Chandigarh Management Portal</p>
+                <p class="text-muted extra-small mb-4">{{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }} Management Portal</p>
 
                 <form action="{{ route('admin.login.post') }}" method="POST" id="adminLoginForm">
                     @csrf

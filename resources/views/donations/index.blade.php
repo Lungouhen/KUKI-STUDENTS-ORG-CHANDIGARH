@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Support KSO Student Welfare Fund | KSO Chandigarh')
+@section('title', 'Support Student Welfare Fund | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 
 <div class="donations-page">
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
-        <h2 class="fw-black mb-1"><i class="fa-solid fa-hand-holding-heart me-2"></i> Support KSO Student Welfare Fund</h2>
+        <h2 class="fw-black mb-1"><i class="fa-solid fa-hand-holding-heart me-2"></i> Support {{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }} Student Welfare Fund</h2>
         <p class="small text-light opacity-90 mb-0">Your generous contributions help fund student medical emergencies, books, and cultural events.</p>
     </div>
 </div>

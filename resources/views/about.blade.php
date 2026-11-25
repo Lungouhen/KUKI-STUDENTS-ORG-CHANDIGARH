@@ -7,7 +7,7 @@
 <div class="about-page">
 <div class="public-page-banner bg-primary text-white py-5 mb-5">
     <div class="container text-center">
-        <h1 class="fw-black display-5 mb-2">About KSO Chandigarh</h1>
+        <h1 class="fw-black display-5 mb-2">About {{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }}</h1>
         <p class="lead opacity-90 mx-auto" style="max-width: 700px;">
             Learn about our history, constitutional principles, student welfare services, and executive council.
         </p>

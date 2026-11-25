@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Membership Registration | KSO Chandigarh')
+@section('title', 'Membership Registration | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 
 <div class="membership-registration-page" x-data="{ memberType: @js(old('membership_category', 'Individual')) }">
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
-        <h1 class="fw-black mb-1">KSO Chandigarh Membership Registration</h1>
+        <h1 class="fw-black mb-1">{{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }} Membership Registration</h1>
         <p class="small text-light opacity-90 mb-0">Register online to get your official verified Digital Membership ID Card</p>
     </div>
 </div>

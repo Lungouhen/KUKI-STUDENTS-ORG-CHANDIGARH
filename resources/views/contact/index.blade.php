@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us | KSO Chandigarh')
+@section('title', 'Contact Us | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 
@@ -8,7 +8,7 @@
 <div class="public-page-banner bg-primary text-white py-4 mb-4">
     <div class="container text-center">
         <h2 class="fw-black mb-1">Contact & Emergency Helplines</h2>
-        <p class="small text-light opacity-90 mb-0">Get in touch with KSO Chandigarh executive body or reach out for assistance</p>
+        <p class="small text-light opacity-90 mb-0">Get in touch with the {{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }} executive body or reach out for assistance</p>
     </div>
 </div>
 

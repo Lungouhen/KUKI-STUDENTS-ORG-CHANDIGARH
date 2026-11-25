@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Photo Gallery | KSO Chandigarh')
+@section('title', 'Photo Gallery | ' . \App\Models\Setting::get('siteName', 'KSO Chandigarh'))
 
 @section('content')
 
@@ -38,7 +38,7 @@
                 <div class="gallery-empty-state">
                     <i class="fa-regular fa-images" aria-hidden="true"></i>
                     <h3>Community photos are on the way</h3>
-                    <p class="mb-0">This gallery will feature moments shared by KSO Chandigarh students and organizers.</p>
+                    <p class="mb-0">This gallery will feature moments shared by {{ \App\Models\Setting::get('siteName', 'KSO Chandigarh') }} students and organizers.</p>
                 </div>
             </div>
         @endforelse
