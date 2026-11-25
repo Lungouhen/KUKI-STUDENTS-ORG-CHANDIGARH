@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
-        $siteName = \App\Models\Setting::get('siteName') ?: 'KSO Chandigarh';
-        $siteAbbreviation = \App\Models\Setting::get('abbreviation') ?: 'KSO CHANDIGARH';
-        $siteTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
-        $sitePrimaryColor = \App\Models\Setting::get('primaryColor', '#003566');
-        $siteAccentColor = \App\Models\Setting::get('accentColor', '#0d9488');
+        $siteName = \App\Support\SiteBrand::name();
+        $siteAbbreviation = \App\Support\SiteBrand::abbreviation();
+        $siteTagline = \App\Support\SiteBrand::tagline();
+        $sitePrimaryColor = \App\Support\SiteBrand::primaryColor();
+        $siteAccentColor = \App\Support\SiteBrand::accentColor();
         $seoSiteName = $siteName;
         $seoDefaultTitle = \App\Models\Setting::get('seoTitle') ?: $seoSiteName;
         $seoDefaultDescription = \App\Models\Setting::get('seoDescription') ?: $siteTagline;
@@ -146,7 +146,7 @@
         <div class="container-fluid px-lg-5 d-flex align-items-center">
             <span class="badge bg-dark me-3 px-2 py-1"><i class="fa-solid fa-bullhorn me-1"></i> NOTICE</span>
             <span role="status">
-                {{ \App\Models\Setting::get('announcement', '📢 Welcome to KSO Chandigarh! Annual Membership Registration 2025-2026 is now OPEN. Get your official digital student ID card online!') }}
+                {{ \App\Support\SiteBrand::announcement() }}
             </span>
         </div>
     </div>

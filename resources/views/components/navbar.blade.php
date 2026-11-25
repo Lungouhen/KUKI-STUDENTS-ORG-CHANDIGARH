@@ -1,6 +1,6 @@
 @php
-    $brandSiteName = \App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH");
-    $brandTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+    $brandSiteName = \App\Support\SiteBrand::name();
+    $brandTagline = \App\Support\SiteBrand::tagline();
 @endphp
 
 <nav class="navbar navbar-expand-xl navbar-modern sticky-top">

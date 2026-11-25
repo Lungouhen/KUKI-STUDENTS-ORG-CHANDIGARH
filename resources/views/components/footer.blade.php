@@ -1,6 +1,6 @@
 @php
-    $footerSiteName = \App\Models\Setting::get('siteName', "KUKI STUDENTS' ORGANISATION CHANDIGARH");
-    $footerTagline = \App\Models\Setting::get('tagline', 'Empowering Students • Preserving Culture • Serving Community');
+    $footerSiteName = \App\Support\SiteBrand::name();
+    $footerTagline = \App\Support\SiteBrand::tagline();
 @endphp
 
 <footer>

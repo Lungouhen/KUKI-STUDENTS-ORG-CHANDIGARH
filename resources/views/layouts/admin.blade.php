@@ -152,7 +152,7 @@
             <div class="admin-profile">
                 <div class="admin-profile-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::substr(auth()->user()->name, 0, 1) }}</div>
                 <div class="admin-profile-copy" x-show="sidebarOpen">
-                    <span class="admin-profile-eyebrow">KSO CHANDIGARH</span>
+                    <span class="admin-profile-eyebrow">{{ \App\Support\SiteBrand::abbreviation() }}</span>
                     <strong>{{ auth()->user()->name }}</strong>
                     <span>Administrator</span>
                 </div>
